@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_white"
+    android:orientation="vertical">
+
+    <com.houoy.www.gongxing.element.ClearEditText
+        android:id="@+id/etxtEmail"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:drawableLeft="@drawable/person_little"
+        android:drawablePadding="10dp"
+        android:hint="请输入用户名" />
+
+    <com.houoy.www.gongxing.element.ClearEditText
+        android:id="@+id/etxtPwd"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:drawableLeft="@drawable/lock"
+        android:drawablePadding="10dp"
+        android:hint="请输入密码"
+        android:inputType="textPassword" />
+
+    <com.houoy.www.gongxing.element.ClearEditText
+        android:id="@+id/etxtPwd2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:drawableLeft="@drawable/lock"
+        android:drawablePadding="10dp"
+        android:hint="请再次输入密码"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/btnNext"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="下一步" />
+
+</LinearLayout>
