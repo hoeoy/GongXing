@@ -1,5 +1,7 @@
 package com.houoy.www.gongxing;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,16 +14,15 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
-import com.houoy.www.gongxing.adapter.ItemClickListener;
-import com.houoy.www.gongxing.adapter.Section;
-import com.houoy.www.gongxing.adapter.SectionedExpandableLayoutHelper;
-import com.houoy.www.gongxing.mock.MockData;
-import com.houoy.www.gongxing.model.messageInfo.Data;
-import com.houoy.www.gongxing.model.messageInfo.DeviceInfo;
-import com.houoy.www.gongxing.model.messageInfo.Place;
+import com.houoy.www.gongxing.fragment.MessageFragment;
+import com.houoy.www.gongxing.fragment.SearchFragment;
 import com.houoy.www.gongxing.util.XUtil;
 import com.houoy.www.gongxing.util.XUtilCallBack;
 import com.houoy.www.gongxing.vo.RequestVO;
@@ -32,11 +33,10 @@ import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @ContentView(R.layout.activity_main)
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     @ViewInject(R.id.recycler_view)
     private RecyclerView mRecyclerView;
@@ -49,6 +49,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @ViewInject(R.id.nav_view)
     private NavigationView navigationView;
+
+
+    @ViewInject(R.id.txt_channel)
+    private TextView txt_channel;
+    @ViewInject(R.id.txt_message)
+    private TextView txt_message;
+    @ViewInject(R.id.ly_content)
+    private FrameLayout ly_content;
+
+    //Fragment Object
+    private MessageFragment messageFragment;
+    private SearchFragment searchFragment;
+    private FragmentManager fManager;
 
     private Context mContext;
 
@@ -77,6 +90,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView.setNavigationItemSelectedListener(this);
 
+
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        fManager = getFragmentManager();
+        txt_channel.setOnClickListener(this);
+        txt_message.setOnClickListener(this);
+        txt_channel.performClick();   //模拟一次点击，既进去后选择第一项
     }
 
     @Override
@@ -152,4 +172,44 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    @Override
+    public void onClick(View v) {
+        FragmentTransaction fTransaction = fManager.beginTransaction();
+        hideAllFragment(fTransaction);
+        switch (v.getId()) {
+            case R.id.txt_channel:
+                setSelected();
+                txt_channel.setSelected(true);
+                if (messageFragment == null) {
+                    messageFragment = new MessageFragment();
+                    fTransaction.add(R.id.ly_content, messageFragment);
+                } else {
+                    fTransaction.show(messageFragment);
+                }
+                break;
+            case R.id.txt_message:
+                setSelected();
+                txt_message.setSelected(true);
+                if (searchFragment == null) {
+                    searchFragment = new SearchFragment();
+                    fTransaction.add(R.id.ly_content, searchFragment);
+                } else {
+                    fTransaction.show(searchFragment);
+                }
+                break;
+        }
+        fTransaction.commit();
+    }
+
+    //隐藏所有Fragment
+    private void hideAllFragment(FragmentTransaction fragmentTransaction) {
+        if (searchFragment != null) fragmentTransaction.hide(searchFragment);
+        if (messageFragment != null) fragmentTransaction.hide(messageFragment);
+    }
+
+    //重置所有文本的选中状态
+    private void setSelected() {
+        txt_channel.setSelected(false);
+        txt_message.setSelected(false);
+    }
 }
