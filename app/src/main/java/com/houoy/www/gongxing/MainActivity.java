@@ -36,8 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 @ContentView(R.layout.activity_main)
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, ItemClickListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     @ViewInject(R.id.recycler_view)
     private RecyclerView mRecyclerView;
@@ -78,49 +77,6 @@ public class MainActivity extends AppCompatActivity
 
         navigationView.setNavigationItemSelectedListener(this);
 
-
-        //setting the recycler view
-        SectionedExpandableLayoutHelper sectionedExpandableLayoutHelper = new SectionedExpandableLayoutHelper(this,
-                mRecyclerView, this, 1);
-
-
-        Data data = initData();
-        List<Place> places = data.getDataPart().getPlace();
-        for (Place place : places) {
-            sectionedExpandableLayoutHelper.addSection(place.getPlaceName(), place.getDeviceInfo());
-        }
-
-        sectionedExpandableLayoutHelper.notifyDataSetChanged();
-    }
-
-    private Data initData() {
-        //random data
-        //注册
-        String url = "http://101.201.67.36:9011/CloudWeChatPlatServer/MessageDetail";
-        Map<String, String> params = new HashMap();
-        params.put("touser", "oSnZ8w5YmoNfZM4Fpix1gYLvGigs");
-        params.put("RelationID", "123");
-        RequestVO requestVO = new RequestVO("dff687bbfd840d3484e2091b09c8c424", params);
-        String paramStr = JSON.toJSONString(requestVO);
-
-        XUtil.Post(url, paramStr, new XUtilCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-                ResultVO resultVO = JSON.parseObject(result, ResultVO.class);
-                if (resultVO.getCode().equals("success")) {
-                    Toast.makeText(x.app(), resultVO.getMessage() + ":登出", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent();
-                    intent.setClass(mContext, RegisterAndSignInActivity.class);
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-
-        //mock data
-        Data data = MockData.getInfoData();
-        return data;
     }
 
     @Override
@@ -178,7 +134,6 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -197,13 +152,4 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    @Override
-    public void itemClicked(DeviceInfo deviceInfo) {
-        Toast.makeText(this, "DeviceInfo: " + deviceInfo.getDeviceName() + " clicked", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void itemClicked(Section section) {
-        Toast.makeText(this, "Section: " + section.getName() + " clicked", Toast.LENGTH_SHORT).show();
-    }
 }
