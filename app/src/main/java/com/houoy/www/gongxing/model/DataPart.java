@@ -1,4 +1,4 @@
-package com.houoy.www.gongxing.model.messageInfo;
+package com.houoy.www.gongxing.model;
 
 import java.util.List;
 

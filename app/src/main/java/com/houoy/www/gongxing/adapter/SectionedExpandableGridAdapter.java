@@ -12,8 +12,8 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.houoy.www.gongxing.R;
-import com.houoy.www.gongxing.model.messageInfo.DeviceInfo;
-import com.houoy.www.gongxing.model.messageInfo.ParaInfo;
+import com.houoy.www.gongxing.model.DeviceInfo;
+import com.houoy.www.gongxing.model.ParaInfo;
 
 import java.util.ArrayList;
 

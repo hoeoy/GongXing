@@ -3,7 +3,7 @@ package com.houoy.www.gongxing.mock;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.houoy.www.gongxing.vo.ResultVO;
-import com.houoy.www.gongxing.model.messageInfo.Data;
+import com.houoy.www.gongxing.model.Data;
 
 /**
  * Created by andyzhao on 2017/12/23.

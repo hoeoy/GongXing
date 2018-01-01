@@ -1,6 +1,6 @@
 package com.houoy.www.gongxing.adapter;
 
-import com.houoy.www.gongxing.model.messageInfo.DeviceInfo;
+import com.houoy.www.gongxing.model.DeviceInfo;
 
 /**
  * Created by lenovo on 2/23/2016.

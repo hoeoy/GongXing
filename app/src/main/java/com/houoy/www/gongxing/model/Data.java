@@ -1,4 +1,4 @@
-package com.houoy.www.gongxing.model.messageInfo;
+package com.houoy.www.gongxing.model;
 
 /**
  * Created by andyzhao on 2017/12/23.

@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.houoy.www.gongxing.R;
-import com.houoy.www.gongxing.model.messageInfo.ParaInfo;
+import com.houoy.www.gongxing.model.ParaInfo;
 
 import java.util.List;
 

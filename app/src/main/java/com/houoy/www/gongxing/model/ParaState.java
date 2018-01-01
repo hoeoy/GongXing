@@ -1,10 +1,10 @@
-package com.houoy.www.gongxing.model.messageInfo;
+package com.houoy.www.gongxing.model;
 
 /**
  * Created by andyzhao on 2017/12/23.
  */
 
-public class ParaValue {
+public class ParaState {
     private String Name;
     private String BackColor;
     private String FontColor;

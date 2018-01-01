@@ -15,7 +15,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -124,31 +123,40 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_out) {
-            //注册
-            String url = "http://101.201.67.36:9011/CloudWeChatPlatServer/Logout";
-            Map<String, String> params = new HashMap();
-            params.put("UserID", "zhangsan1");
-            params.put("openid", "oSnZ8w5YmoNfZM4Fpix1gYLvGigs");
-            RequestVO requestVO = new RequestVO("dff687bbfd840d3484e2091b09c8c424", params);
-            String paramStr = JSON.toJSONString(requestVO);
+        switch (id) {
+            case R.id.action_out:
+                //注册
+                String url = "http://101.201.67.36:9011/CloudWeChatPlatServer/Logout";
+                Map<String, String> params = new HashMap();
+                params.put("UserID", "zhangsan1");
+                params.put("openid", "oSnZ8w5YmoNfZM4Fpix1gYLvGigs");
+                RequestVO requestVO = new RequestVO("dff687bbfd840d3484e2091b09c8c424", params);
+                String paramStr = JSON.toJSONString(requestVO);
 
 
-            XUtil.Post(url, paramStr, new XUtilCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    ResultVO resultVO = JSON.parseObject(result, ResultVO.class);
-                    if (resultVO.getCode().equals("success")) {
-                        Toast.makeText(x.app(), resultVO.getMessage() + ":登出", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent();
-                        intent.setClass(mContext, RegisterAndSignInActivity.class);
-                        startActivity(intent);
-                    } else {
-                        Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_LONG).show();
+                XUtil.Post(url, paramStr, new XUtilCallBack<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        ResultVO resultVO = JSON.parseObject(result, ResultVO.class);
+                        if (resultVO.getCode().equals("success")) {
+                            Toast.makeText(x.app(), resultVO.getMessage() + ":登出", Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent();
+                            intent.setClass(mContext, RegisterAndSignInActivity.class);
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_LONG).show();
+                        }
                     }
-                }
-            });
-            return true;
+                });
+                return true;
+            case R.id.action_share:
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_SUBJECT, "分享");
+                intent.putExtra(Intent.EXTRA_TEXT,"躬行监控");
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                this.startActivity(Intent.createChooser(intent, "躬行监控"));
+                break;
         }
 
         return super.onOptionsItemSelected(item);

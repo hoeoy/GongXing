@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.houoy.www.gongxing.model.messageInfo.DeviceInfo;
+import com.houoy.www.gongxing.model.DeviceInfo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
