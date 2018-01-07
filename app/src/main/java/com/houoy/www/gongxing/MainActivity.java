@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +28,7 @@ import com.houoy.www.gongxing.util.XUtilCallBack;
 import com.houoy.www.gongxing.vo.RequestVO;
 import com.houoy.www.gongxing.vo.ResultVO;
 
+import org.greenrobot.eventbus.EventBus;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
@@ -63,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FragmentManager fManager;
 
     private Context mContext;
+    private long exitTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("text/plain");
                 intent.putExtra(Intent.EXTRA_SUBJECT, "分享");
-                intent.putExtra(Intent.EXTRA_TEXT,"躬行监控");
+                intent.putExtra(Intent.EXTRA_TEXT, "躬行监控");
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 this.startActivity(Intent.createChooser(intent, "躬行监控"));
                 break;
@@ -219,5 +222,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void setSelected() {
         txt_channel.setSelected(false);
         txt_message.setSelected(false);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if ((System.currentTimeMillis() - exitTime) > 1000) {
+                Toast.makeText(getApplicationContext(), "再按一次退出程序",
+                        Toast.LENGTH_SHORT).show();
+                exitTime = System.currentTimeMillis();
+            } else {
+                finish();
+                System.exit(0);
+            }
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onDestroy() {
+//        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 }

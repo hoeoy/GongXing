@@ -1,10 +1,12 @@
 package com.houoy.www.gongxing.model;
 
+import java.io.Serializable;
+
 /**
  * Created by andyzhao on 2017/12/23.
  */
 
-public class ParaState {
+public class ParaState implements Serializable {
     private String Name;
     private String BackColor;
     private String FontColor;

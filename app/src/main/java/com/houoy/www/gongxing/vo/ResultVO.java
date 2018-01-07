@@ -1,5 +1,7 @@
 package com.houoy.www.gongxing.vo;
 
+import java.io.Serializable;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,7 +10,7 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-public class ResultVO<T> {
+public class ResultVO<T> implements Serializable{
     private String code;
     private String message;
     private T data;

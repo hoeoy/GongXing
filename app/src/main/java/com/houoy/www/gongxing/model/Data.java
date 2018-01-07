@@ -1,10 +1,12 @@
 package com.houoy.www.gongxing.model;
 
+import java.io.Serializable;
+
 /**
  * Created by andyzhao on 2017/12/23.
  */
 
-public class Data {
+public class Data implements Serializable {
     private ClientInfo ClientInfo;
     private DataPart DataPart;
 

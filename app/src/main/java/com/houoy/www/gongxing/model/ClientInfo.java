@@ -1,10 +1,12 @@
 package com.houoy.www.gongxing.model;
 
+import java.io.Serializable;
+
 /**
  * Created by andyzhao on 2017/12/23.
  */
 
-public class ClientInfo {
+public class ClientInfo implements Serializable {
     private String UserID;
     private String MsgType;
     private String RelationID;

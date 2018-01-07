@@ -1,5 +1,6 @@
 package com.houoy.www.gongxing.vo;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import lombok.Data;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-public class RequestVO {
+public class RequestVO implements Serializable {
     private String sign;
     private Map<String, String> params;
 

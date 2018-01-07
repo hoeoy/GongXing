@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
@@ -16,63 +15,138 @@
         app:cardCornerRadius="3dp"
         app:cardElevation="8dp">
 
-        <RelativeLayout
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <RelativeLayout
-                android:id="@+id/news_header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/news_photo"
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:layout_alignParentTop="true"
-                    android:scaleType="centerCrop" />
-
-                <TextView
-                    android:id="@+id/news_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/news_photo"
-                    android:gravity="center"
-                    android:maxLines="1"
-                    android:padding="5dp"
-                    android:text="sdfaslkdfjalksdjf;laksjfdlk"
-                    android:textColor="#ffffff"
-                    android:textSize="20sp" />
-            </RelativeLayout>
-
             <TextView
-                android:id="@+id/news_desc"
+                android:id="@+id/title_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/news_header"
-                android:layout_margin="15dp"
-                android:maxLines="2" />
+                android:gravity="left"
+                android:text="title"
+                android:textSize="20sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/news_desc"
-                android:orientation="horizontal">
+                android:gravity="left"
+                android:text="date"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/title_value" />
 
-                <Button
-                    android:id="@+id/btn_more"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="#00000000"
-                    android:text="READ MORE"
-                    android:textColor="#7AD3E0" />
-            </LinearLayout>
+            <TextView
+                android:id="@+id/rulename"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="规则名称"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/date" />
 
+            <TextView
+                android:id="@+id/rule_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="规则名称"
+                app:layout_constraintLeft_toRightOf="@id/rulename"
+                app:layout_constraintTop_toBottomOf="@id/date" />
 
-        </RelativeLayout>
+            <TextView
+                android:id="@+id/triggertime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="触发时间"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rulename" />
 
+            <TextView
+                android:id="@+id/trigger_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="触发时间"
+                app:layout_constraintLeft_toRightOf="@id/triggertime"
+                app:layout_constraintTop_toBottomOf="@id/rulename" />
+
+            <TextView
+                android:id="@+id/devicename"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="设备名称"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/triggertime" />
+
+            <TextView
+                android:id="@+id/device_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="设备名称"
+                app:layout_constraintLeft_toRightOf="@id/devicename"
+                app:layout_constraintTop_toBottomOf="@id/triggertime" />
+
+            <TextView
+                android:id="@+id/subkeyname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="子项名称"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/devicename" />
+
+            <TextView
+                android:id="@+id/subkey_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="子项名称"
+                app:layout_constraintLeft_toRightOf="@id/subkeyname"
+                app:layout_constraintTop_toBottomOf="@id/devicename" />
+
+            <TextView
+                android:id="@+id/currentparameter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="当前参数"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/subkeyname" />
+
+            <TextView
+                android:id="@+id/current_parameter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="当前参数"
+                app:layout_constraintLeft_toRightOf="@id/currentparameter"
+                app:layout_constraintTop_toBottomOf="@id/subkeyname" />
+
+            <TextView
+                android:id="@+id/remark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="备注"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/currentparameter" />
+
+            <Button
+                android:id="@+id/btn_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00000000"
+                android:text="详细"
+                android:textColor="#7AD3E0"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/remark" />
+        </android.support.constraint.ConstraintLayout>
 
     </android.support.v7.widget.CardView>
-
-
 </RelativeLayout>

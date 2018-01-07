@@ -1,10 +1,12 @@
 package com.houoy.www.gongxing.model;
 
+import java.io.Serializable;
+
 /**
  * Created by andyzhao on 2017/12/23.
  */
 
-public class ParaValue {
+public class ParaValue implements Serializable {
     private String Name;
     private String BackColor;
     private String FontColor;

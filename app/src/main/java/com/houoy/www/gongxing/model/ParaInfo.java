@@ -1,10 +1,12 @@
 package com.houoy.www.gongxing.model;
 
+import java.io.Serializable;
+
 /**
  * Created by andyzhao on 2017/12/23.
  */
 
-public class ParaInfo {
+public class ParaInfo implements Serializable {
     private ParaName ParaName;
     private ParaValue ParaValue;
     private ParaState ParaState;

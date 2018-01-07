@@ -1,12 +1,13 @@
 package com.houoy.www.gongxing.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by andyzhao on 2017/12/23.
  */
 
-public class DeviceInfo {
+public class DeviceInfo implements Serializable {
     private String DeviceName;
     private String BackColor;
     private String FontColor;

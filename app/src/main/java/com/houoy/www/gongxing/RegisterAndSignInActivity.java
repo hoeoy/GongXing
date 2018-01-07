@@ -57,8 +57,8 @@ public class RegisterAndSignInActivity extends AppCompatActivity implements Radi
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
     private void bindViews() {
@@ -104,6 +104,7 @@ public class RegisterAndSignInActivity extends AppCompatActivity implements Radi
         Intent intent = new Intent();
         intent.setClass(this, MainActivity.class);
         startActivity(intent);
+        finish();
     }
 
     //重写ViewPager页面切换的处理方法
