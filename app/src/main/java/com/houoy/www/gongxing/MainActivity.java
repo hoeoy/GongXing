@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
+import com.houoy.www.gongxing.dao.GongXingDao;
 import com.houoy.www.gongxing.fragment.MessageFragment;
 import com.houoy.www.gongxing.fragment.SearchFragment;
 import com.houoy.www.gongxing.util.XUtil;
@@ -28,7 +29,7 @@ import com.houoy.www.gongxing.util.XUtilCallBack;
 import com.houoy.www.gongxing.vo.RequestVO;
 import com.houoy.www.gongxing.vo.ResultVO;
 
-import org.greenrobot.eventbus.EventBus;
+import org.xutils.ex.DbException;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private Context mContext;
     private long exitTime = 0;
+    private GongXingDao gongXingDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         setSupportActionBar(toolbar);
         mContext = this;
+        gongXingDao = GongXingDao.getInstant();
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -160,6 +163,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 this.startActivity(Intent.createChooser(intent, "躬行监控"));
                 break;
+            case R.id.clear_cache:
+                try {
+                    gongXingDao.clearMessagePush();
+                    Toast.makeText(getApplicationContext(), "清除缓存成功", Toast.LENGTH_SHORT).show();
+                } catch (DbException e) {
+                    e.printStackTrace();
+                }
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -181,6 +192,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
     }
 
     @Override
@@ -228,8 +244,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if ((System.currentTimeMillis() - exitTime) > 1000) {
-                Toast.makeText(getApplicationContext(), "再按一次退出程序",
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
                 exitTime = System.currentTimeMillis();
             } else {
                 finish();

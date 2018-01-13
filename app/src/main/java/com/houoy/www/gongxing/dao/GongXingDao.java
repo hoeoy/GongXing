@@ -36,17 +36,18 @@ public class GongXingDao {
                 .setDbName("gongxing_db") //设置数据库名
                 .setDbVersion(1) //设置数据库版本,每次启动应用时将会检查该版本号,
                 //发现数据库版本低于这里设置的值将进行数据库升级并触发DbUpgradeListener
-                .setAllowTransaction(true)//设置是否开启事务,默认为false关闭事务
+                .setAllowTransaction(false)//设置是否开启事务,默认为false关闭事务
                 .setTableCreateListener(new DbManager.TableCreateListener() {
                     @Override
                     public void onTableCreated(DbManager db, TableEntity<?> table) {
-                        System.out.print("as");
+                        db.getDatabase().enableWriteAheadLogging();
                         //balabala...
                     }
                 })//设置数据库创建时的Listener
                 .setDbUpgradeListener(new DbManager.DbUpgradeListener() {
                     @Override
                     public void onUpgrade(DbManager db, int oldVersion, int newVersion) {
+
                         //balabala...
                     }
                 });//设置数据库升级时的Listener,这里可以执行相关数据库表的相关修改,比如alter语句增加字段等
@@ -63,7 +64,7 @@ public class GongXingDao {
         return result;
     }
 
-    public List<MessagePush> findMessagePush(int start) throws DbException {
+    public List<MessagePush> findMessagePush(int start,int limit) throws DbException {
         //List<User> users = db.findAll(User.class);
         //showDbMessage("【dbFind#findAll】第一个对象:"+users.get(0).toString());
 
@@ -77,7 +78,7 @@ public class GongXingDao {
 //                .where("name","like","%kevin%")
 //                .and("email", "=", "caolbmail@gmail.com")
                 .orderBy("time", true)
-                .limit(15) //只查询两条记录
+                .limit(limit) //只查询几条记录
                 .offset(start) //偏移两个,从第三个记录开始返回,limit配合offset达到sqlite的limit m,n的查询
                 .findAll();
         return messages;
@@ -95,5 +96,9 @@ public class GongXingDao {
 //        whereBuilder.and("id", ">", "5").or("id", "=", "1").expr(" and mobile > '2015-12-29 00:00:01' ");
         int result = db.delete(MessagePush.class, whereBuilder);
         return result;
+    }
+
+    public void clearMessagePush() throws DbException {
+        db.delete(MessagePush.class);
     }
 }

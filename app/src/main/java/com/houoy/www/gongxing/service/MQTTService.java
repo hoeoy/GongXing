@@ -19,6 +19,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
 import com.houoy.www.gongxing.MainActivity;
 import com.houoy.www.gongxing.R;
 import com.houoy.www.gongxing.dao.GongXingDao;
@@ -50,8 +51,8 @@ public class MQTTService extends Service {
 
     //    private String host = "tcp://10.0.2.2:61613";
 //    private String host = "tcp://192.168.1.103:61613";
-    private String host = "tcp://192.168.0.102:61613";
-    //    private String host = "tcp://101.201.67.36:61613";
+//    private String host = "tcp://192.168.0.102:61613";
+    private String host = "tcp://101.201.67.36:61613";
     private String userName = "admin";
     private String passWord = "password";
     private static String myTopic = "topic";
@@ -178,14 +179,11 @@ public class MQTTService extends Service {
         public void messageArrived(String topic, MqttMessage message) throws Exception {
 
             String str1 = new String(message.getPayload());
-            MessagePush msg = new MessagePush();
-            msg.setTrigger_time_value(str1);
-            msg.setRule_name_value(str1);
-            msg.setTitle_value(str1);
+            MessagePush msg = JSON.parseObject(str1, MessagePush.class);
 
             EventBus.getDefault().post(msg);
 
-            gongXingDao.addMessagePush(new MessagePush());
+            gongXingDao.addMessagePush(msg);
 
             //定义一个PendingIntent点击Notification后启动一个Activity
             Intent it = new Intent(getBaseContext(), MainActivity.class);

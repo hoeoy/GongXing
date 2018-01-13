@@ -9,42 +9,62 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.houoy.www.gongxing.MessageDetailActivity;
 import com.houoy.www.gongxing.R;
+import com.houoy.www.gongxing.dao.GongXingDao;
 import com.houoy.www.gongxing.model.MessagePush;
 
+import org.xutils.ex.DbException;
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-/**
- * Created by QiWangming on 2015/6/13.
- */
-public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.NewsViewHolder> {
+public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<MessagePush> messagePushes;
     public Context context;
+    private static final int TYPE_ITEM = 0;  //普通Item View
+    private static final int TYPE_FOOTER = 1;  //顶部FootView
+    //上拉加载更多状态-默认为0
+    private int load_more_status = -1;
+    //什么都不显示
+    public static final int NOTHING = -1;
+    //上拉加载更多
+    public static final int PULLUP_LOAD_MORE = 0;
+    //正在加载中
+    public static final int LOADING_MORE = 1;
+    //没有更多数据了
+    public static final int NO_MORE_DATA = 2;
+    private GongXingDao gongXingDao;
 
+    private Integer limit = 10;
     public MessageListAdapter(Context context) {
         this.context = context;
-        initData();
+        gongXingDao = GongXingDao.getInstant();
+        initData(0);
     }
 
-    public void initData() {
-        messagePushes = new ArrayList();
-        for (int i = 0; i < 5; i++) {
-            MessagePush messagePush = new MessagePush();
-            messagePush.setCurrent_parameter_color(i + i + i + "000");
-            messagePush.setCurrent_parameter_value(i + "mssage");
-            messagePush.setTime(new Date().toString());
-            messagePush.setDevice_name_value("device" + i);
-            messagePush.setRemark_value("remark" + i);
-            messagePush.setRule_name_value("rule" + i);
-            messagePush.setSubkey_name_value("subkey" + i);
-            messagePush.setTrigger_time_value("trigger" + i);
-            messagePushes.add(messagePush);
+    public void initData(int start) {
+        try {
+            messagePushes = gongXingDao.findMessagePush(start,limit);
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void pushData(int start) {
+        try {
+            List<MessagePush> tempMessages = gongXingDao.findMessagePush(start,limit);
+            if (messagePushes == null) {
+                messagePushes = new ArrayList();
+            }
+
+            messagePushes.addAll(tempMessages);
+        } catch (DbException e) {
+            e.printStackTrace();
         }
     }
 
@@ -79,47 +99,107 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
         }
     }
 
-    @Override
-    public MessageListAdapter.NewsViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(context).inflate(R.layout.fragment_message_item, viewGroup, false);
-        NewsViewHolder nvh = new NewsViewHolder(v);
-        return nvh;
+    /**
+     * 底部FootView布局
+     */
+    public static class FootViewHolder extends RecyclerView.ViewHolder {
+        private TextView foot_view_item_tv;
+        private LinearLayout message_foot;
+
+        public FootViewHolder(View view) {
+            super(view);
+            foot_view_item_tv = (TextView) view.findViewById(R.id.foot_view_item_tv);
+            message_foot = (LinearLayout) view.findViewById(R.id.message_foot);
+        }
     }
 
     @Override
-    public void onBindViewHolder(MessageListAdapter.NewsViewHolder personViewHolder, int i) {
+    public int getItemViewType(int position) {
+        // 最后一个item设置为footerView
+        if (position + 1 == getItemCount()) {
+            return TYPE_FOOTER;
+        } else {
+            return TYPE_ITEM;
+        }
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        //进行判断显示类型，来创建返回不同的View
+        if (viewType == TYPE_ITEM) {
+            View v = LayoutInflater.from(context).inflate(R.layout.fragment_message_item, viewGroup, false);
+            NewsViewHolder nvh = new NewsViewHolder(v);
+            return nvh;
+        } else if (viewType == TYPE_FOOTER) {
+            View foot_view = LayoutInflater.from(context).inflate(R.layout.fragment_message_foot, viewGroup, false);
+            //这边可以做一些属性设置，甚至事件监听绑定
+            //view.setBackgroundColor(Color.RED);
+            FootViewHolder footViewHolder = new FootViewHolder(foot_view);
+            return footViewHolder;
+        }
+        return null;
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int i) {
         final int j = i;
-        personViewHolder.title_value.setText(messagePushes.get(i).getTitle_value());
-        personViewHolder.date.setText(messagePushes.get(i).getTime());
-        personViewHolder.rule_name.setText(messagePushes.get(i).getRule_name_value());
-        personViewHolder.trigger_time.setText(messagePushes.get(i).getTrigger_time_value());
-        personViewHolder.device_name.setText(messagePushes.get(i).getDevice_name_value());
-        personViewHolder.subkey_name.setText(messagePushes.get(i).getSubkey_name_value());
-        personViewHolder.current_parameter.setText(messagePushes.get(i).getCurrent_parameter_value());
-        personViewHolder.remark.setText(messagePushes.get(i).getRemark_value());
+        if (holder instanceof NewsViewHolder) {
+            ((NewsViewHolder) holder).title_value.setText(messagePushes.get(i).getTitle_value());
+            ((NewsViewHolder) holder).date.setText(messagePushes.get(i).getTime());
+            ((NewsViewHolder) holder).rule_name.setText(messagePushes.get(i).getRule_name_value());
+            ((NewsViewHolder) holder).trigger_time.setText(messagePushes.get(i).getTrigger_time_value());
+            ((NewsViewHolder) holder).device_name.setText(messagePushes.get(i).getDevice_name_value());
+            ((NewsViewHolder) holder).subkey_name.setText(messagePushes.get(i).getSubkey_name_value());
+            ((NewsViewHolder) holder).current_parameter.setText(messagePushes.get(i).getCurrent_parameter_value());
+            ((NewsViewHolder) holder).remark.setText(messagePushes.get(i).getRemark_value());
 
-        //为btn_share btn_readMore cardView设置点击事件
-        personViewHolder.cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, MessageDetailActivity.class);
-                intent.putExtra("messagePush", messagePushes.get(j));
-                context.startActivity(intent);
-            }
-        });
+            //为btn_share btn_readMore cardView设置点击事件
+            ((NewsViewHolder) holder).cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, MessageDetailActivity.class);
+                    intent.putExtra("messagePush", messagePushes.get(j));
+                    context.startActivity(intent);
+                }
+            });
 
-        personViewHolder.readMore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, MessageDetailActivity.class);
-                intent.putExtra("messagePush", messagePushes.get(j));
-                context.startActivity(intent);
+            ((NewsViewHolder) holder).readMore.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, MessageDetailActivity.class);
+                    intent.putExtra("messagePush", messagePushes.get(j));
+                    context.startActivity(intent);
+                }
+            });
+        } else if (holder instanceof FootViewHolder) {
+            FootViewHolder footViewHolder = (FootViewHolder) holder;
+            switch (load_more_status) {
+                case NOTHING:
+                    footViewHolder.message_foot.setVisibility(View.GONE);
+                    break;
+                case PULLUP_LOAD_MORE:
+                    footViewHolder.message_foot.setVisibility(View.VISIBLE);
+                    footViewHolder.foot_view_item_tv.setText("上拉加载更多...");
+                    break;
+                case LOADING_MORE:
+                    footViewHolder.message_foot.setVisibility(View.VISIBLE);
+                    footViewHolder.foot_view_item_tv.setText("正在加载更多数据...");
+                    break;
+                case NO_MORE_DATA:
+                    footViewHolder.message_foot.setVisibility(View.VISIBLE);
+                    footViewHolder.foot_view_item_tv.setText("没有更多数据了");
+                    break;
             }
-        });
+        }
     }
 
     @Override
     public int getItemCount() {
-        return messagePushes.size();
+        return messagePushes.size() + 1;//默认又一个foot
+    }
+
+    public void changeMoreStatus(int status) {
+        load_more_status = status;
+        notifyDataSetChanged();
     }
 }
