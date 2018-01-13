@@ -12,7 +12,7 @@
         android:layout_marginTop="30dp"
         android:drawableLeft="@drawable/person_little"
         android:drawablePadding="10dp"
-        android:hint="使用邮箱登陆" />
+        android:hint="用户名" />
 
     <com.houoy.www.gongxing.element.ClearEditText
         android:id="@+id/etxtPwd"
@@ -21,7 +21,7 @@
         android:layout_marginTop="20dp"
         android:drawableLeft="@drawable/lock"
         android:drawablePadding="10dp"
-        android:hint="输入登陆密码"
+        android:hint="密码"
         android:inputType="textPassword" />
 
     <Button

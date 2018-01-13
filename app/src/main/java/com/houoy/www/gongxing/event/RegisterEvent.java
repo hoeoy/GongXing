@@ -4,28 +4,34 @@ package com.houoy.www.gongxing.event;
  * eventBus的
  */
 public class RegisterEvent {
-	private String type;
-	private Object data;
+    public static final String Next = "Next";
+    public static final String Register = "Register";
+    public static final String DentifyingCode = "DentifyingCode";
+    public static final String Begin_Register = "Begin_Register";
+    public static final String Begin_DentifyingCode = "Begin_DentifyingCode";
 
-	public RegisterEvent(String type, Object data) {
-		super();
-		this.data = data;
-		this.type = type;
-	}
+    private String type;
+    private Object data;
 
-	public String getType() {
-		return type;
-	}
+    public RegisterEvent(String type, Object data) {
+        super();
+        this.data = data;
+        this.type = type;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public Object getData() {
-		return data;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public void setData(Object data) {
-		this.data = data;
-	}
+    public Object getData() {
+        return data;
+    }
+
+    public void setData(Object data) {
+        this.data = data;
+    }
 }

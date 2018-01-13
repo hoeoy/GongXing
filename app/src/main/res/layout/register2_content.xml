@@ -23,7 +23,7 @@
         app:rowCount="1">
 
         <com.houoy.www.gongxing.element.ClearEditText
-            android:id="@+id/etxtPwd"
+            android:id="@+id/dentifyingCode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/person_little"
@@ -46,7 +46,7 @@
     </android.support.v7.widget.GridLayout>
 
     <com.houoy.www.gongxing.element.ClearEditText
-        android:id="@+id/etxtPwd2"
+        android:id="@+id/idcode"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"

@@ -1,38 +1,34 @@
 package com.houoy.www.gongxing.fragment;
 
+import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
 import com.houoy.www.gongxing.R;
-import com.houoy.www.gongxing.RegisterAndSignInActivity;
 import com.houoy.www.gongxing.adapter.ItemClickListener;
 import com.houoy.www.gongxing.adapter.Section;
 import com.houoy.www.gongxing.adapter.SectionedExpandableLayoutHelper;
-import com.houoy.www.gongxing.mock.MockData;
+import com.houoy.www.gongxing.controller.GongXingController;
+import com.houoy.www.gongxing.dao.GongXingDao;
+import com.houoy.www.gongxing.event.SearchMessageDataEvent;
 import com.houoy.www.gongxing.model.Data;
 import com.houoy.www.gongxing.model.DeviceInfo;
 import com.houoy.www.gongxing.model.Place;
-import com.houoy.www.gongxing.util.XUtil;
-import com.houoy.www.gongxing.util.XUtilCallBack;
-import com.houoy.www.gongxing.vo.RequestVO;
-import com.houoy.www.gongxing.vo.ResultVO;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @ContentView(R.layout.fragment_search)
 public class SearchFragment extends Fragment implements ItemClickListener {
@@ -40,23 +36,21 @@ public class SearchFragment extends Fragment implements ItemClickListener {
     @ViewInject(R.id.recycler_view)
     private RecyclerView mRecyclerView;
     private Context mContext;
+    private SectionedExpandableLayoutHelper sectionedExpandableLayoutHelper;
+
+    private GongXingDao gongXingDao;
+    private GongXingController gongXingController;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         injected = true;
         View view = x.view().inject(this, inflater, container); //使用注解模块一定要注意初始化视图注解框架
+        EventBus.getDefault().register(this);
         mContext = container.getContext();
         //setting the recycler view
-        SectionedExpandableLayoutHelper sectionedExpandableLayoutHelper = new SectionedExpandableLayoutHelper(mContext,
-                mRecyclerView, this, 1);
-
-
-        Data data = initData();
-        List<Place> places = data.getDataPart().getPlace();
-        for (Place place : places) {
-            sectionedExpandableLayoutHelper.addSection(place.getPlaceName(), place.getDeviceInfo());
-        }
-
-        sectionedExpandableLayoutHelper.notifyDataSetChanged();
+        sectionedExpandableLayoutHelper = new SectionedExpandableLayoutHelper(mContext, mRecyclerView, this, 1);
+        gongXingController = GongXingController.getInstant();
+        gongXingController.queryData();
         return view;
     }
 
@@ -68,34 +62,25 @@ public class SearchFragment extends Fragment implements ItemClickListener {
         }
     }
 
-    private Data initData() {
-        //random data
-        //注册
-        String url = "http://101.201.67.36:9011/CloudWeChatPlatServer/MessageDetail";
-        Map<String, String> params = new HashMap();
-        params.put("touser", "oSnZ8w5YmoNfZM4Fpix1gYLvGigs");
-        params.put("RelationID", "123");
-        RequestVO requestVO = new RequestVO("dff687bbfd840d3484e2091b09c8c424", params);
-        String paramStr = JSON.toJSONString(requestVO);
+    @Override
+    public void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
 
-        XUtil.Post(url, paramStr, new XUtilCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-                ResultVO resultVO = JSON.parseObject(result, ResultVO.class);
-                if (resultVO.getCode().equals("success")) {
-                    Toast.makeText(x.app(), resultVO.getMessage() + ":登出", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent();
-                    intent.setClass(mContext, RegisterAndSignInActivity.class);
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_LONG).show();
-                }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onData(SearchMessageDataEvent event) {
+        Data data = (Data) event.getData();
+        if (data == null) {
+
+        } else {
+            List<Place> places = data.getDataPart().getPlace();
+            for (Place place : places) {
+                sectionedExpandableLayoutHelper.addSection(place.getPlaceName(), place.getDeviceInfo());
             }
-        });
 
-        //mock data
-        Data data = MockData.getInfoData();
-        return data;
+            sectionedExpandableLayoutHelper.notifyDataSetChanged();
+        }
     }
 
     @Override

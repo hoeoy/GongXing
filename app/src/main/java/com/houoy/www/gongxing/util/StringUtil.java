@@ -2,8 +2,16 @@ package com.houoy.www.gongxing.util;
 
 public class StringUtil {
 
+    //是否
+    public static Boolean isEmpty(String s) {
+        if (s == null || s.trim().equals("")) {
+            return true;
+        }
+        return false;
+    }
+
     //字符串转为16进制
-    public static  String toHexString(String s) {
+    public static String toHexString(String s) {
         String str = "";
         for (int i = 0; i < s.length(); i++) {
             int ch = (int) s.charAt(i);
@@ -36,7 +44,7 @@ public class StringUtil {
         return s;
     }
 
-    public static String getEPCValue(String readvalue){
+    public static String getEPCValue(String readvalue) {
         readvalue = toStringHex(readvalue);
         int ix = -1;
 

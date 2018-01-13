@@ -1,5 +1,6 @@
 package com.houoy.www.gongxing.dao;
 
+import com.houoy.www.gongxing.model.ClientInfo;
 import com.houoy.www.gongxing.model.MessagePush;
 
 import org.xutils.DbManager;
@@ -64,7 +65,7 @@ public class GongXingDao {
         return result;
     }
 
-    public List<MessagePush> findMessagePush(int start,int limit) throws DbException {
+    public List<MessagePush> findMessagePush(int start, int limit) throws DbException {
         //List<User> users = db.findAll(User.class);
         //showDbMessage("【dbFind#findAll】第一个对象:"+users.get(0).toString());
 
@@ -100,5 +101,45 @@ public class GongXingDao {
 
     public void clearMessagePush() throws DbException {
         db.delete(MessagePush.class);
+    }
+
+
+    public Boolean setUser(ClientInfo clientInfo) throws DbException {
+        //如果之前有用户则删除
+        List<ClientInfo> users = findUsers();
+        if (users != null && users.size() > 0) {
+            clearUser();
+        }
+
+        Boolean result = db.saveBindingId(clientInfo);
+        return result;
+    }
+
+    public ClientInfo findUser() throws DbException {
+        List<ClientInfo> users = db.selector(ClientInfo.class)
+                .limit(1) //只查询几条记录
+                .offset(0) //偏移两个,从第三个记录开始返回,limit配合offset达到sqlite的limit m,n的查询
+                .findAll();
+        if (users == null || users.size() < 1) {
+            return null;
+        }
+
+        return users.get(0);
+    }
+
+    public List<ClientInfo> findUsers() throws DbException {
+        List<ClientInfo> users = db.selector(ClientInfo.class).findAll();
+        return users;
+    }
+
+    public Integer deleteUser(int id) throws DbException {
+        WhereBuilder whereBuilder = WhereBuilder.b();
+        whereBuilder.and("id", "=", id);
+        int result = db.delete(ClientInfo.class, whereBuilder);
+        return result;
+    }
+
+    public void clearUser() throws DbException {
+        db.delete(ClientInfo.class);
     }
 }

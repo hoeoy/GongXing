@@ -8,21 +8,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
 import com.houoy.www.gongxing.R;
-import com.houoy.www.gongxing.event.LoginEvent;
-import com.houoy.www.gongxing.util.XUtil;
-import com.houoy.www.gongxing.util.XUtilCallBack;
-import com.houoy.www.gongxing.vo.RequestVO;
-import com.houoy.www.gongxing.vo.ResultVO;
+import com.houoy.www.gongxing.controller.GongXingController;
+import com.houoy.www.gongxing.dao.GongXingDao;
+import com.houoy.www.gongxing.element.ClearEditText;
+import com.houoy.www.gongxing.util.StringUtil;
 
-import org.greenrobot.eventbus.EventBus;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
+import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by Jay on 2015/8/28 0028.
@@ -30,6 +25,13 @@ import java.util.Map;
 @ContentView(R.layout.signin_content)
 public class Signin extends Fragment {
     private boolean injected = false;
+
+    @ViewInject(R.id.etxtEmail)
+    private ClearEditText etxtEmail;
+    @ViewInject(R.id.etxtPwd)
+    private ClearEditText etxtPwd;
+    private GongXingDao gongXingDao;
+    private GongXingController gongXingController;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,6 +47,8 @@ public class Signin extends Fragment {
         if (!injected) {
             x.view().inject(this, this.getView());
         }
+        gongXingDao = GongXingDao.getInstant();
+        gongXingController = GongXingController.getInstant();
     }
 
     /**
@@ -56,26 +60,17 @@ public class Signin extends Fragment {
      **/
     @Event(value = {R.id.btnLogin})
     private void onLoginClick(View view) {
-        String url = "http://101.201.67.36:9011/CloudWeChatPlatServer/Login";
-        Map<String, String> params = new HashMap();
-        params.put("UserID", "zhaozhao");
-        params.put("Password", "123456");
-        RequestVO requestVO = new RequestVO("dff687bbfd840d3484e2091b09c8c424", params);
-        String paramStr = JSON.toJSONString(requestVO);
+        String userid = etxtEmail.getText().toString();
+        String password = etxtPwd.getText().toString();
+        if (StringUtil.isEmpty(userid)) {
+            Toast.makeText(x.app(), "请输入用户名", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (StringUtil.isEmpty(password)) {
+            Toast.makeText(x.app(), "请输入密码", Toast.LENGTH_LONG).show();
+            return;
+        }
 
-        XUtil.Post(url, paramStr, new XUtilCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-                ResultVO resultVO = JSON.parseObject(result, ResultVO.class);
-//                if (resultVO.getCode().equals("success")) {
-//                    EventBus.getDefault().post(new LoginEvent("login", resultVO));
-//                } else {
-//                    Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_SHORT).show();
-//                }
-
-                Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_SHORT).show();
-                EventBus.getDefault().post(new LoginEvent("login", resultVO));
-            }
-        });
+        gongXingController.signin(userid, password);
     }
 }

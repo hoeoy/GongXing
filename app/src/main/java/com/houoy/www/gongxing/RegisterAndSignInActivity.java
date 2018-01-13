@@ -4,17 +4,24 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.houoy.www.gongxing.controller.GongXingController;
+import com.houoy.www.gongxing.dao.GongXingDao;
 import com.houoy.www.gongxing.event.LoginEvent;
 import com.houoy.www.gongxing.event.RegisterEvent;
 import com.houoy.www.gongxing.fragment.MyFragmentPagerAdapter;
+import com.houoy.www.gongxing.model.ClientInfo;
+import com.houoy.www.gongxing.util.StringUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.xutils.ex.DbException;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
@@ -42,6 +49,9 @@ public class RegisterAndSignInActivity extends AppCompatActivity implements Radi
     public static final int PAGE_TWO = 1;
     public static final int PAGE_TWO2 = 2;
 
+    private GongXingDao gongXingDao;
+    private GongXingController gongXingController;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +62,18 @@ public class RegisterAndSignInActivity extends AppCompatActivity implements Radi
         bindViews();
         rb_channel.setChecked(true);
         EventBus.getDefault().register(this);
+        gongXingDao = GongXingDao.getInstant();
+        gongXingController = GongXingController.getInstant();
 
+        try {
+            ClientInfo clientInfo = gongXingDao.findUser();
+            if (clientInfo != null && !StringUtil.isEmpty(clientInfo.getUserID()) && !StringUtil.isEmpty(clientInfo.getPassword())) {
+                gongXingController.signin(clientInfo.getUserID(), clientInfo.getPassword());
+            }
+        } catch (DbException e) {
+            Log.e(e.getMessage(), e.getLocalizedMessage());
+            Toast.makeText(x.app(), "获取本地缓存用户信息失败，所以无法登录", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -91,10 +112,19 @@ public class RegisterAndSignInActivity extends AppCompatActivity implements Radi
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void handleConnect(RegisterEvent event) {
         switch (event.getType()) {
-            case "1":
+            case RegisterEvent.Next:
                 vpager.setCurrentItem(PAGE_TWO2);
                 break;
-            case "2":
+            case RegisterEvent.Begin_Register:
+                ClientInfo clientInfo = mAdapter.getClientInfo();
+                gongXingController.register(clientInfo);
+                break;
+            case RegisterEvent.Begin_DentifyingCode:
+                gongXingController.getDentifyingCode((String) event.getData());
+                break;
+            case RegisterEvent.Register:
+                break;
+            case RegisterEvent.DentifyingCode:
                 break;
         }
     }

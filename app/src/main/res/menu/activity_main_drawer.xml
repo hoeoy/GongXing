@@ -5,7 +5,7 @@
         <item
             android:id="@+id/nav_person_name"
             android:icon="@drawable/person_little"
-            android:title="zhaozhoa" />
+            android:title="zhaozhao" />
         <item
             android:id="@+id/nav_mobile"
             android:icon="@drawable/phone"

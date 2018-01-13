@@ -20,22 +20,19 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
+import com.houoy.www.gongxing.controller.GongXingController;
 import com.houoy.www.gongxing.dao.GongXingDao;
+import com.houoy.www.gongxing.event.LogoutEvent;
 import com.houoy.www.gongxing.fragment.MessageFragment;
 import com.houoy.www.gongxing.fragment.SearchFragment;
-import com.houoy.www.gongxing.util.XUtil;
-import com.houoy.www.gongxing.util.XUtilCallBack;
-import com.houoy.www.gongxing.vo.RequestVO;
-import com.houoy.www.gongxing.vo.ResultVO;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.xutils.ex.DbException;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @ContentView(R.layout.activity_main)
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
@@ -68,17 +65,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Context mContext;
     private long exitTime = 0;
     private GongXingDao gongXingDao;
+    private GongXingController gongXingController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //注入view和事件
         x.view().inject(this);
-//        EventBus.getDefault().register(this);
+        EventBus.getDefault().register(this);
 
         setSupportActionBar(toolbar);
         mContext = this;
         gongXingDao = GongXingDao.getInstant();
+        gongXingController = GongXingController.getInstant();
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -131,29 +130,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //noinspection SimplifiableIfStatement
         switch (id) {
             case R.id.action_out:
-                //注册
-                String url = "http://101.201.67.36:9011/CloudWeChatPlatServer/Logout";
-                Map<String, String> params = new HashMap();
-                params.put("UserID", "zhangsan1");
-                params.put("openid", "oSnZ8w5YmoNfZM4Fpix1gYLvGigs");
-                RequestVO requestVO = new RequestVO("dff687bbfd840d3484e2091b09c8c424", params);
-                String paramStr = JSON.toJSONString(requestVO);
-
-
-                XUtil.Post(url, paramStr, new XUtilCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        ResultVO resultVO = JSON.parseObject(result, ResultVO.class);
-                        if (resultVO.getCode().equals("success")) {
-                            Toast.makeText(x.app(), resultVO.getMessage() + ":登出", Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent();
-                            intent.setClass(mContext, RegisterAndSignInActivity.class);
-                            startActivity(intent);
-                        } else {
-                            Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
+                //登出
+                gongXingController.logout();
                 return true;
             case R.id.action_share:
                 Intent intent = new Intent(Intent.ACTION_SEND);
@@ -228,6 +206,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fTransaction.commit();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLogout(LogoutEvent event) {
+        Intent intent = new Intent();
+        intent.setClass(mContext, RegisterAndSignInActivity.class);
+        startActivity(intent);
+    }
+
     //隐藏所有Fragment
     private void hideAllFragment(FragmentTransaction fragmentTransaction) {
         if (searchFragment != null) fragmentTransaction.hide(searchFragment);
@@ -257,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onDestroy() {
-//        EventBus.getDefault().unregister(this);
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 }

@@ -8,22 +8,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
 import com.houoy.www.gongxing.R;
+import com.houoy.www.gongxing.controller.GongXingController;
 import com.houoy.www.gongxing.element.ClearEditText;
-import com.houoy.www.gongxing.util.XUtil;
-import com.houoy.www.gongxing.util.XUtilCallBack;
-import com.houoy.www.gongxing.vo.RequestVO;
-import com.houoy.www.gongxing.vo.ResultVO;
+import com.houoy.www.gongxing.event.RegisterEvent;
+import com.houoy.www.gongxing.model.ClientInfo;
+import com.houoy.www.gongxing.util.StringUtil;
 
 import org.eclipse.paho.client.mqttv3.util.Strings;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -35,10 +34,12 @@ public class Register2 extends Fragment {
 
     @ViewInject(R.id.etxtPhone)
     private ClearEditText etxtPhone;
-    @ViewInject(R.id.etxtPwd)
-    private ClearEditText etxtPwd;
-    @ViewInject(R.id.etxtPwd2)
-    private ClearEditText etxtPwd2;
+    @ViewInject(R.id.dentifyingCode)
+    private ClearEditText dentifyingCode;
+    @ViewInject(R.id.idcode)
+    private ClearEditText idcode;
+
+    private GongXingController gongXingController;
 
     public Register2() {
     }
@@ -47,8 +48,15 @@ public class Register2 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         injected = true;
         View view = x.view().inject(this, inflater, container); //使用注解模块一定要注意初始化视图注解框架
-
+//        EventBus.getDefault().register(this);
+        gongXingController = GongXingController.getInstant();
         return view;
+    }
+
+    @Override
+    public void onDestroy() {
+//        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
     @Override
@@ -61,48 +69,24 @@ public class Register2 extends Fragment {
 
     @Event(value = {R.id.btnSure})
     private void onRegisterClick(View view) {
-        //识别码验证
-        String url = "http://101.201.67.36:9011/CloudWeChatPlatServer/CheckProjectID";
-        Map<String, String> params = new HashMap();
-        params.put("IDENTIFYINGCODE", "zhangsan1");
-        params.put("IDCode", "ceshihuanjing");
-        params.put("PhoneNum", "15811111111");
-        final RequestVO requestVO = new RequestVO("dff687bbfd840d3484e2091b09c8c424", params);
-        String paramStr = JSON.toJSONString(requestVO);
+        String etxtPhoneStr = etxtPhone.getText().toString();
+        String dentifyingCodeStr = dentifyingCode.getText().toString();
+        String idcodeStr = idcode.getText().toString();
 
-        XUtil.Post(url, paramStr, new XUtilCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-                ResultVO resultVO = JSON.parseObject(result, ResultVO.class);
-                if (resultVO.getCode().equals("success")) {
-                    //注册
-                    String url = "http://101.201.67.36:9011/CloudWeChatPlatServer/Register";
-                    Map<String, String> params = new HashMap();
-                    params.put("UserID", "zhangsan1");
-                    params.put("Password", "p123456");
-                    params.put("IDCode", "ceshihuanjing");
-                    params.put("PhoneNum", "15811111111");
-                    params.put("openid", "oSnZ8w5YmoNfZM4Fpix1gYLvGigs");
-                    params.put("verification", "1234");//手机验证码
-                    RequestVO requestVO = new RequestVO("dff687bbfd840d3484e2091b09c8c424", params);
-                    String paramStr = JSON.toJSONString(requestVO);
+        if (StringUtil.isEmpty(etxtPhoneStr)) {
+            Toast.makeText(view.getContext(), "手机号不能为空", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (StringUtil.isEmpty(dentifyingCodeStr)) {
+            Toast.makeText(view.getContext(), "验证码不能为空", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (StringUtil.isEmpty(idcodeStr)) {
+            Toast.makeText(view.getContext(), "识别码不能为空", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-                    XUtil.Post(url, paramStr, new XUtilCallBack<String>() {
-                        @Override
-                        public void onSuccess(String result) {
-                            ResultVO resultVO = JSON.parseObject(result, ResultVO.class);
-                            if (resultVO.getCode().equals("success")) {
-
-                            } else {
-                                Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    });
-                } else {
-                    Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+        EventBus.getDefault().post(new RegisterEvent(RegisterEvent.Begin_Register, ""));
     }
 
     @Event(value = {R.id.btnDentifyingCode})
@@ -112,26 +96,18 @@ public class Register2 extends Fragment {
         if (Strings.isEmpty(mobile) || mobile.length() < 11 || mobile.length() > 11) {
             Toast.makeText(view.getContext(), "请输入正确手机号", Toast.LENGTH_LONG).show();
         } else {
-            //获取验证码
-            String url = "http://101.201.67.36:9011/CloudWeChatPlatServer/PhoneDentifyingCode";
-            Map<String, String> params = new HashMap();
-            params.put("mobile", mobile);
-            RequestVO requestVO = new RequestVO("dff687bbfd840d3484e2091b09c8c424", params);
-            String paramStr = JSON.toJSONString(requestVO);
-
-            XUtil.Post(url, paramStr, new XUtilCallBack<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    ResultVO resultVO = JSON.parseObject(result, ResultVO.class);
-                    if (resultVO.getCode().equals("success")) {
-
-                    } else {
-                        Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                }
-            });
+            EventBus.getDefault().post(new RegisterEvent(RegisterEvent.Begin_DentifyingCode, mobile));
         }
     }
+
+    public ClientInfo getInputClientInfo() {
+        ClientInfo clientInfo = new ClientInfo();
+        clientInfo.setPhoneNum(etxtPhone.getText().toString());
+        clientInfo.setVerification(dentifyingCode.getText().toString());
+        clientInfo.setIDCode(idcode.getText().toString());
+        return clientInfo;
+    }
+
 }
 
 
