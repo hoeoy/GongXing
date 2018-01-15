@@ -90,6 +90,7 @@ public class SearchFragment extends Fragment implements ItemClickListener {
 
     @Override
     public void itemClicked(Section section) {
-        Toast.makeText(mContext, "Section: " + section.getName() + " clicked", Toast.LENGTH_SHORT).show();
+        section.isExpanded = !section.isExpanded;
+        sectionedExpandableLayoutHelper.onSectionStateChanged(section, section.isExpanded);
     }
 }

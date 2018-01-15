@@ -14,7 +14,7 @@ import com.houoy.www.gongxing.controller.GongXingController;
 import com.houoy.www.gongxing.dao.GongXingDao;
 import com.houoy.www.gongxing.event.LoginEvent;
 import com.houoy.www.gongxing.event.RegisterEvent;
-import com.houoy.www.gongxing.fragment.MyFragmentPagerAdapter;
+import com.houoy.www.gongxing.adapter.RegisterAndSignInAdapter;
 import com.houoy.www.gongxing.model.ClientInfo;
 import com.houoy.www.gongxing.util.StringUtil;
 
@@ -42,7 +42,7 @@ public class RegisterAndSignInActivity extends AppCompatActivity implements Radi
     @ViewInject(R.id.vpager)
     private ViewPager vpager;
 
-    private MyFragmentPagerAdapter mAdapter;
+    private RegisterAndSignInAdapter mAdapter;
 
     //几个代表页面的常量
     public static final int PAGE_ONE = 0;
@@ -58,7 +58,7 @@ public class RegisterAndSignInActivity extends AppCompatActivity implements Radi
         //注入view和事件
         x.view().inject(this);
 
-        mAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
+        mAdapter = new RegisterAndSignInAdapter(getSupportFragmentManager());
         bindViews();
         rb_channel.setChecked(true);
         EventBus.getDefault().register(this);

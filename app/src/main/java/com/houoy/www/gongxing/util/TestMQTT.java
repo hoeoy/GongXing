@@ -18,13 +18,13 @@ import java.util.Date;
  * @date 2017-1-12 下午1:19:42
  */
 public class TestMQTT {
+    //消息发送的模式   选择消息发送的次数，依据不同的使用环境使用不同的模式
+    private static int qos = 0;
+    //消息的类型
+    private static String topic = "topic";
 
     public static void main(String args[]) {
 
-        //消息的类型
-        String topic = "topic";
-        //消息发送的模式   选择消息发送的次数，依据不同的使用环境使用不同的模式
-        int qos = 0;
         //服务器地址
 //        String broker = "tcp://192.168.0.102:61613";
         String broker = "tcp://101.201.67.36:61613";
@@ -46,22 +46,13 @@ public class TestMQTT {
             //链接服务器
             sampleClient.connect(connOpts);
 
-            MessagePush msg = new MessagePush();
-            msg.setTitle_value("title" + new Date());
-            msg.setRule_name_value("rule" + new Date());
-            msg.setSubkey_name_value("subkey" + new Date());
-            msg.setTime(DateUtil.getNowDateTimeShanghai());
-            msg.setDevice_name_value("shebei asdf" + new Date());
-            msg.setRelationID("sdsfsdfsdfusodfusduf897987807t78" + new Date());
-            msg.setCurrent_parameter_value("current parmeters" + new Date());
-            String content = JSON.toJSONString(msg);
-            //创建消息
-            MqttMessage message = new MqttMessage(content.getBytes());
-            message.setPayload(content.getBytes());
-            //给消息设置发送的模式
-            message.setQos(qos);
-            //发布消息到服务器
-            sampleClient.publish(topic, message);
+            MessagePush msg = getMessage("1");
+            publish(sampleClient, msg);
+
+            MessagePush msg2 = getMessage("2");
+            publish(sampleClient, msg);
+            publish(sampleClient, msg2);
+
             System.out.println("Message published");
             //断开链接
             sampleClient.disconnect();
@@ -76,6 +67,44 @@ public class TestMQTT {
             me.printStackTrace();
         }
 
+    }
+
+    public static void publish(MqttClient sampleClient, MessagePush msg) throws MqttException {
+        String content = JSON.toJSONString(msg);
+        MqttMessage message = new MqttMessage(content.getBytes());
+        message.setPayload(content.getBytes());
+        //给消息设置发送的模式
+        message.setQos(qos);
+        //发布消息到服务器
+        sampleClient.publish(topic, message);
+    }
+
+    public static MessagePush getMessage(String type) {
+        MessagePush msg = new MessagePush();
+        switch (type) {
+            case "1"://日报
+                msg.setTitle_value("title" + new Date());
+                msg.setTime(DateUtil.getNowDateTimeShanghai());
+                msg.setTemperature_value("tempara" + new Date());
+                msg.setHumidity_value("humdi" + new Date());
+                msg.setState_value("stat asdf" + new Date());
+                msg.setAlarm_num_value("alarm" + new Date());
+                msg.setRemark_value("remarsdfdfl");
+                break;
+            case "2"://报警
+                msg.setTitle_value("title" + new Date());
+                msg.setRule_name_value("rule" + new Date());
+                msg.setSubkey_name_value("subkey" + new Date());
+                msg.setTime(DateUtil.getNowDateTimeShanghai());
+                msg.setDevice_name_value("shebei asdf" + new Date());
+                msg.setRelationID("sdsfsdfsdfusodfusduf897987807t78" + new Date());
+                msg.setCurrent_parameter_value("current parmeters" + new Date());
+                msg.setRemark_value("remarsdfdfl");
+                break;
+            default:
+                break;
+        }
+        return msg;
     }
 
 }

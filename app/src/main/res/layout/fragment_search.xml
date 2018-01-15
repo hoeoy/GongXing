@@ -2,6 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
+    android:padding="@dimen/recycler_padding"
     tools:context="com.houoy.www.gongxing.fragment.SearchFragment">
 
     <android.support.v7.widget.RecyclerView
@@ -9,6 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="48dp"
-        android:background="#E0F2F1"/>
+        android:background="@color/background"/>
 
 </FrameLayout>

@@ -28,13 +28,13 @@ public class MockData {
                 "                    \"PlaceId\": \"15\",\n" +
                 "                    \"DeviceInfo\": [\n" +
                 "                        {\n" +
-                "                            \"DeviceName\": \"温湿度2\",\n" +
+                "                            \"DeviceName\": \"温湿度sdfs2\",\n" +
                 "                            \"BackColor\": \"\",\n" +
                 "                            \"FontColor\": \"\",\n" +
                 "                            \"ParaInfo\": [\n" +
                 "                                {\n" +
                 "                                    \"ParaName\": {\n" +
-                "                                        \"Name\": \"温度\",\n" +
+                "                                        \"Name\": \"温ddd度\",\n" +
                 "                                        \"BackColor\": \"\",\n" +
                 "                                        \"FontColor\": \"\"\n" +
                 "                                    },\n" +
@@ -51,7 +51,7 @@ public class MockData {
                 "                                },\n" +
                 "                                {\n" +
                 "                                    \"ParaName\": {\n" +
-                "                                        \"Name\": \"湿度\",\n" +
+                "                                        \"Name\": \"湿度dddd\",\n" +
                 "                                        \"BackColor\": \"\",\n" +
                 "                                        \"FontColor\": \"\"\n" +
                 "                                    },\n" +
@@ -69,13 +69,13 @@ public class MockData {
                 "                            ]\n" +
                 "                        },\n" +
                 "                        {\n" +
-                "                            \"DeviceName\": \"温湿度1\",\n" +
+                "                            \"DeviceName\": \"温湿dd度1\",\n" +
                 "                            \"BackColor\": \"\",\n" +
                 "                            \"FontColor\": \"\",\n" +
                 "                            \"ParaInfo\": [\n" +
                 "                                {\n" +
                 "                                    \"ParaName\": {\n" +
-                "                                        \"Name\": \"温度\",\n" +
+                "                                        \"Name\": \"温ddff度\",\n" +
                 "                                        \"BackColor\": \"\",\n" +
                 "                                        \"FontColor\": \"\"\n" +
                 "                                    },\n" +
@@ -92,7 +92,7 @@ public class MockData {
                 "                                },\n" +
                 "                                {\n" +
                 "                                    \"ParaName\": {\n" +
-                "                                        \"Name\": \"温度\",\n" +
+                "                                        \"Name\": \"温ss度\",\n" +
                 "                                        \"BackColor\": \"\",\n" +
                 "                                        \"FontColor\": \"\"\n" +
                 "                                    },\n" +
@@ -122,7 +122,7 @@ public class MockData {
                 "                            \"ParaInfo\": [\n" +
                 "                                {\n" +
                 "                                    \"ParaName\": {\n" +
-                "                                        \"Name\": \"温度\",\n" +
+                "                                        \"Name\": \"温gggggg度\",\n" +
                 "                                        \"BackColor\": \"\",\n" +
                 "                                        \"FontColor\": \"\"\n" +
                 "                                    },\n" +
@@ -180,7 +180,7 @@ public class MockData {
                 "                            \"ParaInfo\": [\n" +
                 "                                {\n" +
                 "                                    \"ParaName\": {\n" +
-                "                                        \"Name\": \"温度\",\n" +
+                "                                        \"Name\": \"温ggg度\",\n" +
                 "                                        \"BackColor\": \"#948A54\",\n" +
                 "                                        \"FontColor\": \"\"\n" +
                 "                                    },\n" +

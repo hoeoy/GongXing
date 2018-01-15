@@ -4,31 +4,43 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#ffffff"
+    android:padding="@dimen/recycler_padding"
     android:orientation="horizontal">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="@dimen/section_text_size"
+        android:textColor="@color/text_font_gray"
+        android:textSize="@dimen/regular14"
         android:id="@+id/paraName"
-        android:layout_weight="0.12"/>
+        android:text="开关量"
+        android:layout_weight="0.25"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="@dimen/section_text_size"
+        android:textColor="@color/text_font_black"
+        android:textSize="@dimen/regular14"
         android:id="@+id/paraValue"
-        android:layout_weight="0.12"/>
+        android:text="关"
+        android:layout_weight="0.25"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="@dimen/section_text_size"
+        android:textColor="@color/text_font_gray"
+        android:textSize="@dimen/regular14"
+        android:id="@+id/paraStateName"
+        android:text="状态"
+        android:layout_weight="0.25"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_font_black"
+        android:textSize="@dimen/regular14"
         android:id="@+id/paraState"
-        android:layout_weight="0.12"/>
+        android:text="正常"
+        android:layout_weight="0.25"/>
 
 </LinearLayout>

@@ -52,14 +52,9 @@ public class MessageFragment extends Fragment {
         swiperefreshlayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.initData(0);
-                        swiperefreshlayout.setRefreshing(false);
-                        Toast.makeText(container.getContext(), "获取消息成功...", Toast.LENGTH_SHORT).show();
-                    }
-                }, 2000);
+                adapter.initData(0);
+                swiperefreshlayout.setRefreshing(false);
+                Toast.makeText(container.getContext(), "获取消息成功", Toast.LENGTH_SHORT).show();
             }
         });
 

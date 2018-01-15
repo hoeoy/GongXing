@@ -1,41 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:circletextview="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    app:elevation="5dp"
+    android:layout_height="wrap_content"
     android:layout_marginTop="7dp"
-    android:layout_height="wrap_content">
+    app:elevation="5dp">
 
-   <LinearLayout
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:background="#26A69A"
-       android:orientation="horizontal">
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/sectionLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-       <TextView
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:paddingTop="@dimen/section_padding"
-           android:paddingBottom="@dimen/section_padding"
-           android:paddingStart="@dimen/section_text_padding_left"
-           android:background="@color/colorPrimary"
-           android:textColor="@color/bg_white"
-           android:textSize="@dimen/section_text_size"
-           android:id="@+id/text_section"
-           android:layout_weight="0.12"/>
+        <circletextimage.viviant.com.circletextimagelib.view.CircleTextImage
+            android:id="@+id/text_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:padding="@dimen/recycler_padding"
+            circletextview:circle_color="@color/text_font_blue" />
 
-       <ToggleButton
-           android:layout_width="match_parent"
-           android:layout_height="match_parent"
-           android:id="@+id/toggle_button_section"
-           android:contentDescription="@string/place"
-           android:background="@drawable/selector_section_toggle"
-           android:padding="@dimen/section_padding"
-           android:textOn=""
-           android:textOff=""
-           android:layout_weight="0.88"/>
+        <TextView
+            android:id="@+id/text_section"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="机房名称"
+            android:textColor="@color/text_font_black"
+            android:textSize="@dimen/regular17"
+            app:layout_constraintBottom_toTopOf="@+id/text_section2"
+            app:layout_constraintLeft_toRightOf="@id/text_icon"
+            app:layout_constraintTop_toTopOf="parent" />
 
-   </LinearLayout>
+        <TextView
+            android:id="@+id/text_section2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="躬行监控"
+            android:textColor="@color/text_font_gray"
+            android:textSize="@dimen/regular14"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/text_icon"
+            app:layout_constraintTop_toBottomOf="@id/text_section" />
+
+        <ToggleButton
+            android:id="@+id/toggle_button_section"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@drawable/selector_section_toggle"
+            android:layout_marginRight="@dimen/recycler_padding"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:textOff=""
+            android:textOn="" />
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.v7.widget.CardView>

@@ -4,17 +4,26 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="background">#ebebeb</color>
+    <color name="text_font_black">#353535</color>
+    <color name="text_font_gray">#888888</color>
+    <color name="text_font_blue">#7AD3E0</color>
+    <color name="text_font_blue_dark">#576b95</color>
+    <color name="main">#09BB07</color>
+    <color name="bg_gray_ligth">#f2f2f2</color>
+    <color name="bg_gray">#b2b2b2</color>
+    <color name="bg_white">#FFFFFF</color>
 
     <color name="bg_topbar">#353535</color>
     <color name="bg_topbarline">#121212</color>
-    <color name="bg_white">#FFFFFF</color>
+
     <color name="text_font_white">#FFFFFF</color>
     <color name="transparent">#00000000</color>
 
 
-    <color name="text_gray">#8D7A71</color>
+
     <color name="text_white">#FFFFFF</color>
-    <color name="text_yellow">#FFC800</color>
+
     <color name="text_topbar">#694E42</color>
     <color name="div_white">#E5E5E5</color>
 </resources>

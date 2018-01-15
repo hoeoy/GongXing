@@ -1,6 +1,7 @@
 package com.houoy.www.gongxing.adapter;
 
 import android.content.Context;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,6 +17,8 @@ import com.houoy.www.gongxing.model.DeviceInfo;
 import com.houoy.www.gongxing.model.ParaInfo;
 
 import java.util.ArrayList;
+
+import circletextimage.viviant.com.circletextimagelib.view.CircleTextImage;
 
 /**
  * Created by lenovo on 2/23/2016.
@@ -95,8 +98,10 @@ public class SectionedExpandableGridAdapter extends RecyclerView.Adapter<Section
                 break;
             case VIEW_TYPE_SECTION:
                 final Section section = (Section) mDataArrayList.get(position);
+                holder.text_icon.setText4CircleImage(section.getName().toCharArray()[0] + "");
+
                 holder.sectionTextView.setText(section.getName());
-                holder.sectionTextView.setOnClickListener(new View.OnClickListener() {
+                holder.sectionLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mItemClickListener.itemClicked(section);
@@ -132,8 +137,10 @@ public class SectionedExpandableGridAdapter extends RecyclerView.Adapter<Section
         int viewType;
 
         //for section
+        ConstraintLayout sectionLayout;
         TextView sectionTextView;
         ToggleButton sectionToggleButton;
+        CircleTextImage text_icon;
 
         //for item
         TextView itemTextView;
@@ -150,6 +157,8 @@ public class SectionedExpandableGridAdapter extends RecyclerView.Adapter<Section
                 paraInfoContainer = (LinearLayout) view.findViewById(R.id.paraInfoContainer);
             } else {
                 sectionTextView = (TextView) view.findViewById(R.id.text_section);
+                sectionLayout = (ConstraintLayout) view.findViewById(R.id.sectionLayout);
+                text_icon = (CircleTextImage) view.findViewById(R.id.text_icon);
                 sectionToggleButton = (ToggleButton) view.findViewById(R.id.toggle_button_section);
             }
         }

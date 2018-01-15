@@ -3,6 +3,7 @@ package com.houoy.www.gongxing.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -41,6 +42,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private GongXingDao gongXingDao;
 
     private Integer limit = 10;
+
     public MessageListAdapter(Context context) {
         this.context = context;
         gongXingDao = GongXingDao.getInstant();
@@ -49,7 +51,10 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public void initData(int start) {
         try {
-            messagePushes = gongXingDao.findMessagePush(start,limit);
+            messagePushes = gongXingDao.findMessagePush(start, limit);
+            if (messagePushes == null) {
+                messagePushes = new ArrayList();
+            }
         } catch (DbException e) {
             e.printStackTrace();
         }
@@ -57,12 +62,14 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public void pushData(int start) {
         try {
-            List<MessagePush> tempMessages = gongXingDao.findMessagePush(start,limit);
+            List<MessagePush> tempMessages = gongXingDao.findMessagePush(start, limit);
             if (messagePushes == null) {
                 messagePushes = new ArrayList();
             }
 
-            messagePushes.addAll(tempMessages);
+            if (tempMessages != null) {
+                messagePushes.addAll(tempMessages);
+            }
         } catch (DbException e) {
             e.printStackTrace();
         }
@@ -71,6 +78,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     //自定义ViewHolder类
     static class NewsViewHolder extends RecyclerView.ViewHolder {
 
+        ConstraintLayout constraintLayout1;
+        ConstraintLayout constraintLayout2;
         CardView cardView;
         TextView title_value;
         TextView date;
@@ -82,9 +91,20 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         TextView remark;
         Button readMore;
 
+        TextView title_value2;
+        TextView date2;
+        TextView temperature_value;
+        TextView humidity_value;
+        TextView state_value;
+        TextView alarm_num_value;
+        TextView remark2;
+        Button btn_more2;
+
         public NewsViewHolder(final View itemView) {
             super(itemView);
             cardView = (CardView) itemView.findViewById(R.id.card_view);
+            constraintLayout1 = (ConstraintLayout) itemView.findViewById(R.id.constraintLayout1);
+            constraintLayout2 = (ConstraintLayout) itemView.findViewById(R.id.constraintLayout2);
             title_value = (TextView) itemView.findViewById(R.id.title_value);
             date = (TextView) itemView.findViewById(R.id.date);
             rule_name = (TextView) itemView.findViewById(R.id.rule_name);
@@ -94,8 +114,15 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             current_parameter = (TextView) itemView.findViewById(R.id.current_parameter);
             remark = (TextView) itemView.findViewById(R.id.remark);
             readMore = (Button) itemView.findViewById(R.id.btn_more);
-            //设置TextView背景为半透明
-            title_value.setBackgroundColor(Color.argb(20, 0, 0, 0));
+
+            title_value2 = (TextView) itemView.findViewById(R.id.title_value2);
+            date2 = (TextView) itemView.findViewById(R.id.date2);
+            temperature_value = (TextView) itemView.findViewById(R.id.temperature_value);
+            humidity_value = (TextView) itemView.findViewById(R.id.humidity_value);
+            state_value = (TextView) itemView.findViewById(R.id.state_value);
+            alarm_num_value = (TextView) itemView.findViewById(R.id.alarm_num_value);
+            remark2 = (TextView) itemView.findViewById(R.id.remark2);
+            btn_more2 = (Button) itemView.findViewById(R.id.btn_more2);
         }
     }
 
@@ -141,33 +168,65 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int i) {
-        final int j = i;
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int i) {
         if (holder instanceof NewsViewHolder) {
-            ((NewsViewHolder) holder).title_value.setText(messagePushes.get(i).getTitle_value());
-            ((NewsViewHolder) holder).date.setText(messagePushes.get(i).getTime());
-            ((NewsViewHolder) holder).rule_name.setText(messagePushes.get(i).getRule_name_value());
-            ((NewsViewHolder) holder).trigger_time.setText(messagePushes.get(i).getTrigger_time_value());
-            ((NewsViewHolder) holder).device_name.setText(messagePushes.get(i).getDevice_name_value());
-            ((NewsViewHolder) holder).subkey_name.setText(messagePushes.get(i).getSubkey_name_value());
-            ((NewsViewHolder) holder).current_parameter.setText(messagePushes.get(i).getCurrent_parameter_value());
-            ((NewsViewHolder) holder).remark.setText(messagePushes.get(i).getRemark_value());
+            String type = messagePushes.get(i).getType();
+            if(type == null){//默认为报警信息
+                type = "2" ;
+            }
+            switch (type) {
+                case "1"://日报
+                    ((NewsViewHolder) holder).constraintLayout1.setVisibility(View.GONE);
+                    ((NewsViewHolder) holder).constraintLayout2.setVisibility(View.VISIBLE);
+                    ((NewsViewHolder) holder).title_value2.setText(messagePushes.get(i).getTitle_value());
+                    ((NewsViewHolder) holder).date2.setText(messagePushes.get(i).getTime());
+                    ((NewsViewHolder) holder).temperature_value.setText(messagePushes.get(i).getTemperature_value());
+                    ((NewsViewHolder) holder).humidity_value.setText(messagePushes.get(i).getHumidity_value());
+                    ((NewsViewHolder) holder).state_value.setText(messagePushes.get(i).getState_value());
+                    ((NewsViewHolder) holder).alarm_num_value.setText(messagePushes.get(i).getAlarm_num_value());
+                    ((NewsViewHolder) holder).remark2.setText(messagePushes.get(i).getCurrent_parameter_value());
+
+                    ((NewsViewHolder) holder).btn_more2.setText("日报详细");
+                    ((NewsViewHolder) holder).btn_more2.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(context, MessageDetailActivity.class);
+                            intent.putExtra("messagePush", messagePushes.get(i));
+                            context.startActivity(intent);
+                        }
+                    });
+                    break;
+                case "2"://报警
+                    ((NewsViewHolder) holder).constraintLayout1.setVisibility(View.VISIBLE);
+                    ((NewsViewHolder) holder).constraintLayout2.setVisibility(View.GONE);
+                    ((NewsViewHolder) holder).title_value.setText(messagePushes.get(i).getTitle_value());
+                    ((NewsViewHolder) holder).date.setText(messagePushes.get(i).getTime());
+                    ((NewsViewHolder) holder).rule_name.setText(messagePushes.get(i).getRule_name_value());
+                    ((NewsViewHolder) holder).trigger_time.setText(messagePushes.get(i).getTrigger_time_value());
+                    ((NewsViewHolder) holder).device_name.setText(messagePushes.get(i).getDevice_name_value());
+                    ((NewsViewHolder) holder).subkey_name.setText(messagePushes.get(i).getSubkey_name_value());
+                    ((NewsViewHolder) holder).current_parameter.setText(messagePushes.get(i).getCurrent_parameter_value());
+                    ((NewsViewHolder) holder).remark.setText(messagePushes.get(i).getRemark_value());
+                    ((NewsViewHolder) holder).readMore.setText("报警详细");
+                    ((NewsViewHolder) holder).readMore.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(context, MessageDetailActivity.class);
+                            intent.putExtra("messagePush", messagePushes.get(i));
+                            context.startActivity(intent);
+                        }
+                    });
+                    break;
+                default:
+                    break;
+            }
 
             //为btn_share btn_readMore cardView设置点击事件
             ((NewsViewHolder) holder).cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(context, MessageDetailActivity.class);
-                    intent.putExtra("messagePush", messagePushes.get(j));
-                    context.startActivity(intent);
-                }
-            });
-
-            ((NewsViewHolder) holder).readMore.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(context, MessageDetailActivity.class);
-                    intent.putExtra("messagePush", messagePushes.get(j));
+                    intent.putExtra("messagePush", messagePushes.get(i));
                     context.startActivity(intent);
                 }
             });
@@ -195,6 +254,10 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getItemCount() {
+        if (messagePushes == null) {
+            return 1;
+        }
+
         return messagePushes.size() + 1;//默认又一个foot
     }
 

@@ -36,7 +36,7 @@ public class MessagePush implements Serializable {
     @Column(name = "type")
     private String type;//消息类型 1 日报， 2 报警
 
-    //日报类型属性
+    //报警类型属性
     @Column(name = "rule_name_value")
     private String rule_name_value;//规则名称
     @Column(name = "rule_name_color")

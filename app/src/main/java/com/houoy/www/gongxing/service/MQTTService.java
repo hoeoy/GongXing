@@ -180,30 +180,42 @@ public class MQTTService extends Service {
 
             String str1 = new String(message.getPayload());
             MessagePush msg = JSON.parseObject(str1, MessagePush.class);
+            String ticker = "";
+            if (msg != null) {
+                if (msg.getRule_name_value() != null) {//报警类型属性
+                    msg.setType("2");
+                    ticker = "收到报警消息" ;
+                } else {//日报类型属性
+                    msg.setType("1");
+                    ticker = "收到躬行监控的日报消息" ;
+                }
 
-            EventBus.getDefault().post(msg);
+                EventBus.getDefault().post(msg);
 
-            gongXingDao.addMessagePush(msg);
+                gongXingDao.addMessagePush(msg);
 
-            //定义一个PendingIntent点击Notification后启动一个Activity
-            Intent it = new Intent(getBaseContext(), MainActivity.class);
-            PendingIntent pit = PendingIntent.getActivity(getBaseContext(), 0, it, 0);
+                //定义一个PendingIntent点击Notification后启动一个Activity
+                Intent it = new Intent(getBaseContext(), MainActivity.class);
+                PendingIntent pit = PendingIntent.getActivity(getBaseContext(), 0, it, 0);
 
-            //设置图片,通知标题,发送时间,提示方式等属性
-            Notification.Builder mBuilder = new Notification.Builder(getBaseContext());
-            mBuilder.setContentTitle("躬行监控")                        //标题
-                    .setContentText(str1)      //内容
-                    .setSubText(DateUtil.getNowDateTimeShanghai())                    //内容下面的一小段文字
-                    .setTicker("收到叶良辰发送过来的信息~")             //收到信息后状态栏显示的文字信息
-                    .setWhen(System.currentTimeMillis())           //设置通知时间
-                    .setSmallIcon(R.drawable.ic_menu_send)            //设置小图标
-                    .setLargeIcon(LargeBitmap)                     //设置大图标
-                    .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)    //设置默认的三色灯与振动器
-                    .setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.biaobiao))  //设置自定义的提示音
-                    .setAutoCancel(true)                           //设置点击后取消Notification
-                    .setContentIntent(pit);                        //设置PendingIntent
-            notify1 = mBuilder.build();
-            mNManager.notify(NOTIFYID_1, notify1);
+                //设置图片,通知标题,发送时间,提示方式等属性
+                Notification.Builder mBuilder = new Notification.Builder(getBaseContext());
+                mBuilder.setContentTitle("躬行监控")                        //标题
+                        .setContentText(str1)      //内容
+                        .setSubText(DateUtil.getNowDateTimeShanghai())                    //内容下面的一小段文字
+                        .setTicker(ticker)             //收到信息后状态栏显示的文字信息
+                        .setWhen(System.currentTimeMillis())           //设置通知时间
+                        .setSmallIcon(R.drawable.ic_menu_send)            //设置小图标
+                        .setLargeIcon(LargeBitmap)                     //设置大图标
+                        .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)    //设置默认的三色灯与振动器
+                        .setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.biaobiao))  //设置自定义的提示音
+                        .setAutoCancel(true)                           //设置点击后取消Notification
+                        .setContentIntent(pit);                        //设置PendingIntent
+                notify1 = mBuilder.build();
+                mNManager.notify(NOTIFYID_1, notify1);
+            } else {
+
+            }
         }
 
         @Override
