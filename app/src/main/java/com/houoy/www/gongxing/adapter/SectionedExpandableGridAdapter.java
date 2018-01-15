@@ -80,7 +80,7 @@ public class SectionedExpandableGridAdapter extends RecyclerView.Adapter<Section
                     TextView paraValueTextView = (TextView) cardView.findViewById(R.id.paraValue);
                     TextView paraStateTextView = (TextView) cardView.findViewById(R.id.paraState);
 
-                    paraNameTextView.setText(paraInfo.getParaName().getName());
+                    paraNameTextView.setText(paraInfo.getParaName().getName()+":");
                     paraValueTextView.setText(paraInfo.getParaValue().getName());
                     paraStateTextView.setText(paraInfo.getParaState().getName());
                     holder.paraInfoContainer.addView(cardView);

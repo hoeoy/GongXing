@@ -31,7 +31,7 @@
         android:textColor="@color/text_font_gray"
         android:textSize="@dimen/regular14"
         android:id="@+id/paraStateName"
-        android:text="状态"
+        android:text="状态:"
         android:layout_weight="0.25"/>
 
     <TextView

@@ -13,8 +13,7 @@
     <color name="bg_gray_ligth">#f2f2f2</color>
     <color name="bg_gray">#b2b2b2</color>
     <color name="bg_white">#FFFFFF</color>
-
-    <color name="bg_topbar">#353535</color>
+    <color name="bg_semi">#353535</color>
     <color name="bg_topbarline">#121212</color>
 
     <color name="text_font_white">#FFFFFF</color>
