@@ -23,8 +23,10 @@ import com.alibaba.fastjson.JSON;
 import com.houoy.www.gongxing.MainActivity;
 import com.houoy.www.gongxing.R;
 import com.houoy.www.gongxing.dao.GongXingDao;
+import com.houoy.www.gongxing.model.ClientInfo;
 import com.houoy.www.gongxing.model.MessagePush;
 import com.houoy.www.gongxing.util.DateUtil;
+import com.houoy.www.gongxing.util.StringUtil;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -35,6 +37,7 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.greenrobot.eventbus.EventBus;
+import org.xutils.ex.DbException;
 
 /**
  * MQTT长连接服务
@@ -55,7 +58,7 @@ public class MQTTService extends Service {
     private String host = "tcp://101.201.67.36:61613";
     private String userName = "admin";
     private String passWord = "password";
-    private static String myTopic = "topic";
+    //    private static String myTopic = "topic";
     private String clientId = "test";
 
     private NotificationManager mNManager;
@@ -66,65 +69,73 @@ public class MQTTService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        gongXingDao = GongXingDao.getInstant();
         init();
         mNManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         //创建大图标的Bitmap
         LargeBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_menu_share);
-        gongXingDao = GongXingDao.getInstant();
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public static void publish(String msg) {
-        String topic = myTopic;
-        Integer qos = 0;
-        Boolean retained = false;
-        try {
-            client.publish(topic, msg.getBytes(), qos.intValue(), retained.booleanValue());
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
-    }
+//    public static void publish(String msg) {
+//        String topic = myTopic;
+//        Integer qos = 0;
+//        Boolean retained = false;
+//        try {
+//            client.publish(topic, msg.getBytes(), qos.intValue(), retained.booleanValue());
+//        } catch (MqttException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     private void init() {
-        // 服务器地址（协议+地址+端口号）
-        String uri = host;
-        client = new MqttAndroidClient(this, uri, clientId);
-        // 设置MQTT监听并且接受消息
-        client.setCallback(mqttCallback);
+        try {
+            // 服务器地址（协议+地址+端口号）
+            String uri = host;
+            client = new MqttAndroidClient(this, uri, clientId);
+            // 设置MQTT监听并且接受消息
+            client.setCallback(mqttCallback);
 
-        conOpt = new MqttConnectOptions();
-        // 清除缓存
-        conOpt.setCleanSession(true);
-        // 设置超时时间，单位：秒
-        conOpt.setConnectionTimeout(10);
-        // 心跳包发送间隔，单位：秒
-        conOpt.setKeepAliveInterval(20);
-        // 用户名
-        conOpt.setUserName(userName);
-        // 密码
-        conOpt.setPassword(passWord.toCharArray());
+            conOpt = new MqttConnectOptions();
+            // 清除缓存
+            conOpt.setCleanSession(true);
+            // 设置超时时间，单位：秒
+            conOpt.setConnectionTimeout(10);
+            // 心跳包发送间隔，单位：秒
+            conOpt.setKeepAliveInterval(20);
+            // 用户名
+            conOpt.setUserName(userName);
+            // 密码
+            conOpt.setPassword(passWord.toCharArray());
 
-        // last will message
-        boolean doConnect = true;
-        String message = "{\"terminal_uid\":\"" + clientId + "\"}";
-        String topic = myTopic;
-        Integer qos = 0;
-        Boolean retained = false;
-        if ((!message.equals("")) || (!topic.equals(""))) {
-            // 最后的遗嘱
-            try {
-                conOpt.setWill(topic, message.getBytes(), qos.intValue(), retained.booleanValue());
-            } catch (Exception e) {
-                Log.i(TAG, "Exception Occured", e);
-                doConnect = false;
-                iMqttActionListener.onFailure(null, e);
+            // last will message
+            boolean doConnect = true;
+            String message = "{\"terminal_uid\":\"" + clientId + "\"}";
+            ClientInfo clientInfo = null;
+            clientInfo = gongXingDao.findUser();
+            if (clientInfo != null) {
+                String topic = clientInfo.getTopic();
+                if (!StringUtil.isEmpty(topic)) {
+                    Integer qos = 0;
+                    Boolean retained = false;
+                    if ((!message.trim().equals("")) || (!topic.trim().equals(""))) {
+                        try {
+                            conOpt.setWill(topic, message.getBytes(), qos.intValue(), retained.booleanValue());
+                        } catch (Exception e) {
+                            Log.i(TAG, "Exception Occured", e);
+                            doConnect = false;
+                            iMqttActionListener.onFailure(null, e);
+                        }
+                    }
+
+                    if (doConnect) {
+                        doClientConnection();
+                    }
+                }
             }
+        } catch (DbException e) {
+            e.printStackTrace();
         }
-
-        if (doConnect) {
-            doClientConnection();
-        }
-
     }
 
     @Override
@@ -158,9 +169,12 @@ public class MQTTService extends Service {
         public void onSuccess(IMqttToken arg0) {
             Log.i(TAG, "连接成功 ");
             try {
+                ClientInfo clientInfo = gongXingDao.findUser();
                 // 订阅myTopic话题
-                client.subscribe(myTopic, 1);
+                client.subscribe(clientInfo.getTopic(), 1);
             } catch (MqttException e) {
+                e.printStackTrace();
+            } catch (DbException e) {
                 e.printStackTrace();
             }
         }
@@ -184,10 +198,10 @@ public class MQTTService extends Service {
             if (msg != null) {
                 if (msg.getRule_name_value() != null) {//报警类型属性
                     msg.setType("2");
-                    ticker = "收到报警消息" ;
+                    ticker = "收到报警消息";
                 } else {//日报类型属性
                     msg.setType("1");
-                    ticker = "收到躬行监控的日报消息" ;
+                    ticker = "收到躬行监控的日报消息";
                 }
 
                 EventBus.getDefault().post(msg);

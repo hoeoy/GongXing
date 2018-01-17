@@ -12,11 +12,13 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +27,9 @@ import com.houoy.www.gongxing.dao.GongXingDao;
 import com.houoy.www.gongxing.event.LogoutEvent;
 import com.houoy.www.gongxing.fragment.MessageFragment;
 import com.houoy.www.gongxing.fragment.SearchFragment;
+import com.houoy.www.gongxing.model.ClientInfo;
+import com.houoy.www.gongxing.util.ImageUtil;
+import com.houoy.www.gongxing.util.StringUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -89,18 +94,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
 
 
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
-
         fManager = getFragmentManager();
         txt_channel.setOnClickListener(this);
         txt_message.setOnClickListener(this);
         txt_channel.performClick();   //模拟一次点击，既进去后选择第一项
+
+        try {
+            ClientInfo clientInfo = gongXingDao.findUser();
+            if(clientInfo != null){
+//                View headerLayout = navigationView.getHeaderView(R.layout.nav_header_main);
+                View headerLayout = navigationView.getHeaderView(0);
+                ImageView nav_head_portal = (ImageView) headerLayout.findViewById(R.id.nav_head_portal);
+                TextView nav_head_person_name = (TextView) headerLayout.findViewById(R.id.nav_head_person_name);
+
+                if(!StringUtil.isEmpty(clientInfo.getHeadimgurl())){
+                    ImageUtil.setImageToImageView(nav_head_portal,clientInfo.getHeadimgurl());
+                }
+                nav_head_person_name.setText(clientInfo.getName());
+                Menu menu = navigationView.getMenu();
+                menu.getItem(0).setTitle(clientInfo.getUserID());
+                menu.getItem(1).setTitle(clientInfo.getPhoneNum());
+                menu.getItem(2).setTitle(clientInfo.getIDCode());
+            }
+        } catch (DbException e) {
+            Log.e(e.getMessage(),e.getLocalizedMessage());
+        }
     }
 
     @Override
@@ -163,11 +188,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // Handle the camera action
         } else if (id == R.id.nav_mobile) {
 
-        } else if (id == R.id.nav_group) {
+        } else if (id == R.id.nav_idcode) {
 
         }
 
-//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -211,6 +235,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Intent intent = new Intent();
         intent.setClass(mContext, RegisterAndSignInActivity.class);
         startActivity(intent);
+        this.finish();
     }
 
     //隐藏所有Fragment

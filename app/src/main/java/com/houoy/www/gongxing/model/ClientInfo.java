@@ -18,12 +18,16 @@ public class ClientInfo implements Serializable {
     private int id;
     @Column(name = "UserID")
     private String UserID;//用户名
+    @Column(name = "name")
+    private String name;//用户名
     @Column(name = "MsgType")
     private String MsgType;
     @Column(name = "RelationID")
     private String RelationID;
     @Column(name = "IDCode")
     private String IDCode;//识别码
+    @Column(name = "IDENTIFYINGCODE")
+    private String IDENTIFYINGCODE;//识别码的另一个名字，与识别码应该相同
     @Column(name = "Logourl")
     private String Logourl;
     @Column(name = "Password")
@@ -32,6 +36,13 @@ public class ClientInfo implements Serializable {
     private String PhoneNum;//手机号
     @Column(name = "openid")
     private String openid;//用户微信唯一标识
+    @Column(name = "WeChatID")
+    private String WeChatID;//用户的微信端唯一码,与openid一样
     @Column(name = "verification")
     private String verification;//手机验证码
+
+    @Column(name = "Topic")
+    private String Topic;//用于用户接受消息推送需要订阅的topic
+    @Column(name = "headimgurl")
+    private String headimgurl;//用户头像url
 }

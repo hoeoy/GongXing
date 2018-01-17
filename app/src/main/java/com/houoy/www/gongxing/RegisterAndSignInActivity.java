@@ -16,6 +16,7 @@ import com.houoy.www.gongxing.event.LoginEvent;
 import com.houoy.www.gongxing.event.RegisterEvent;
 import com.houoy.www.gongxing.adapter.RegisterAndSignInAdapter;
 import com.houoy.www.gongxing.model.ClientInfo;
+import com.houoy.www.gongxing.service.MQTTService;
 import com.houoy.www.gongxing.util.StringUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -133,6 +134,9 @@ public class RegisterAndSignInActivity extends AppCompatActivity implements Radi
     public void onLogin(LoginEvent event) {
         Intent intent = new Intent();
         intent.setClass(this, MainActivity.class);
+
+        getApplication().startService(new Intent(getApplicationContext(), MQTTService.class));
+
         startActivity(intent);
         finish();
     }

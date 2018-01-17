@@ -4,6 +4,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.houoy.www.gongxing.dao.GongXingDao;
 import com.houoy.www.gongxing.event.LoginEvent;
 import com.houoy.www.gongxing.event.LogoutEvent;
@@ -26,9 +28,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * 调用接口的Congroller
  * Created by andyzhao on 1/14/2018.
  */
-
 public class GongXingController {
 
     private static GongXingController gongXingController = null;
@@ -46,22 +48,23 @@ public class GongXingController {
     }
 
     public void signin(final String userid, final String password) {
-        String url = Constants.url + "CloudWeChatPlatServer/Login";
+        String url = Constants.url + "CloudWeChatPlatServer/AppLogin";
         Map<String, String> params = new HashMap();
         params.put("UserID", userid);
         params.put("Password", password);
-        RequestVO requestVO = new RequestVO(Constants.sign, params);
+        final RequestVO requestVO = new RequestVO(Constants.sign, params);
         String paramStr = JSON.toJSONString(requestVO);
 
         XUtil.Post(url, paramStr, new XUtilCallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                ResultVO resultVO = JSON.parseObject(result, ResultVO.class);
+                ResultVO<ClientInfo> resultVO = JSON.parseObject(result, new TypeReference<ResultVO<ClientInfo>>(){});
                 if (resultVO.getCode().equals("success")) {
                     try {
-                        ClientInfo clientInfo = new ClientInfo();
-                        clientInfo.setUserID(userid);
+                        ClientInfo clientInfo = resultVO.getData();
                         clientInfo.setPassword(password);
+                        clientInfo.setIDCode(clientInfo.getIDENTIFYINGCODE());
+                        clientInfo.setOpenid(clientInfo.getWeChatID());
                         gongXingDao.setUser(clientInfo);
                         EventBus.getDefault().post(new LoginEvent("login", resultVO));
                     } catch (DbException e) {
@@ -174,26 +177,23 @@ public class GongXingController {
         });
     }
 
-    public void queryData() {
+    public void queryData() throws DbException {
         String url = Constants.url + "/CloudWeChatPlatServer/QueryData";
         Map<String, String> params = new HashMap();
-        params.put("touser", "zhaozhao");
+        ClientInfo clientInfo = gongXingDao.findUser();
+        params.put("touser", clientInfo.getOpenid());
         RequestVO requestVO = new RequestVO(Constants.sign, params);
         String paramStr = JSON.toJSONString(requestVO);
 
         XUtil.Post(url, paramStr, new XUtilCallBack<String>() {
             @Override
             public void onSuccess(String result) {
-//                ResultVO resultVO = JSON.parseObject(result, ResultVO.class);
-//                if (resultVO.getCode().equals("success")) {
-//                    EventBus.getDefault().post(new SearchMessageDataEvent("data", resultVO.getData()));
-//                } else {
-//                    Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_LONG).show();
-//                }
-
-                //mock data
-                Data data = MockData.getInfoData();
-                EventBus.getDefault().post(new SearchMessageDataEvent("data", data));
+                ResultVO<Data> resultVO = JSON.parseObject(result, new TypeReference<ResultVO<Data>>(){});
+                if (resultVO.getCode().equals("success")) {
+                    EventBus.getDefault().post(new SearchMessageDataEvent("data", resultVO.getData()));
+                } else {
+                    Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_LONG).show();
+                }
             }
         });
     }

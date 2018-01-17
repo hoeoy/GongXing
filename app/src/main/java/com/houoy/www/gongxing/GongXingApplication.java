@@ -1,10 +1,8 @@
 package com.houoy.www.gongxing;
 
 import android.app.Application;
-import android.content.Intent;
 
 import com.houoy.www.gongxing.dao.GongXingDao;
-import com.houoy.www.gongxing.service.MQTTService;
 
 import org.xutils.x;
 
@@ -20,7 +18,6 @@ public class GongXingApplication extends Application {
 
         gongXingDao = GongXingDao.getInstant();
         gongXingDao.initDb();
-        startService(new Intent(this, MQTTService.class));
     }
 
 

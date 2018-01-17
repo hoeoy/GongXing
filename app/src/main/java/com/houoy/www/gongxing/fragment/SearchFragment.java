@@ -4,7 +4,9 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +26,7 @@ import com.houoy.www.gongxing.model.Place;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.xutils.ex.DbException;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
@@ -41,8 +44,11 @@ public class SearchFragment extends Fragment implements ItemClickListener {
     private GongXingDao gongXingDao;
     private GongXingController gongXingController;
 
+    @ViewInject(R.id.searchSwipeRefreshLayout)
+    private SwipeRefreshLayout searchSwipeRefreshLayout;
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         injected = true;
         View view = x.view().inject(this, inflater, container); //使用注解模块一定要注意初始化视图注解框架
         EventBus.getDefault().register(this);
@@ -50,7 +56,26 @@ public class SearchFragment extends Fragment implements ItemClickListener {
         //setting the recycler view
         sectionedExpandableLayoutHelper = new SectionedExpandableLayoutHelper(mContext, mRecyclerView, this, 1);
         gongXingController = GongXingController.getInstant();
-        gongXingController.queryData();
+        try {
+            gongXingController.queryData();
+        } catch (DbException e) {
+            Log.e(e.getMessage(),e.getLocalizedMessage());
+            e.printStackTrace();
+        }
+
+        searchSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                try {
+                    gongXingController.queryData();
+//                    searchSwipeRefreshLayout.setRefreshing(false);
+//                    Toast.makeText(container.getContext(), "查询成功", Toast.LENGTH_SHORT).show();
+                } catch (DbException e) {
+                    Log.e(e.getMessage(),e.getLocalizedMessage());
+                    e.printStackTrace();
+                }
+            }
+        });
         return view;
     }
 
@@ -70,10 +95,14 @@ public class SearchFragment extends Fragment implements ItemClickListener {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onData(SearchMessageDataEvent event) {
+        searchSwipeRefreshLayout.setRefreshing(false);
         Data data = (Data) event.getData();
         if (data == null) {
 
         } else {
+            //清空数据
+            sectionedExpandableLayoutHelper.clearData();
+            //重新加载
             List<Place> places = data.getDataPart().getPlace();
             for (Place place : places) {
                 sectionedExpandableLayoutHelper.addSection(place.getPlaceName(), place.getDeviceInfo());
@@ -85,7 +114,7 @@ public class SearchFragment extends Fragment implements ItemClickListener {
 
     @Override
     public void itemClicked(DeviceInfo deviceInfo) {
-        Toast.makeText(mContext, "DeviceInfo: " + deviceInfo.getDeviceName() + " clicked", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(mContext, "DeviceInfo: " + deviceInfo.getDeviceName() + " clicked", Toast.LENGTH_SHORT).show();
     }
 
     @Override

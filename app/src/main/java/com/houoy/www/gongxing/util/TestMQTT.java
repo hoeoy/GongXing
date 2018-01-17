@@ -21,7 +21,7 @@ public class TestMQTT {
     //消息发送的模式   选择消息发送的次数，依据不同的使用环境使用不同的模式
     private static int qos = 0;
     //消息的类型
-    private static String topic = "topic";
+    private static String topic = "oEUjn08Drl1HyQEOpiNv1Jd7q_X8";//zhaozhao的openid
 
     public static void main(String args[]) {
 

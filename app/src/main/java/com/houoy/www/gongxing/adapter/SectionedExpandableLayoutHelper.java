@@ -70,6 +70,11 @@ public class SectionedExpandableLayoutHelper implements SectionStateChangeListen
         mSectionMap.remove(section);
     }
 
+    public void clearData() {
+        mSectionDataMap.clear();
+        mSectionMap.clear();
+    }
+
     private void generateDataList() {
         mDataArrayList.clear();
         for (Map.Entry<Section, List<DeviceInfo>> entry : mSectionDataMap.entrySet()) {
