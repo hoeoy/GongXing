@@ -41,7 +41,6 @@ public class SearchFragment extends Fragment implements ItemClickListener {
     private Context mContext;
     private SectionedExpandableLayoutHelper sectionedExpandableLayoutHelper;
 
-    private GongXingDao gongXingDao;
     private GongXingController gongXingController;
 
     @ViewInject(R.id.searchSwipeRefreshLayout)

@@ -8,6 +8,7 @@ import java.io.Serializable;
 import lombok.NoArgsConstructor;
 
 /**
+ * 用户，消息 等统一model
  * Created by andyzhao on 2017/12/23.
  */
 @lombok.Data
@@ -21,7 +22,7 @@ public class ClientInfo implements Serializable {
     @Column(name = "name")
     private String name;//用户名
     @Column(name = "MsgType")
-    private String MsgType;
+    private String MsgType;//数据类型:（0：错误；1：查询；2：报警（主动推送）；3：日报(主动推送)；4：应答；）
     @Column(name = "RelationID")
     private String RelationID;
     @Column(name = "IDCode")

@@ -184,7 +184,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     ((NewsViewHolder) holder).humidity_value.setText(messagePushes.get(i).getHumidity_value());
                     ((NewsViewHolder) holder).state_value.setText(messagePushes.get(i).getState_value());
                     ((NewsViewHolder) holder).alarm_num_value.setText(messagePushes.get(i).getAlarm_num_value());
-                    ((NewsViewHolder) holder).remark2.setText(messagePushes.get(i).getCurrent_parameter_value());
+                    ((NewsViewHolder) holder).remark2.setText(messagePushes.get(i).getRemark_value());
 
                     ((NewsViewHolder) holder).btn_more2.setText("日报详细");
                     ((NewsViewHolder) holder).btn_more2.setOnClickListener(new View.OnClickListener() {

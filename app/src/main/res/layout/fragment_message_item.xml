@@ -26,8 +26,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="left"
                 android:text="title"
-                android:textSize="@dimen/regular17"
                 android:textColor="@color/text_font_black"
+                android:textSize="@dimen/regular17"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -36,8 +36,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="left"
-                android:text="date"
                 android:paddingBottom="@dimen/text_margin"
+                android:text="date"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/title_value" />
 
@@ -69,7 +69,7 @@
                 android:text="触发时间："
                 android:textColor="@color/text_font_black"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/rulename" />
+                app:layout_constraintTop_toBottomOf="@id/rule_name" />
 
             <TextView
                 android:id="@+id/trigger_time"
@@ -79,7 +79,7 @@
                 android:text="触发时间"
                 android:textColor="@color/text_font_black"
                 app:layout_constraintLeft_toRightOf="@id/triggertime"
-                app:layout_constraintTop_toBottomOf="@id/rulename" />
+                app:layout_constraintTop_toBottomOf="@id/rule_name" />
 
             <TextView
                 android:id="@+id/devicename"
@@ -89,7 +89,7 @@
                 android:text="设备名称："
                 android:textColor="@color/text_font_black"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/triggertime" />
+                app:layout_constraintTop_toBottomOf="@id/trigger_time" />
 
             <TextView
                 android:id="@+id/device_name"
@@ -99,7 +99,7 @@
                 android:text="设备名称"
                 android:textColor="@color/text_font_black"
                 app:layout_constraintLeft_toRightOf="@id/devicename"
-                app:layout_constraintTop_toBottomOf="@id/triggertime" />
+                app:layout_constraintTop_toBottomOf="@id/trigger_time" />
 
             <TextView
                 android:id="@+id/subkeyname"
@@ -109,7 +109,7 @@
                 android:text="子项名称："
                 android:textColor="@color/text_font_black"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/devicename" />
+                app:layout_constraintTop_toBottomOf="@id/device_name" />
 
             <TextView
                 android:id="@+id/subkey_name"
@@ -119,7 +119,7 @@
                 android:text="子项名称"
                 android:textColor="@color/text_font_black"
                 app:layout_constraintLeft_toRightOf="@id/subkeyname"
-                app:layout_constraintTop_toBottomOf="@id/devicename" />
+                app:layout_constraintTop_toBottomOf="@id/device_name" />
 
             <TextView
                 android:id="@+id/currentparameter"
@@ -129,7 +129,7 @@
                 android:text="当前参数："
                 android:textColor="@color/text_font_black"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/subkeyname" />
+                app:layout_constraintTop_toBottomOf="@id/subkey_name" />
 
             <TextView
                 android:id="@+id/current_parameter"
@@ -139,18 +139,27 @@
                 android:text="当前参数"
                 android:textColor="@color/text_font_black"
                 app:layout_constraintLeft_toRightOf="@id/currentparameter"
-                app:layout_constraintTop_toBottomOf="@id/subkeyname" />
+                app:layout_constraintTop_toBottomOf="@id/subkey_name" />
+
+            <TextView
+                android:id="@+id/remarkname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="报警摘要："
+                android:textColor="@color/text_font_black"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/current_parameter" />
 
             <TextView
                 android:id="@+id/remark"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="left"
-                android:layout_marginTop="@dimen/recycler_padding"
                 android:text="备注"
-                android:textColor="@color/text_font_gray"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/currentparameter" />
+                android:textColor="@color/text_font_black"
+                app:layout_constraintLeft_toRightOf="@id/remarkname"
+                app:layout_constraintTop_toBottomOf="@id/current_parameter" />
 
             <Button
                 android:id="@+id/btn_more"
@@ -158,8 +167,8 @@
                 android:layout_height="wrap_content"
                 android:background="#00000000"
                 android:gravity="left"
-                android:text="详细"
                 android:paddingTop="@dimen/text_margin"
+                android:text="报警详细"
                 android:textColor="#7AD3E0"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/remark" />
@@ -177,8 +186,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="left"
                 android:text="title"
-                android:textSize="@dimen/regular17"
                 android:textColor="@color/text_font_black"
+                android:textSize="@dimen/regular17"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -187,8 +196,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="left"
-                android:text="date"
                 android:paddingBottom="@dimen/text_margin"
+                android:text="date"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/title_value2" />
 
@@ -220,7 +229,7 @@
                 android:text="当前湿度："
                 android:textColor="@color/text_font_black"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/temperaturevalue" />
+                app:layout_constraintTop_toBottomOf="@id/temperature_value" />
 
             <TextView
                 android:id="@+id/humidity_value"
@@ -230,7 +239,7 @@
                 android:text="当前湿度"
                 android:textColor="@color/text_font_black"
                 app:layout_constraintLeft_toRightOf="@id/humidityvalue"
-                app:layout_constraintTop_toBottomOf="@id/temperaturevalue" />
+                app:layout_constraintTop_toBottomOf="@id/temperature_value" />
 
             <TextView
                 android:id="@+id/statevalue"
@@ -240,7 +249,7 @@
                 android:text="空调状态："
                 android:textColor="@color/text_font_black"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/humidityvalue" />
+                app:layout_constraintTop_toBottomOf="@id/humidity_value" />
 
             <TextView
                 android:id="@+id/state_value"
@@ -250,7 +259,7 @@
                 android:text="空调状态"
                 android:textColor="@color/text_font_black"
                 app:layout_constraintLeft_toRightOf="@id/statevalue"
-                app:layout_constraintTop_toBottomOf="@id/humidityvalue" />
+                app:layout_constraintTop_toBottomOf="@id/humidity_value" />
 
             <TextView
                 android:id="@+id/alarmnumvalue"
@@ -260,7 +269,7 @@
                 android:text="今日告警："
                 android:textColor="@color/text_font_black"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/statevalue" />
+                app:layout_constraintTop_toBottomOf="@id/state_value" />
 
             <TextView
                 android:id="@+id/alarm_num_value"
@@ -270,7 +279,17 @@
                 android:text="今日告警"
                 android:textColor="@color/text_font_black"
                 app:layout_constraintLeft_toRightOf="@id/alarmnumvalue"
-                app:layout_constraintTop_toBottomOf="@id/statevalue" />
+                app:layout_constraintTop_toBottomOf="@id/state_value" />
+
+            <TextView
+                android:id="@+id/remarkname2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="报警摘要："
+                android:textColor="@color/text_font_black"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/alarm_num_value" />
 
             <TextView
                 android:id="@+id/remark2"
@@ -279,20 +298,20 @@
                 android:gravity="left"
                 android:text="备注"
                 android:textColor="@color/text_font_black"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/alarmnumvalue" />
+                app:layout_constraintLeft_toRightOf="@id/remarkname2"
+                app:layout_constraintTop_toBottomOf="@id/alarm_num_value" />
 
             <Button
                 android:id="@+id/btn_more2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#00000000"
-                android:text="详细"
                 android:gravity="left"
                 android:paddingTop="@dimen/text_margin"
+                android:text="日报详细"
                 android:textColor="#7AD3E0"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/alarmnumvalue" />
+                app:layout_constraintTop_toBottomOf="@id/remark2" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 </RelativeLayout>

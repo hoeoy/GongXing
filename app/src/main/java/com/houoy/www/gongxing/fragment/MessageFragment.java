@@ -2,7 +2,6 @@ package com.houoy.www.gongxing.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,9 +22,6 @@ import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @ContentView(R.layout.fragment_message)
 public class MessageFragment extends Fragment {
     private boolean injected = false;
@@ -39,6 +35,7 @@ public class MessageFragment extends Fragment {
     private MessageListAdapter adapter;
 
     private Integer lastVisibleItem;
+
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         injected = true;
@@ -62,15 +59,16 @@ public class MessageFragment extends Fragment {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if (newState ==RecyclerView.SCROLL_STATE_IDLE && lastVisibleItem + 1 ==adapter.getItemCount()) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && lastVisibleItem + 1 == adapter.getItemCount()) {
                     adapter.changeMoreStatus(MessageListAdapter.LOADING_MORE);
                     adapter.pushData(lastVisibleItem);
                     adapter.changeMoreStatus(MessageListAdapter.NOTHING);
                 }
             }
+
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView,dx, dy);
+                super.onScrolled(recyclerView, dx, dy);
                 lastVisibleItem = layoutManager.findLastVisibleItemPosition();
             }
         });
@@ -80,7 +78,7 @@ public class MessageFragment extends Fragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getMqttMessage(MessagePush messagePush) {
-        Toast.makeText(adapter.context, messagePush.getTitle_value(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(adapter.context, "收到消息:" + messagePush.getTitle_value(), Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -10,10 +10,13 @@ import com.houoy.www.gongxing.dao.GongXingDao;
 import com.houoy.www.gongxing.event.LoginEvent;
 import com.houoy.www.gongxing.event.LogoutEvent;
 import com.houoy.www.gongxing.event.RegisterEvent;
+import com.houoy.www.gongxing.event.SearchDailyMessageDataEvent;
 import com.houoy.www.gongxing.event.SearchMessageDataEvent;
+import com.houoy.www.gongxing.event.SearchWarningMessageDataEvent;
 import com.houoy.www.gongxing.mock.MockData;
 import com.houoy.www.gongxing.model.ClientInfo;
 import com.houoy.www.gongxing.model.Data;
+import com.houoy.www.gongxing.model.MessagePush;
 import com.houoy.www.gongxing.util.Constants;
 import com.houoy.www.gongxing.util.XUtil;
 import com.houoy.www.gongxing.util.XUtilCallBack;
@@ -177,6 +180,7 @@ public class GongXingController {
         });
     }
 
+    //查询消息
     public void queryData() throws DbException {
         String url = Constants.url + "/CloudWeChatPlatServer/QueryData";
         Map<String, String> params = new HashMap();
@@ -198,4 +202,53 @@ public class GongXingController {
         });
     }
 
+    //查询报警消息详细
+    public void queryWarningData(MessagePush messagePush) throws DbException {
+        String url = Constants.url + "/CloudWeChatPlatServer/MessageDetail";
+        Map<String, String> params = new HashMap();
+        params.put("touser", messagePush.getTouser());
+        params.put("RelationID", messagePush.getRelationID());
+        RequestVO requestVO = new RequestVO(Constants.sign, params);
+        String paramStr = JSON.toJSONString(requestVO);
+
+        XUtil.Post(url, paramStr, new XUtilCallBack<String>() {
+            @Override
+            public void onSuccess(String result) {
+//                ResultVO<Data> resultVO = JSON.parseObject(result, new TypeReference<ResultVO<Data>>(){});
+//                if (resultVO.getCode().equals("success")) {
+//                    EventBus.getDefault().post(new SearchWarningMessageDataEvent("data", resultVO.getData()));
+//                } else {
+//                    Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_LONG).show();
+//                }
+
+                Data data = MockData.getPushData();
+                EventBus.getDefault().post(new SearchWarningMessageDataEvent("data", data));
+            }
+        });
+    }
+
+    //查询日报消息详细
+    public void queryDailyData(MessagePush messagePush) throws DbException {
+        String url = Constants.url + "/CloudWeChatPlatServer/MessageDetail";
+        Map<String, String> params = new HashMap();
+        params.put("touser", messagePush.getTouser());
+        params.put("RelationID", messagePush.getRelationID());
+        RequestVO requestVO = new RequestVO(Constants.sign, params);
+        String paramStr = JSON.toJSONString(requestVO);
+
+        XUtil.Post(url, paramStr, new XUtilCallBack<String>() {
+            @Override
+            public void onSuccess(String result) {
+//                ResultVO<Data> resultVO = JSON.parseObject(result, new TypeReference<ResultVO<Data>>(){});
+//                if (resultVO.getCode().equals("success")) {
+//                    EventBus.getDefault().post(new SearchDailyMessageDataEvent("data", resultVO.getData()));
+//                } else {
+//                    Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_LONG).show();
+//                }
+
+                Data data = MockData.getPushData();
+                EventBus.getDefault().post(new SearchDailyMessageDataEvent("data", data));
+            }
+        });
+    }
 }

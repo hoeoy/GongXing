@@ -19,6 +19,8 @@ public class MessagePush implements Serializable {
     //公共属性
     @Column(name = "id", isId = true)
     private int id;
+    @Column(name = "RelationID")
+    private String RelationID;//消息id
     @Column(name = "touser")
     private String touser;//接收信息用户在微信端的唯一标识
     @Column(name = "title_value")
@@ -29,8 +31,6 @@ public class MessagePush implements Serializable {
     private String remark_value;//备注
     @Column(name = "remark_color")
     private String remark_color;//备注颜色，默认为#000000
-    @Column(name = "RelationID")
-    private String RelationID;//消息id
     @Column(name = "time")
     private String time;//消息到达日期
     @Column(name = "type")

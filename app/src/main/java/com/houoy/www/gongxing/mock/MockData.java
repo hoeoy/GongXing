@@ -10,7 +10,7 @@ import com.houoy.www.gongxing.model.Data;
  */
 
 public class MockData {
-    public static Data getInfoData() {
+    public static Data getPushData() {
         String json = "{\n" +
                 "    \"code\": \"success\",\n" +
                 "    \"message\": \"操作成功\",\n" +
@@ -237,6 +237,6 @@ public class MockData {
     }
 
     public static void main(String[] args){
-        getInfoData();
+        getPushData();
     }
 }
