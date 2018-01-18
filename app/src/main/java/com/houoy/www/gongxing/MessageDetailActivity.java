@@ -8,25 +8,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
 import com.houoy.www.gongxing.adapter.ItemClickListener;
 import com.houoy.www.gongxing.adapter.Section;
+import com.houoy.www.gongxing.adapter.SectiondFooter;
 import com.houoy.www.gongxing.adapter.SectionedExpandableLayoutHelper;
 import com.houoy.www.gongxing.controller.GongXingController;
 import com.houoy.www.gongxing.event.SearchDailyMessageDataEvent;
-import com.houoy.www.gongxing.event.SearchMessageDataEvent;
 import com.houoy.www.gongxing.event.SearchWarningMessageDataEvent;
-import com.houoy.www.gongxing.mock.MockData;
 import com.houoy.www.gongxing.model.Data;
 import com.houoy.www.gongxing.model.DeviceInfo;
 import com.houoy.www.gongxing.model.MessagePush;
 import com.houoy.www.gongxing.model.Place;
-import com.houoy.www.gongxing.util.XUtil;
-import com.houoy.www.gongxing.util.XUtilCallBack;
-import com.houoy.www.gongxing.vo.RequestVO;
-import com.houoy.www.gongxing.vo.ResultVO;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -36,9 +29,7 @@ import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @ContentView(R.layout.activity_message_detail)
 public class MessageDetailActivity extends AppCompatActivity implements ItemClickListener {
@@ -49,6 +40,7 @@ public class MessageDetailActivity extends AppCompatActivity implements ItemClic
 
     private GongXingController gongXingController;
     private SectionedExpandableLayoutHelper sectionedExpandableLayoutHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +59,7 @@ public class MessageDetailActivity extends AppCompatActivity implements ItemClic
 
         gongXingController = GongXingController.getInstant();
         try {
-            switch (messagePush.getType()){
+            switch (messagePush.getType()) {
                 case "1"://日报
                     actionBar.setTitle("日报");
                     gongXingController.queryDailyData(messagePush);
@@ -78,7 +70,7 @@ public class MessageDetailActivity extends AppCompatActivity implements ItemClic
                     break;
             }
         } catch (DbException e) {
-            Log.e(e.getMessage(),e.getLocalizedMessage());
+            Log.e(e.getMessage(), e.getLocalizedMessage());
             e.printStackTrace();
         }
     }
@@ -88,25 +80,17 @@ public class MessageDetailActivity extends AppCompatActivity implements ItemClic
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onData(SearchWarningMessageDataEvent event) {
         Data data = (Data) event.getData();
-        if (data == null) {
-
-        } else {
-            //清空数据
-            sectionedExpandableLayoutHelper.clearData();
-            //重新加载
-            List<Place> places = data.getDataPart().getPlace();
-            for (Place place : places) {
-                sectionedExpandableLayoutHelper.addSection(place.getPlaceName(), place.getDeviceInfo());
-            }
-
-            sectionedExpandableLayoutHelper.notifyDataSetChanged();
-        }
+        onData(data, "2");
     }
 
     //接收日报类消息
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onData(SearchDailyMessageDataEvent event) {
         Data data = (Data) event.getData();
+        onData(data, "3");
+    }
+
+    private void onData(Data data, String type) {
         if (data == null) {
 
         } else {
@@ -117,6 +101,11 @@ public class MessageDetailActivity extends AppCompatActivity implements ItemClic
             for (Place place : places) {
                 sectionedExpandableLayoutHelper.addSection(place.getPlaceName(), place.getDeviceInfo());
             }
+            SectiondFooter sectiondFooter = new SectiondFooter();
+            sectiondFooter.setOperatePart(data.getOperatePart());
+            sectiondFooter.setRemarkPart(data.getRemarkPart());
+            sectiondFooter.setType(type);
+            sectionedExpandableLayoutHelper.setFooter(sectiondFooter);
 
             sectionedExpandableLayoutHelper.notifyDataSetChanged();
         }

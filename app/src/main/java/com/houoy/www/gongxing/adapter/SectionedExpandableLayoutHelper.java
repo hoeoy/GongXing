@@ -26,6 +26,8 @@ public class SectionedExpandableLayoutHelper implements SectionStateChangeListen
     //TODO : look for a way to avoid this
     private HashMap<String, Section> mSectionMap = new HashMap<String, Section>();
 
+    private SectiondFooter footer = new SectiondFooter();
+
     //adapter
     private SectionedExpandableGridAdapter mSectionedExpandableGridAdapter;
 
@@ -38,7 +40,7 @@ public class SectionedExpandableLayoutHelper implements SectionStateChangeListen
         //setting the recycler view
         GridLayoutManager gridLayoutManager = new GridLayoutManager(context, gridSpanCount);
         recyclerView.setLayoutManager(gridLayoutManager);
-        mSectionedExpandableGridAdapter = new SectionedExpandableGridAdapter(context, mDataArrayList,
+        mSectionedExpandableGridAdapter = new SectionedExpandableGridAdapter(context, mDataArrayList, footer,
                 gridLayoutManager, itemClickListener, this);
         recyclerView.setAdapter(mSectionedExpandableGridAdapter);
 
@@ -48,13 +50,8 @@ public class SectionedExpandableLayoutHelper implements SectionStateChangeListen
     public void notifyDataSetChanged() {
         //TODO : handle this condition such that these functions won't be called if the recycler view is on scroll
         generateDataList();
+        mSectionedExpandableGridAdapter.setFooter(footer);
         mSectionedExpandableGridAdapter.notifyDataSetChanged();
-    }
-
-    public void addSection(String section, List<DeviceInfo> deviceInfos) {
-        Section newSection;
-        mSectionMap.put(section, (newSection = new Section(section)));
-        mSectionDataMap.put(newSection, deviceInfos);
     }
 
     public void addItem(String section, DeviceInfo item) {
@@ -65,14 +62,29 @@ public class SectionedExpandableLayoutHelper implements SectionStateChangeListen
         mSectionDataMap.get(mSectionMap.get(section)).remove(item);
     }
 
+    public void addSection(String section, List<DeviceInfo> deviceInfos) {
+        Section newSection;
+        mSectionMap.put(section, (newSection = new Section(section)));
+        mSectionDataMap.put(newSection, deviceInfos);
+    }
+
     public void removeSection(String section) {
         mSectionDataMap.remove(mSectionMap.get(section));
         mSectionMap.remove(section);
     }
 
+    public void setFooter(SectiondFooter footer) {
+        this.footer = footer;
+    }
+
+    public void removeFooter(String section) {
+        footer = new SectiondFooter();
+    }
+
     public void clearData() {
         mSectionDataMap.clear();
         mSectionMap.clear();
+        footer = new SectiondFooter();
     }
 
     private void generateDataList() {

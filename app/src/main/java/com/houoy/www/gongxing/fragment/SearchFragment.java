@@ -10,14 +10,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.houoy.www.gongxing.R;
 import com.houoy.www.gongxing.adapter.ItemClickListener;
 import com.houoy.www.gongxing.adapter.Section;
+import com.houoy.www.gongxing.adapter.SectiondFooter;
 import com.houoy.www.gongxing.adapter.SectionedExpandableLayoutHelper;
 import com.houoy.www.gongxing.controller.GongXingController;
-import com.houoy.www.gongxing.dao.GongXingDao;
 import com.houoy.www.gongxing.event.SearchMessageDataEvent;
 import com.houoy.www.gongxing.model.Data;
 import com.houoy.www.gongxing.model.DeviceInfo;
@@ -58,7 +57,7 @@ public class SearchFragment extends Fragment implements ItemClickListener {
         try {
             gongXingController.queryData();
         } catch (DbException e) {
-            Log.e(e.getMessage(),e.getLocalizedMessage());
+            Log.e(e.getMessage(), e.getLocalizedMessage());
             e.printStackTrace();
         }
 
@@ -70,7 +69,7 @@ public class SearchFragment extends Fragment implements ItemClickListener {
 //                    searchSwipeRefreshLayout.setRefreshing(false);
 //                    Toast.makeText(container.getContext(), "查询成功", Toast.LENGTH_SHORT).show();
                 } catch (DbException e) {
-                    Log.e(e.getMessage(),e.getLocalizedMessage());
+                    Log.e(e.getMessage(), e.getLocalizedMessage());
                     e.printStackTrace();
                 }
             }
@@ -106,6 +105,12 @@ public class SearchFragment extends Fragment implements ItemClickListener {
             for (Place place : places) {
                 sectionedExpandableLayoutHelper.addSection(place.getPlaceName(), place.getDeviceInfo());
             }
+
+            SectiondFooter sectiondFooter = new SectiondFooter();
+            sectiondFooter.setOperatePart(data.getOperatePart());
+            sectiondFooter.setRemarkPart(data.getRemarkPart());
+            sectiondFooter.setType("1");
+            sectionedExpandableLayoutHelper.setFooter(sectiondFooter);
 
             sectionedExpandableLayoutHelper.notifyDataSetChanged();
         }

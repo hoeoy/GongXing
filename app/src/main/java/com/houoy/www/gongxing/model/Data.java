@@ -12,4 +12,6 @@ import lombok.NoArgsConstructor;
 public class Data implements Serializable {
     private ClientInfo ClientInfo;
     private DataPart DataPart;
+    private OperatePart operatePart;
+    private RemarkPart remarkPart;
 }

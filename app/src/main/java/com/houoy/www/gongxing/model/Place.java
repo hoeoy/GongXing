@@ -13,5 +13,11 @@ import lombok.NoArgsConstructor;
 public class Place implements Serializable {
     private String PlaceName;
     private String PlaceId;
+
+    private String AlarmNum;
+    private String BackColor;
+    private String FontColor;
+    private String Time;
+    private String Remark;
     private List<DeviceInfo> DeviceInfo;
 }

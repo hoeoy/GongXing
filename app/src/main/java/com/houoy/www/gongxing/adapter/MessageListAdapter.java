@@ -174,6 +174,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             if(type == null){//默认为报警信息
                 type = "2" ;
             }
+
             switch (type) {
                 case "1"://日报
                     ((NewsViewHolder) holder).constraintLayout1.setVisibility(View.GONE);

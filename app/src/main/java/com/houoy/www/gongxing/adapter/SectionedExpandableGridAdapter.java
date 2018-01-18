@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -14,9 +15,11 @@ import android.widget.ToggleButton;
 
 import com.houoy.www.gongxing.R;
 import com.houoy.www.gongxing.model.DeviceInfo;
+import com.houoy.www.gongxing.model.OperateButton;
 import com.houoy.www.gongxing.model.ParaInfo;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import circletextimage.viviant.com.circletextimagelib.view.CircleTextImage;
 
@@ -27,7 +30,7 @@ public class SectionedExpandableGridAdapter extends RecyclerView.Adapter<Section
 
     //data array
     private ArrayList<Object> mDataArrayList;
-
+    private SectiondFooter footer;
     //context
     private final Context mContext;
 
@@ -38,14 +41,16 @@ public class SectionedExpandableGridAdapter extends RecyclerView.Adapter<Section
     //view type
     private static final int VIEW_TYPE_SECTION = R.layout.layout_section;
     private static final int VIEW_TYPE_ITEM = R.layout.layout_item2; //TODO : change this
+    private static final int VIEW_TYPE_FOOTER = R.layout.layout_section_footer;
 
-    public SectionedExpandableGridAdapter(Context context, ArrayList<Object> dataArrayList,
+    public SectionedExpandableGridAdapter(Context context, ArrayList<Object> dataArrayList, SectiondFooter _footer,
                                           final GridLayoutManager gridLayoutManager, ItemClickListener itemClickListener,
                                           SectionStateChangeListener sectionStateChangeListener) {
         mContext = context;
         mItemClickListener = itemClickListener;
         mSectionStateChangeListener = sectionStateChangeListener;
         mDataArrayList = dataArrayList;
+        footer = _footer;
 
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
@@ -55,8 +60,16 @@ public class SectionedExpandableGridAdapter extends RecyclerView.Adapter<Section
         });
     }
 
+    public void setFooter(SectiondFooter footer) {
+        this.footer = footer;
+    }
+
     private boolean isSection(int position) {
-        return mDataArrayList.get(position) instanceof Section;
+        if (position + 1 == getItemCount()) {
+            return false;
+        } else {
+            return mDataArrayList.get(position) instanceof Section;
+        }
     }
 
     @Override
@@ -80,7 +93,7 @@ public class SectionedExpandableGridAdapter extends RecyclerView.Adapter<Section
                     TextView paraValueTextView = (TextView) cardView.findViewById(R.id.paraValue);
                     TextView paraStateTextView = (TextView) cardView.findViewById(R.id.paraState);
 
-                    paraNameTextView.setText(paraInfo.getParaName().getName()+":");
+                    paraNameTextView.setText(paraInfo.getParaName().getName() + ":");
                     paraValueTextView.setText(paraInfo.getParaValue().getName());
                     paraStateTextView.setText(paraInfo.getParaState().getName());
                     holder.paraInfoContainer.addView(cardView);
@@ -115,19 +128,65 @@ public class SectionedExpandableGridAdapter extends RecyclerView.Adapter<Section
                     }
                 });
                 break;
+            case VIEW_TYPE_FOOTER:
+                if (footer != null) {
+                    holder.sectionFooterLayout.setVisibility(View.VISIBLE);
+                    if (footer.getRemarkPart() != null) {
+                        holder.section_remark.setVisibility(View.VISIBLE);
+                        holder.sectionRemark.setVisibility(View.VISIBLE);
+                        switch(footer.getType()){
+                            case "1"://查询
+                                holder.sectionRemark.setVisibility(View.GONE);
+                                break;
+                            case "2"://报警
+                                holder.sectionRemark.setText("报警信息:");
+                                break;
+                            case "3"://日报
+                                holder.sectionRemark.setText("日报摘要:");
+                                break;
+                        }
+                        holder.section_remark.setText(footer.getRemarkPart().getRemark());
+                    }else{
+                        holder.section_remark.setVisibility(View.GONE);
+                        holder.sectionRemark.setVisibility(View.GONE);
+                    }
+
+                    if (footer.getOperatePart() != null) {
+                        List<OperateButton> operateButtons = footer.getOperatePart().getOperateButton();
+                        if (operateButtons != null && operateButtons.size() > 0) {
+                            OperateButton button = operateButtons.get(0);
+                            holder.sectionOperateLayoutButton.setText(button.getOperateName());
+                            holder.sectionOperateLayout.setVisibility(View.VISIBLE);
+                        }else{
+                            holder.sectionOperateLayout.setVisibility(View.GONE);
+                        }
+                    }else{
+                        holder.sectionOperateLayout.setVisibility(View.GONE);
+                    }
+                }else{
+                    holder.sectionFooterLayout.setVisibility(View.GONE);
+                }
+                break;
         }
     }
 
     @Override
     public int getItemCount() {
-        return mDataArrayList.size();
+        return mDataArrayList.size() + 1;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (isSection(position))
-            return VIEW_TYPE_SECTION;
-        else return VIEW_TYPE_ITEM;
+        // 最后一个item设置为footerView
+        if (position + 1 == getItemCount()) {
+            return VIEW_TYPE_FOOTER;
+        } else {
+            if (isSection(position)) {
+                return VIEW_TYPE_SECTION;
+            } else {
+                return VIEW_TYPE_ITEM;
+            }
+        }
     }
 
     protected static class ViewHolder extends RecyclerView.ViewHolder {
@@ -147,6 +206,14 @@ public class SectionedExpandableGridAdapter extends RecyclerView.Adapter<Section
         //        RecyclerView recycler_view2;
         LinearLayout paraInfoContainer;
 
+
+        //for footer
+        ConstraintLayout sectionFooterLayout;//描述信息名称
+        TextView sectionRemark;//描述信息名称
+        TextView section_remark;//描述信息内容
+        LinearLayout sectionOperateLayout;//按钮区域
+        Button sectionOperateLayoutButton;//区域按钮
+
         public ViewHolder(View view, int viewType) {
             super(view);
             this.viewType = viewType;
@@ -155,14 +222,18 @@ public class SectionedExpandableGridAdapter extends RecyclerView.Adapter<Section
                 itemTextView = (TextView) view.findViewById(R.id.text_item2);
 //                recycler_view2 = (RecyclerView) view.findViewById(R.id.recycler_view2);
                 paraInfoContainer = (LinearLayout) view.findViewById(R.id.paraInfoContainer);
-            } else {
+            } else if (viewType == VIEW_TYPE_SECTION) {
                 sectionTextView = (TextView) view.findViewById(R.id.text_section);
                 sectionLayout = (ConstraintLayout) view.findViewById(R.id.sectionLayout);
                 text_icon = (CircleTextImage) view.findViewById(R.id.text_icon);
                 sectionToggleButton = (ToggleButton) view.findViewById(R.id.toggle_button_section);
+            } else {//footer
+                sectionFooterLayout = (ConstraintLayout) view.findViewById(R.id.sectionFooterLayout);
+                sectionRemark = (TextView) view.findViewById(R.id.sectionRemark);
+                section_remark = (TextView) view.findViewById(R.id.section_remark);
+                sectionOperateLayout = (LinearLayout) view.findViewById(R.id.sectionOperateLayout);
+                sectionOperateLayoutButton = (Button) view.findViewById(R.id.sectionOperateLayoutButton);
             }
         }
     }
-
-
 }
