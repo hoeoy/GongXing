@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="7dp"
+    android:id="@+id/cardView"
     app:elevation="5dp">
 
     <android.support.constraint.ConstraintLayout
@@ -45,6 +46,9 @@
                 android:layout_width="match_parent"
                 android:layout_marginBottom="@dimen/recycler_padding"
                 android:layout_height="wrap_content"
+                android:background="@drawable/btn_selector"
+                android:padding="8dp"
+                android:textColor="@color/bg_white"
                 android:text="确定信息测试按钮"/>
         </LinearLayout>
     </android.support.constraint.ConstraintLayout>

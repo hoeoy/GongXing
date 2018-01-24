@@ -119,6 +119,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 nav_head_person_name.setText(clientInfo.getName());
                 Menu menu = navigationView.getMenu();
+                navigationView.setItemTextColor(null);//@null则icon的颜色还是会随菜单的状态改变而改变
+                navigationView.setItemIconTintList(null);//@null则icon的颜色还是会随菜单的状态改变而改变
                 menu.getItem(0).setTitle(clientInfo.getUserID());
                 menu.getItem(1).setTitle(clientInfo.getPhoneNum());
                 menu.getItem(2).setTitle(clientInfo.getIDCode());

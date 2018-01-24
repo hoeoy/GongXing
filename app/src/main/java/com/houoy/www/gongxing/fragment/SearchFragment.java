@@ -103,12 +103,13 @@ public class SearchFragment extends Fragment implements ItemClickListener {
             //重新加载
             List<Place> places = data.getDataPart().getPlace();
             for (Place place : places) {
-                sectionedExpandableLayoutHelper.addSection(place.getPlaceName(), place.getDeviceInfo());
+                sectionedExpandableLayoutHelper.addSection(place, place.getDeviceInfo());
             }
 
             SectiondFooter sectiondFooter = new SectiondFooter();
             sectiondFooter.setOperatePart(data.getOperatePart());
             sectiondFooter.setRemarkPart(data.getRemarkPart());
+            sectiondFooter.setClientInfo(data.getClientInfo());
             sectiondFooter.setType("1");
             sectionedExpandableLayoutHelper.setFooter(sectiondFooter);
 

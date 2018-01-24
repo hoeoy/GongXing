@@ -1,7 +1,6 @@
 package com.houoy.www.gongxing.model;
 
 import java.io.Serializable;
-import java.util.List;
 
 import lombok.NoArgsConstructor;
 
@@ -13,5 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OperateButton implements Serializable {
     private String OperateName;//确认收到或已确认  按钮名称
-    private String OperateTypeID;//1或2   操作类型（1：可点击 2：不可点击）
+    private Integer OperateTypeID;//1或2   操作类型（1：可点击 2：不可点击）
+
+    public static final Integer OperateType_ENABLE = 1;//1或2   操作类型（1：可点击 2：不可点击）
+    public static final Integer OperateType_UNABLE = 2;//1或2   操作类型（1：可点击 2：不可点击)
 }

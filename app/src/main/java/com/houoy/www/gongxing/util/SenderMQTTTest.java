@@ -17,7 +17,7 @@ import java.util.Date;
  * @Description:
  * @date 2017-1-12 下午1:19:42
  */
-public class TestMQTT {
+public class SenderMQTTTest {
     //消息发送的模式   选择消息发送的次数，依据不同的使用环境使用不同的模式
     private static int qos = 0;
     //消息的类型

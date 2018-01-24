@@ -4,9 +4,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.houoy.www.gongxing.dao.GongXingDao;
+import com.houoy.www.gongxing.event.AffirmOperateEvent;
 import com.houoy.www.gongxing.event.LoginEvent;
 import com.houoy.www.gongxing.event.LogoutEvent;
 import com.houoy.www.gongxing.event.RegisterEvent;
@@ -61,7 +61,8 @@ public class GongXingController {
         XUtil.Post(url, paramStr, new XUtilCallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                ResultVO<ClientInfo> resultVO = JSON.parseObject(result, new TypeReference<ResultVO<ClientInfo>>(){});
+                ResultVO<ClientInfo> resultVO = JSON.parseObject(result, new TypeReference<ResultVO<ClientInfo>>() {
+                });
                 if (resultVO.getCode().equals("success")) {
                     try {
                         ClientInfo clientInfo = resultVO.getData();
@@ -192,7 +193,8 @@ public class GongXingController {
         XUtil.Post(url, paramStr, new XUtilCallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                ResultVO<Data> resultVO = JSON.parseObject(result, new TypeReference<ResultVO<Data>>(){});
+                ResultVO<Data> resultVO = JSON.parseObject(result, new TypeReference<ResultVO<Data>>() {
+                });
                 if (resultVO.getCode().equals("success")) {
                     EventBus.getDefault().post(new SearchMessageDataEvent("data", resultVO.getData()));
                 } else {
@@ -248,6 +250,30 @@ public class GongXingController {
 
                 Data data = MockData.getPushData();
                 EventBus.getDefault().post(new SearchDailyMessageDataEvent("data", data));
+            }
+        });
+    }
+
+    //确认报警
+    public void affirmOperate(ClientInfo clientInfo) throws DbException {
+        String url = Constants.url + "/CloudWeChatPlatServer/AffirmOperate";
+        Map<String, String> params = new HashMap();
+        params.put("touser", clientInfo.getOpenid());
+        params.put("RelationID", clientInfo.getRelationID());
+        RequestVO requestVO = new RequestVO(Constants.sign, params);
+        String paramStr = JSON.toJSONString(requestVO);
+
+        XUtil.Post(url, paramStr, new XUtilCallBack<String>() {
+            @Override
+            public void onSuccess(String result) {
+//                ResultVO<Data> resultVO = JSON.parseObject(result, new TypeReference<ResultVO<Data>>(){});
+//                if (resultVO.getCode().equals("success")) {
+//                    EventBus.getDefault().post(new SearchDailyMessageDataEvent("data", resultVO.getData()));
+//                } else {
+//                    Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_LONG).show();
+//                }
+
+                EventBus.getDefault().post(new AffirmOperateEvent("data", ""));
             }
         });
     }

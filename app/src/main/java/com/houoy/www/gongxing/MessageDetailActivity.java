@@ -14,6 +14,7 @@ import com.houoy.www.gongxing.adapter.Section;
 import com.houoy.www.gongxing.adapter.SectiondFooter;
 import com.houoy.www.gongxing.adapter.SectionedExpandableLayoutHelper;
 import com.houoy.www.gongxing.controller.GongXingController;
+import com.houoy.www.gongxing.event.AffirmOperateEvent;
 import com.houoy.www.gongxing.event.SearchDailyMessageDataEvent;
 import com.houoy.www.gongxing.event.SearchWarningMessageDataEvent;
 import com.houoy.www.gongxing.model.Data;
@@ -40,6 +41,7 @@ public class MessageDetailActivity extends AppCompatActivity implements ItemClic
 
     private GongXingController gongXingController;
     private SectionedExpandableLayoutHelper sectionedExpandableLayoutHelper;
+    private ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,13 +53,17 @@ public class MessageDetailActivity extends AppCompatActivity implements ItemClic
         //setting the recycler view
         sectionedExpandableLayoutHelper = new SectionedExpandableLayoutHelper(mContext,
                 message_detail_recyclerview, this, 1);
-
-        Intent intent = getIntent();
-        MessagePush messagePush = (MessagePush) intent.getSerializableExtra("messagePush");
-        ActionBar actionBar = this.getSupportActionBar();
+        actionBar = this.getSupportActionBar();
+        gongXingController = GongXingController.getInstant();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        gongXingController = GongXingController.getInstant();
+        refreshData();
+    }
+
+    private void refreshData() {
+        Intent intent = getIntent();
+        MessagePush messagePush = (MessagePush) intent.getSerializableExtra("messagePush");
+
         try {
             switch (messagePush.getType()) {
                 case "1"://日报
@@ -75,6 +81,11 @@ public class MessageDetailActivity extends AppCompatActivity implements ItemClic
         }
     }
 
+    //当回复报警消息成功，需要刷新界面
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onAffirmOperateEvent(AffirmOperateEvent event) {
+        refreshData();
+    }
 
     //接收报警类消息
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -99,11 +110,12 @@ public class MessageDetailActivity extends AppCompatActivity implements ItemClic
             //重新加载
             List<Place> places = data.getDataPart().getPlace();
             for (Place place : places) {
-                sectionedExpandableLayoutHelper.addSection(place.getPlaceName(), place.getDeviceInfo());
+                sectionedExpandableLayoutHelper.addSection(place, place.getDeviceInfo());
             }
             SectiondFooter sectiondFooter = new SectiondFooter();
             sectiondFooter.setOperatePart(data.getOperatePart());
             sectiondFooter.setRemarkPart(data.getRemarkPart());
+            sectiondFooter.setClientInfo(data.getClientInfo());
             sectiondFooter.setType(type);
             sectionedExpandableLayoutHelper.setFooter(sectiondFooter);
 

@@ -5,6 +5,9 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.houoy.www.gongxing.model.DeviceInfo;
+import com.houoy.www.gongxing.model.ParaInfo;
+import com.houoy.www.gongxing.model.Place;
+import com.houoy.www.gongxing.util.Constants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,9 +65,29 @@ public class SectionedExpandableLayoutHelper implements SectionStateChangeListen
         mSectionDataMap.get(mSectionMap.get(section)).remove(item);
     }
 
-    public void addSection(String section, List<DeviceInfo> deviceInfos) {
+    public void addSection(Place place, List<DeviceInfo> deviceInfos) {
         Section newSection;
-        mSectionMap.put(section, (newSection = new Section(section)));
+        String state = Constants.State_normal;
+        Integer wnum = 0;
+        for (DeviceInfo deviceInfo : deviceInfos) {
+            if (deviceInfo.getState() != null && deviceInfo.getState().equals(Constants.State_normal)) {
+
+            } else {
+                wnum++;
+            }
+            List<ParaInfo> paraInfos = deviceInfo.getParaInfo();
+            for (ParaInfo paraInfo : paraInfos) {
+                if (paraInfo.getParaState() != null && paraInfo.getParaState().getName() != null
+                        && paraInfo.getParaState().getName().contains(Constants.State_warningName)) {
+                    wnum++;
+                }
+            }
+        }
+        if (wnum > 0) {
+            state = wnum + Constants.State_warning;
+        }
+
+        mSectionMap.put(place.getPlaceName(), (newSection = new Section(place.getPlaceName(), place.getTime(), state)));
         mSectionDataMap.put(newSection, deviceInfos);
     }
 

@@ -1,8 +1,12 @@
 package com.houoy.www.gongxing.event;
 
+import lombok.NoArgsConstructor;
+
 /**
  * eventBus的
  */
+@lombok.Data
+@NoArgsConstructor
 public class RegisterEvent {
     public static final String Next = "Next";
     public static final String Register = "Register";
@@ -17,21 +21,5 @@ public class RegisterEvent {
         super();
         this.data = data;
         this.type = type;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Object getData() {
-        return data;
-    }
-
-    public void setData(Object data) {
-        this.data = data;
     }
 }

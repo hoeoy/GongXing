@@ -9,7 +9,8 @@
     <color name="text_font_gray">#888888</color>
     <color name="text_font_blue">#7AD3E0</color>
     <color name="text_font_blue_dark">#576b95</color>
-    <color name="main">#09BB07</color>
+    <color name="text_font_yellow">#fbb762</color>
+    <color name="text_font_green">#09BB07</color>
     <color name="bg_gray_ligth">#f2f2f2</color>
     <color name="bg_gray">#b2b2b2</color>
     <color name="bg_white">#FFFFFF</color>

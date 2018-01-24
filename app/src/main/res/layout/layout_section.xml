@@ -10,7 +10,30 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/sectionLayout"
         android:layout_width="match_parent"
+        android:padding="@dimen/recycler_padding"
         android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/text_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2018-1-1 00:00:00"
+            android:textColor="@color/text_font_gray"
+            android:textSize="@dimen/regular14"
+            app:layout_constraintBottom_toTopOf="@+id/text_icon"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/text_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="正常"
+            android:textColor="@color/text_font_gray"
+            android:textSize="@dimen/regular14"
+            app:layout_constraintBottom_toTopOf="@+id/text_icon"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <circletextimage.viviant.com.circletextimagelib.view.CircleTextImage
             android:id="@+id/text_icon"
@@ -19,7 +42,7 @@
             android:padding="@dimen/recycler_padding"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_date"
             circletextview:circle_color="@color/text_font_blue" />
 
         <TextView
@@ -29,9 +52,9 @@
             android:text="机房名称"
             android:textColor="@color/text_font_black"
             android:textSize="@dimen/regular17"
+            app:layout_constraintTop_toBottomOf="@id/text_date"
             app:layout_constraintBottom_toTopOf="@+id/text_section2"
-            app:layout_constraintLeft_toRightOf="@id/text_icon"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintLeft_toRightOf="@+id/text_icon" />
 
         <TextView
             android:id="@+id/text_section2"
@@ -41,20 +64,21 @@
             android:textColor="@color/text_font_gray"
             android:textSize="@dimen/regular14"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/text_icon"
-            app:layout_constraintTop_toBottomOf="@id/text_section" />
+            app:layout_constraintLeft_toRightOf="@+id/text_icon"
+            app:layout_constraintTop_toBottomOf="@+id/text_section" />
 
         <ToggleButton
             android:id="@+id/toggle_button_section"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginRight="@dimen/recycler_padding"
-            android:background="@drawable/selector_section_toggle"
             android:textOff=""
             android:textOn=""
+            android:layout_marginEnd="@dimen/recycler_padding"
+            android:layout_marginRight="@dimen/recycler_padding"
+            android:background="@drawable/selector_section_toggle"
+            app:layout_constraintTop_toBottomOf="@id/text_date"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintRight_toRightOf="parent" />
     </android.support.constraint.ConstraintLayout>
 
 </android.support.v7.widget.CardView>

@@ -1,6 +1,8 @@
 package com.houoy.www.gongxing;
 
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -10,11 +12,13 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.houoy.www.gongxing.adapter.RegisterAndSignInAdapter;
 import com.houoy.www.gongxing.controller.GongXingController;
 import com.houoy.www.gongxing.dao.GongXingDao;
 import com.houoy.www.gongxing.event.LoginEvent;
+import com.houoy.www.gongxing.event.NetBroadcastReceiver;
+import com.houoy.www.gongxing.event.NetworkChangeEvent;
 import com.houoy.www.gongxing.event.RegisterEvent;
-import com.houoy.www.gongxing.adapter.RegisterAndSignInAdapter;
 import com.houoy.www.gongxing.model.ClientInfo;
 import com.houoy.www.gongxing.service.MQTTService;
 import com.houoy.www.gongxing.util.StringUtil;
@@ -53,6 +57,8 @@ public class RegisterAndSignInActivity extends AppCompatActivity implements Radi
     private GongXingDao gongXingDao;
     private GongXingController gongXingController;
 
+    NetBroadcastReceiver netWorkStateReceiver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +72,21 @@ public class RegisterAndSignInActivity extends AppCompatActivity implements Radi
         gongXingDao = GongXingDao.getInstant();
         gongXingController = GongXingController.getInstant();
 
+        trySignin();
+    }
+
+    @Override
+    protected void onResume() {
+        if (netWorkStateReceiver == null) {
+            netWorkStateReceiver = new NetBroadcastReceiver();
+        }
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(netWorkStateReceiver, filter);
+        super.onResume();
+    }
+
+    private void trySignin() {
         try {
             ClientInfo clientInfo = gongXingDao.findUser();
             if (clientInfo != null && !StringUtil.isEmpty(clientInfo.getUserID()) && !StringUtil.isEmpty(clientInfo.getPassword())) {
@@ -80,6 +101,7 @@ public class RegisterAndSignInActivity extends AppCompatActivity implements Radi
     @Override
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
+        unregisterReceiver(netWorkStateReceiver);
         super.onDestroy();
     }
 
@@ -164,6 +186,34 @@ public class RegisterAndSignInActivity extends AppCompatActivity implements Radi
                     break;
             }
         }
+    }
+
+    /**
+     * 网络变化之后的类型
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onNetChange(NetworkChangeEvent event) {
+        Boolean hasNet = isNetConnect((Integer) event.getData());
+        if(hasNet){
+            trySignin();
+        }
+    }
+
+    /**
+     * 判断有无网络 。
+     *
+     * @return true 有网, false 没有网络.
+     */
+    public boolean isNetConnect(int netMobile) {
+        if (netMobile == 1) {
+            return true;
+        } else if (netMobile == 0) {
+            return true;
+        } else if (netMobile == -1) {
+            return false;
+
+        }
+        return false;
     }
 }
 

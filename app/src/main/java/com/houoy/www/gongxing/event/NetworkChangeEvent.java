@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
  */
 @lombok.Data
 @NoArgsConstructor
-public class LogoutEvent {
+public class NetworkChangeEvent {
 	private String type;
 	private Object data;
 
-	public LogoutEvent(String type, Object data) {
+	public NetworkChangeEvent(String type, Object data) {
 		super();
 		this.data = data;
 		this.type = type;
