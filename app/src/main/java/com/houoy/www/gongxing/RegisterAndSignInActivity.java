@@ -2,8 +2,12 @@ package com.houoy.www.gongxing;
 
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -19,6 +23,7 @@ import com.houoy.www.gongxing.event.LoginEvent;
 import com.houoy.www.gongxing.event.NetBroadcastReceiver;
 import com.houoy.www.gongxing.event.NetworkChangeEvent;
 import com.houoy.www.gongxing.event.RegisterEvent;
+import com.houoy.www.gongxing.event.SMSContentObserver;
 import com.houoy.www.gongxing.model.ClientInfo;
 import com.houoy.www.gongxing.service.MQTTService;
 import com.houoy.www.gongxing.util.StringUtil;
@@ -58,13 +63,21 @@ public class RegisterAndSignInActivity extends AppCompatActivity implements Radi
     private GongXingController gongXingController;
 
     NetBroadcastReceiver netWorkStateReceiver;
+    SMSContentObserver smsContentObserver;
+    //    SMSBroadcastReceiver oSMSBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //注入view和事件
         x.view().inject(this);
-
+        smsContentObserver = new SMSContentObserver(this, new Handler(),
+                new SMSContentObserver.SmsListener() {
+                    @Override
+                    public void onResult(String smsContent) {
+                        //todo
+                    }
+                });
         mAdapter = new RegisterAndSignInAdapter(getSupportFragmentManager());
         bindViews();
         rb_channel.setChecked(true);
@@ -80,10 +93,21 @@ public class RegisterAndSignInActivity extends AppCompatActivity implements Radi
         if (netWorkStateReceiver == null) {
             netWorkStateReceiver = new NetBroadcastReceiver();
         }
+//        if (oSMSBroadcastReceiver == null) {
+//            oSMSBroadcastReceiver = new SMSBroadcastReceiver();
+//        }
         IntentFilter filter = new IntentFilter();
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(netWorkStateReceiver, filter);
+
+//        IntentFilter iff = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
+//        iff.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
+//        registerReceiver(oSMSBroadcastReceiver, iff);
         super.onResume();
+        if (smsContentObserver != null) {
+            getContentResolver().registerContentObserver(
+                    Uri.parse("content://sms/"), true, smsContentObserver);// 注册监听短信数据库的变化
+        }
     }
 
     private void trySignin() {
@@ -102,7 +126,18 @@ public class RegisterAndSignInActivity extends AppCompatActivity implements Radi
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
         unregisterReceiver(netWorkStateReceiver);
+//        unregisterReceiver(oSMSBroadcastReceiver);
         super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        // TODO Auto-generated method stub
+        super.onPause();
+        if (smsContentObserver != null) {
+            getContentResolver().unregisterContentObserver(smsContentObserver);// 取消监听短信数据库的变化
+        }
+
     }
 
     private void bindViews() {
@@ -194,7 +229,7 @@ public class RegisterAndSignInActivity extends AppCompatActivity implements Radi
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onNetChange(NetworkChangeEvent event) {
         Boolean hasNet = isNetConnect((Integer) event.getData());
-        if(hasNet){
+        if (hasNet) {
             trySignin();
         }
     }

@@ -73,7 +73,7 @@ public class MQTTService extends Service {
         init();
         mNManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         //创建大图标的Bitmap
-        LargeBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_menu_share);
+        LargeBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_round);
         return super.onStartCommand(intent, flags, startId);
     }
 

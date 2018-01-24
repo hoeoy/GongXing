@@ -34,7 +34,7 @@
             app:layout_column="0"
             app:layout_columnSpan="3"
             app:layout_gravity="fill"
-            android:inputType="textPassword" />
+            android:inputType="numberSigned" />
 
         <Button
             android:id="@+id/btnDentifyingCode"

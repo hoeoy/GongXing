@@ -176,6 +176,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     e.printStackTrace();
                 }
                 break;
+            case R.id.help:
+                Intent intent1 = new Intent(MainActivity.this, HelpActivity.class);
+                startActivity(intent1);
+                break;
         }
 
         return super.onOptionsItemSelected(item);
