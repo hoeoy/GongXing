@@ -165,23 +165,23 @@ public class SectionedExpandableGridAdapter extends RecyclerView.Adapter<Section
                     holder.sectionFooterLayout.setVisibility(View.VISIBLE);
                     if (footer.getRemarkPart() != null) {
                         holder.section_remark.setVisibility(View.VISIBLE);
-                        holder.sectionRemark.setVisibility(View.VISIBLE);
-                        switch (footer.getType()) {
-                            case "1"://查询
-                                holder.sectionRemark.setVisibility(View.GONE);
-                                break;
-                            case "2"://报警
-                                holder.sectionRemark.setText("报警信息:");
-                                break;
-                            case "3"://日报
-                                holder.sectionRemark.setText("日报摘要:");
-                                break;
-                        }
+//                        holder.sectionRemark.setVisibility(View.VISIBLE);
+//                        switch (footer.getType()) {
+//                            case "1"://查询
+//                                holder.sectionRemark.setVisibility(View.GONE);
+//                                break;
+//                            case "2"://报警
+//                                holder.sectionRemark.setText("报警信息:");
+//                                break;
+//                            case "3"://日报
+//                                holder.sectionRemark.setText("日报摘要:");
+//                                break;
+//                        }
                         holder.section_remark.setText(footer.getRemarkPart().getRemark());
 
                     } else {
                         holder.section_remark.setVisibility(View.GONE);
-                        holder.sectionRemark.setVisibility(View.GONE);
+//                        holder.sectionRemark.setVisibility(View.GONE);
                     }
 
                     if (footer.getOperatePart() != null) {
@@ -259,7 +259,7 @@ public class SectionedExpandableGridAdapter extends RecyclerView.Adapter<Section
         //for footer
         CardView cardView;//
         ConstraintLayout sectionFooterLayout;//
-        TextView sectionRemark;//描述信息名称
+//        TextView sectionRemark;//描述信息名称
         TextView section_remark;//描述信息内容
         LinearLayout sectionOperateLayout;//按钮区域
         Button sectionOperateLayoutButton;//区域按钮
@@ -282,7 +282,7 @@ public class SectionedExpandableGridAdapter extends RecyclerView.Adapter<Section
             } else {//footer
                 cardView = (CardView) view.findViewById(R.id.cardView);
                 sectionFooterLayout = (ConstraintLayout) view.findViewById(R.id.sectionFooterLayout);
-                sectionRemark = (TextView) view.findViewById(R.id.sectionRemark);
+//                sectionRemark = (TextView) view.findViewById(R.id.sectionRemark);
                 section_remark = (TextView) view.findViewById(R.id.section_remark);
                 sectionOperateLayout = (LinearLayout) view.findViewById(R.id.sectionOperateLayout);
                 sectionOperateLayoutButton = (Button) view.findViewById(R.id.sectionOperateLayoutButton);

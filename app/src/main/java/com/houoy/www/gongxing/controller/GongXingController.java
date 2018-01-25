@@ -216,15 +216,15 @@ public class GongXingController {
         XUtil.Post(url, paramStr, new XUtilCallBack<String>() {
             @Override
             public void onSuccess(String result) {
-//                ResultVO<Data> resultVO = JSON.parseObject(result, new TypeReference<ResultVO<Data>>(){});
-//                if (resultVO.getCode().equals("success")) {
-//                    EventBus.getDefault().post(new SearchWarningMessageDataEvent("data", resultVO.getData()));
-//                } else {
-//                    Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_LONG).show();
-//                }
+                ResultVO<Data> resultVO = JSON.parseObject(result, new TypeReference<ResultVO<Data>>(){});
+                if (resultVO.getCode().equals("success")) {
+                    EventBus.getDefault().post(new SearchWarningMessageDataEvent("data", resultVO.getData()));
+                } else {
+                    Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_LONG).show();
+                }
 
-                Data data = MockData.getPushData();
-                EventBus.getDefault().post(new SearchWarningMessageDataEvent("data", data));
+//                Data data = MockData.getPushData();
+//                EventBus.getDefault().post(new SearchWarningMessageDataEvent("data", data));
             }
         });
     }
@@ -241,15 +241,15 @@ public class GongXingController {
         XUtil.Post(url, paramStr, new XUtilCallBack<String>() {
             @Override
             public void onSuccess(String result) {
-//                ResultVO<Data> resultVO = JSON.parseObject(result, new TypeReference<ResultVO<Data>>(){});
-//                if (resultVO.getCode().equals("success")) {
-//                    EventBus.getDefault().post(new SearchDailyMessageDataEvent("data", resultVO.getData()));
-//                } else {
-//                    Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_LONG).show();
-//                }
+                ResultVO<Data> resultVO = JSON.parseObject(result, new TypeReference<ResultVO<Data>>(){});
+                if (resultVO.getCode().equals("success")) {
+                    EventBus.getDefault().post(new SearchDailyMessageDataEvent("data", resultVO.getData()));
+                } else {
+                    Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_LONG).show();
+                }
 
-                Data data = MockData.getPushData();
-                EventBus.getDefault().post(new SearchDailyMessageDataEvent("data", data));
+//                Data data = MockData.getPushData();
+//                EventBus.getDefault().post(new SearchDailyMessageDataEvent("data", data));
             }
         });
     }

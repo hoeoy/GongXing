@@ -18,12 +18,14 @@ import android.net.Uri;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.houoy.www.gongxing.MainActivity;
 import com.houoy.www.gongxing.R;
 import com.houoy.www.gongxing.dao.GongXingDao;
 import com.houoy.www.gongxing.model.ClientInfo;
+import com.houoy.www.gongxing.model.Message;
 import com.houoy.www.gongxing.model.MessagePush;
 import com.houoy.www.gongxing.util.DateUtil;
 import com.houoy.www.gongxing.util.StringUtil;
@@ -38,6 +40,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.greenrobot.eventbus.EventBus;
 import org.xutils.ex.DbException;
+import org.xutils.x;
 
 /**
  * MQTT长连接服务
@@ -59,8 +62,8 @@ public class MQTTService extends Service {
     private String userName = "admin";
     private String passWord = "password";
     //    private static String myTopic = "topic";
-    private String clientId = "test";
-
+//    private String clientId = "test123456789";
+    private ClientInfo clientInfo;
     private NotificationManager mNManager;
     private Notification notify1;
     private static final int NOTIFYID_1 = 1;
@@ -70,10 +73,20 @@ public class MQTTService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         gongXingDao = GongXingDao.getInstant();
-        init();
-        mNManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        //创建大图标的Bitmap
-        LargeBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_round);
+        try {
+            clientInfo = gongXingDao.findUser();
+            if (clientInfo == null || StringUtil.isEmpty(clientInfo.getTopic())) {
+                Toast.makeText(x.app(), "无法获得用户的Topic，无法接收到推送消息，请尝试清空缓存后重启应用。", Toast.LENGTH_LONG).show();
+            }
+            init();
+            mNManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            //创建大图标的Bitmap
+            LargeBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_round);
+        } catch (DbException e) {
+            e.printStackTrace();
+            Toast.makeText(x.app(), e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -90,6 +103,8 @@ public class MQTTService extends Service {
 
     private void init() {
         try {
+            String clientId = clientInfo.getTopic();
+
             // 服务器地址（协议+地址+端口号）
             String uri = host;
             client = new MqttAndroidClient(this, uri, clientId);
@@ -169,12 +184,9 @@ public class MQTTService extends Service {
         public void onSuccess(IMqttToken arg0) {
             Log.i(TAG, "连接成功 ");
             try {
-                ClientInfo clientInfo = gongXingDao.findUser();
                 // 订阅myTopic话题
                 client.subscribe(clientInfo.getTopic(), 1);
             } catch (MqttException e) {
-                e.printStackTrace();
-            } catch (DbException e) {
                 e.printStackTrace();
             }
         }
@@ -193,40 +205,45 @@ public class MQTTService extends Service {
         public void messageArrived(String topic, MqttMessage message) throws Exception {
 
             String str1 = new String(message.getPayload());
-            MessagePush msg = JSON.parseObject(str1, MessagePush.class);
-            String ticker = "";
-            if (msg != null) {
-                if (msg.getRule_name_value() != null) {//报警类型属性
-                    msg.setType("2");
-                    ticker = "收到报警消息";
-                } else {//日报类型属性
-                    msg.setType("1");
-                    ticker = "收到躬行监控的日报消息";
+            Message msgg = JSON.parseObject(str1, Message.class);
+            if (msgg != null) {
+                MessagePush msg = msgg.getParams();
+                String ticker = "";
+                if (msg != null) {
+                    if (msg.getRule_name_value() != null) {//报警类型属性
+                        msg.setType("2");
+                        ticker = "收到报警消息";
+                    } else {//日报类型属性
+                        msg.setType("1");
+                        ticker = "收到躬行监控的日报消息";
+                    }
+
+                    EventBus.getDefault().post(msg);
+
+                    gongXingDao.addMessagePush(msg);
+
+                    //定义一个PendingIntent点击Notification后启动一个Activity
+                    Intent it = new Intent(getBaseContext(), MainActivity.class);
+                    PendingIntent pit = PendingIntent.getActivity(getBaseContext(), 0, it, 0);
+
+                    //设置图片,通知标题,发送时间,提示方式等属性
+                    Notification.Builder mBuilder = new Notification.Builder(getBaseContext());
+                    mBuilder.setContentTitle(msg.getTitle_value())                        //标题
+                            .setContentText(msg.getRemark_value())      //内容
+                            .setSubText(DateUtil.getNowDateTimeShanghai())                    //内容下面的一小段文字
+                            .setTicker(ticker)             //收到信息后状态栏显示的文字信息
+                            .setWhen(System.currentTimeMillis())           //设置通知时间
+                            .setSmallIcon(R.drawable.ic_menu_send)            //设置小图标
+                            .setLargeIcon(LargeBitmap)                     //设置大图标
+                            .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)    //设置默认的三色灯与振动器
+                            .setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.biaobiao))  //设置自定义的提示音
+                            .setAutoCancel(true)                           //设置点击后取消Notification
+                            .setContentIntent(pit);                        //设置PendingIntent
+                    notify1 = mBuilder.build();
+                    mNManager.notify(NOTIFYID_1, notify1);
+                } else {
+
                 }
-
-                EventBus.getDefault().post(msg);
-
-                gongXingDao.addMessagePush(msg);
-
-                //定义一个PendingIntent点击Notification后启动一个Activity
-                Intent it = new Intent(getBaseContext(), MainActivity.class);
-                PendingIntent pit = PendingIntent.getActivity(getBaseContext(), 0, it, 0);
-
-                //设置图片,通知标题,发送时间,提示方式等属性
-                Notification.Builder mBuilder = new Notification.Builder(getBaseContext());
-                mBuilder.setContentTitle("躬行监控")                        //标题
-                        .setContentText(str1)      //内容
-                        .setSubText(DateUtil.getNowDateTimeShanghai())                    //内容下面的一小段文字
-                        .setTicker(ticker)             //收到信息后状态栏显示的文字信息
-                        .setWhen(System.currentTimeMillis())           //设置通知时间
-                        .setSmallIcon(R.drawable.ic_menu_send)            //设置小图标
-                        .setLargeIcon(LargeBitmap)                     //设置大图标
-                        .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)    //设置默认的三色灯与振动器
-                        .setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.biaobiao))  //设置自定义的提示音
-                        .setAutoCancel(true)                           //设置点击后取消Notification
-                        .setContentIntent(pit);                        //设置PendingIntent
-                notify1 = mBuilder.build();
-                mNManager.notify(NOTIFYID_1, notify1);
             } else {
 
             }

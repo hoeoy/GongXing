@@ -37,7 +37,7 @@ public class GongXingDao {
         //本地数据的初始化
         DbManager.DaoConfig daoConfig = new DbManager.DaoConfig()
                 .setDbName("gongxing_db") //设置数据库名
-                .setDbVersion(3) //设置数据库版本,每次启动应用时将会检查该版本号,
+                .setDbVersion(4) //设置数据库版本,每次启动应用时将会检查该版本号,
                 //发现数据库版本低于这里设置的值将进行数据库升级并触发DbUpgradeListener
                 .setAllowTransaction(false)//设置是否开启事务,默认为false关闭事务
                 .setTableCreateListener(new DbManager.TableCreateListener() {

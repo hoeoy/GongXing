@@ -17,6 +17,7 @@
             android:id="@+id/sectionRemark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="摘要"
             android:textColor="@color/text_font_black"
             android:textSize="@dimen/regular14"

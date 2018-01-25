@@ -64,11 +64,19 @@ public class HelpActivity extends AppCompatActivity {
 
         WebSettings webSettings = webView.getSettings();
         webSettings.setDefaultTextEncodingName("UTF-8");
-        webView.loadData("更新2018-1-24：" +
-                        "</br>1 修改查询页颜色不匹配的问题" +
-                        "</br>2 验证一些型号手机无法自动填入验证码" +
-                        "</br>3 增加帮助页面",
-                "text/html; charset=UTF-8", null);
+        StringBuilder detail = new StringBuilder("更新2018-1-24：" +
+                "</br>1 修改查询页颜色不匹配的问题" +
+                "</br>2 验证一些型号手机无法自动填入验证码" +
+                "</br>3 增加帮助页面" +
+                "</br></br>");
+
+        detail.insert(0,"更新2018-1-25：" +
+                "</br>1 修改clientid为topic从而支持接收历史消息" +
+                "</br>2 升级数据库版本号" +
+                "</br>3 调整message格式增加sign从而解决消息内容为null的Bug" +
+                "</br></br>");
+
+        webView.loadData(detail.toString(), "text/html; charset=UTF-8", null);
     }
 
     @Override
