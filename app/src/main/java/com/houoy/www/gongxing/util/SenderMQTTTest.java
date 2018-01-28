@@ -48,8 +48,8 @@ public class SenderMQTTTest {
             Message msg = getMessage("1");
             publish(sampleClient, msg);
 
-            Message msg2 = getMessage("2");
-            publish(sampleClient, msg2);
+//            Message msg2 = getMessage("2");
+//            publish(sampleClient, msg2);
 
             System.out.println("Message published");
             //断开链接

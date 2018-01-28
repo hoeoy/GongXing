@@ -1,0 +1,24 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+        android:key="key_message"
+        android:persistent="true"
+        android:checked="true"
+        android:summary="清除消息缓存"
+        android:summaryOff="本次不清除消息缓存"
+        android:summaryOn="本次清除消息缓存"
+        android:title="消息缓存" />
+
+    <CheckBoxPreference
+        android:key="key_user_cache"
+        android:checked="true"
+        android:persistent="true"
+        android:summary="清除其他缓存"
+        android:summaryOff="本次不清除其他缓存"
+        android:summaryOn="本次清除其他缓存"
+        android:title="其他缓存" />
+
+    <com.houoy.www.gongxing.fragment.CachePreference
+        android:key="key_clean"/>
+
+</PreferenceScreen>

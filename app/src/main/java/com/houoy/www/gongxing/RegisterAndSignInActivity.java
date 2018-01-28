@@ -2,12 +2,10 @@ package com.houoy.www.gongxing;
 
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -18,14 +16,13 @@ import android.widget.Toast;
 
 import com.houoy.www.gongxing.adapter.RegisterAndSignInAdapter;
 import com.houoy.www.gongxing.controller.GongXingController;
-import com.houoy.www.gongxing.dao.GongXingDao;
+import com.houoy.www.gongxing.dao.UserDao;
 import com.houoy.www.gongxing.event.LoginEvent;
 import com.houoy.www.gongxing.event.NetBroadcastReceiver;
 import com.houoy.www.gongxing.event.NetworkChangeEvent;
 import com.houoy.www.gongxing.event.RegisterEvent;
 import com.houoy.www.gongxing.event.SMSContentObserver;
 import com.houoy.www.gongxing.model.ClientInfo;
-import com.houoy.www.gongxing.service.MQTTService;
 import com.houoy.www.gongxing.util.StringUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -59,7 +56,7 @@ public class RegisterAndSignInActivity extends AppCompatActivity implements Radi
     public static final int PAGE_TWO = 1;
     public static final int PAGE_TWO2 = 2;
 
-    private GongXingDao gongXingDao;
+    private UserDao userDao;
     private GongXingController gongXingController;
 
     NetBroadcastReceiver netWorkStateReceiver;
@@ -82,10 +79,8 @@ public class RegisterAndSignInActivity extends AppCompatActivity implements Radi
         bindViews();
         rb_channel.setChecked(true);
         EventBus.getDefault().register(this);
-        gongXingDao = GongXingDao.getInstant();
+        userDao = UserDao.getInstant();
         gongXingController = GongXingController.getInstant();
-
-        trySignin();
     }
 
     @Override
@@ -112,7 +107,7 @@ public class RegisterAndSignInActivity extends AppCompatActivity implements Radi
 
     private void trySignin() {
         try {
-            ClientInfo clientInfo = gongXingDao.findUser();
+            ClientInfo clientInfo = userDao.findUser();
             if (clientInfo != null && !StringUtil.isEmpty(clientInfo.getUserID()) && !StringUtil.isEmpty(clientInfo.getPassword())) {
                 gongXingController.signin(clientInfo.getUserID(), clientInfo.getPassword());
             }
@@ -191,9 +186,7 @@ public class RegisterAndSignInActivity extends AppCompatActivity implements Radi
     public void onLogin(LoginEvent event) {
         Intent intent = new Intent();
         intent.setClass(this, MainActivity.class);
-
-        getApplication().startService(new Intent(getApplicationContext(), MQTTService.class));
-
+//        getApplication().startService(new Intent(getApplicationContext(), MQTTService.class));
         startActivity(intent);
         finish();
     }

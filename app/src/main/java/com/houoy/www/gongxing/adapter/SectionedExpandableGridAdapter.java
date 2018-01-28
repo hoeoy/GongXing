@@ -16,12 +16,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.houoy.www.gongxing.GongXingApplication;
 import com.houoy.www.gongxing.R;
 import com.houoy.www.gongxing.controller.GongXingController;
 import com.houoy.www.gongxing.model.DeviceInfo;
 import com.houoy.www.gongxing.model.OperateButton;
 import com.houoy.www.gongxing.model.ParaInfo;
-import com.houoy.www.gongxing.util.Constants;
 import com.houoy.www.gongxing.util.StringUtil;
 
 import org.xutils.ex.DbException;
@@ -137,7 +137,7 @@ public class SectionedExpandableGridAdapter extends RecyclerView.Adapter<Section
                 holder.text_icon.setText4CircleImage(section.getName().toCharArray()[0] + "");
                 holder.text_date.setText(section.getTime());
                 holder.text_state.setText(section.getState());
-                if (section.getState().equals(Constants.State_normal)) {
+                if (section.getState().equals(GongXingApplication.State_normal)) {
                     holder.text_state.setTextColor(Color.parseColor("#09BB07"));
                 } else {
                     holder.text_state.setTextColor(Color.RED);

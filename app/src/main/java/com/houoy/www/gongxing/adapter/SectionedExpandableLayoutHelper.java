@@ -4,10 +4,10 @@ import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.houoy.www.gongxing.GongXingApplication;
 import com.houoy.www.gongxing.model.DeviceInfo;
-import com.houoy.www.gongxing.model.ParaInfo;
 import com.houoy.www.gongxing.model.Place;
-import com.houoy.www.gongxing.util.Constants;
+import com.houoy.www.gongxing.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,24 +67,25 @@ public class SectionedExpandableLayoutHelper implements SectionStateChangeListen
 
     public void addSection(Place place, List<DeviceInfo> deviceInfos) {
         Section newSection;
-        String state = Constants.State_normal;
-        Integer wnum = 0;
-        for (DeviceInfo deviceInfo : deviceInfos) {
-            if (deviceInfo.getState() != null && deviceInfo.getState().equals(Constants.State_normal)) {
+        String state = GongXingApplication.State_normal;
+        String wnum = place.getAlarmNum();
+//        for (DeviceInfo deviceInfo : deviceInfos) {
+//            if (deviceInfo.getState() != null && deviceInfo.getState().equals(GongXingApplication.State_normal)) {
+//
+//            } else {
+//                wnum++;
+//            }
+//            List<ParaInfo> paraInfos = deviceInfo.getParaInfo();
+//            for (ParaInfo paraInfo : paraInfos) {
+//                if (paraInfo.getParaState() != null && paraInfo.getParaState().getName() != null
+//                        && paraInfo.getParaState().getName().contains(GongXingApplication.State_warningName)) {
+//                    wnum++;
+//                }
+//            }
+//        }
 
-            } else {
-                wnum++;
-            }
-            List<ParaInfo> paraInfos = deviceInfo.getParaInfo();
-            for (ParaInfo paraInfo : paraInfos) {
-                if (paraInfo.getParaState() != null && paraInfo.getParaState().getName() != null
-                        && paraInfo.getParaState().getName().contains(Constants.State_warningName)) {
-                    wnum++;
-                }
-            }
-        }
-        if (wnum > 0) {
-            state = wnum + Constants.State_warning;
+        if (!StringUtil.isEmpty(wnum) && Integer.parseInt(wnum) > 0) {
+            state = Integer.parseInt(wnum) + GongXingApplication.State_warning;
         }
 
         mSectionMap.put(place.getPlaceName(), (newSection = new Section(place.getPlaceName(), place.getTime(), state)));

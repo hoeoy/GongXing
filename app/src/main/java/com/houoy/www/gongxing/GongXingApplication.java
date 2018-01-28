@@ -2,12 +2,13 @@ package com.houoy.www.gongxing;
 
 import android.app.Application;
 
-import com.houoy.www.gongxing.dao.GongXingDao;
+import com.houoy.www.gongxing.dao.DBHelper;
+import com.houoy.www.gongxing.dao.MessagePushDao;
 
 import org.xutils.x;
 
 public class GongXingApplication extends Application {
-    private GongXingDao gongXingDao;
+    private MessagePushDao messagePushDao;
 
     @Override
     public void onCreate() {
@@ -15,10 +16,15 @@ public class GongXingApplication extends Application {
         x.Ext.init(this);//注入view和事件
 //        x.view().inject(this); //使用注解模块一定要注意初始化视图注解框架
 //        Mqtt.getInstance(this).connect();
-
-        gongXingDao = GongXingDao.getInstant();
-        gongXingDao.initDb();
+        DBHelper.initDb();
     }
 
+    public static String url = "http://101.201.67.36:9011/";
+    public static String sign = "dff687bbfd840d3484e2091b09c8c424";
+    public final static String State_normal = "正常";
+    public final static String State_warning = "项异常";
+    public final static String State_warningName = "报警";
+    public final static String DB_Name = "gongxing_db";//本地sqlite数据库名称
+    public final static Integer DB_Version = 5;//数据库版本
 
 }

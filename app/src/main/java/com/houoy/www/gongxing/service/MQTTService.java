@@ -10,12 +10,14 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
@@ -23,7 +25,8 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSON;
 import com.houoy.www.gongxing.MainActivity;
 import com.houoy.www.gongxing.R;
-import com.houoy.www.gongxing.dao.GongXingDao;
+import com.houoy.www.gongxing.dao.MessagePushDao;
+import com.houoy.www.gongxing.dao.UserDao;
 import com.houoy.www.gongxing.model.ClientInfo;
 import com.houoy.www.gongxing.model.Message;
 import com.houoy.www.gongxing.model.MessagePush;
@@ -68,13 +71,16 @@ public class MQTTService extends Service {
     private Notification notify1;
     private static final int NOTIFYID_1 = 1;
     Bitmap LargeBitmap = null;
-    private GongXingDao gongXingDao;
+    private MessagePushDao messagePushDao;
+    private UserDao userDao;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        gongXingDao = GongXingDao.getInstant();
+        messagePushDao = MessagePushDao.getInstant();
+        userDao = UserDao.getInstant();
+
         try {
-            clientInfo = gongXingDao.findUser();
+            clientInfo = userDao.findUser();
             if (clientInfo == null || StringUtil.isEmpty(clientInfo.getTopic())) {
                 Toast.makeText(x.app(), "无法获得用户的Topic，无法接收到推送消息，请尝试清空缓存后重启应用。", Toast.LENGTH_LONG).show();
             }
@@ -127,7 +133,7 @@ public class MQTTService extends Service {
             boolean doConnect = true;
             String message = "{\"terminal_uid\":\"" + clientId + "\"}";
             ClientInfo clientInfo = null;
-            clientInfo = gongXingDao.findUser();
+            clientInfo = userDao.findUser();
             if (clientInfo != null) {
                 String topic = clientInfo.getTopic();
                 if (!StringUtil.isEmpty(topic)) {
@@ -220,11 +226,29 @@ public class MQTTService extends Service {
 
                     EventBus.getDefault().post(msg);
 
-                    gongXingDao.addMessagePush(msg);
+                    messagePushDao.addMessagePush(msg);
 
                     //定义一个PendingIntent点击Notification后启动一个Activity
                     Intent it = new Intent(getBaseContext(), MainActivity.class);
                     PendingIntent pit = PendingIntent.getActivity(getBaseContext(), 0, it, 0);
+
+
+                    //设置图片,通知标题,发送时间,提示方式等属性
+//                    Notification.Builder mBuilder = new Notification.Builder(getBaseContext());
+//                    mBuilder.setContentTitle(msg.getTitle_value())                        //标题
+//                            .setContentText(msg.getRemark_value())      //内容
+//                            .setSubText(DateUtil.getNowDateTimeShanghai())                    //内容下面的一小段文字
+//                            .setTicker(ticker)             //收到信息后状态栏显示的文字信息
+//                            .setWhen(System.currentTimeMillis())           //设置通知时间
+//                            .setSmallIcon(R.drawable.ic_menu_send)            //设置小图标
+//                            .setLargeIcon(LargeBitmap)                     //设置大图标
+//                            .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)    //设置默认的三色灯与振动器
+//                            .setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.biaobiao))  //设置自定义的提示音
+//                            .setAutoCancel(true)                           //设置点击后取消Notification
+//                            .setContentIntent(pit);                        //设置PendingIntent
+//                    notify1 = mBuilder.build();
+//                    mNManager.notify(NOTIFYID_1, notify1);
+
 
                     //设置图片,通知标题,发送时间,提示方式等属性
                     Notification.Builder mBuilder = new Notification.Builder(getBaseContext());
@@ -235,10 +259,37 @@ public class MQTTService extends Service {
                             .setWhen(System.currentTimeMillis())           //设置通知时间
                             .setSmallIcon(R.drawable.ic_menu_send)            //设置小图标
                             .setLargeIcon(LargeBitmap)                     //设置大图标
-                            .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)    //设置默认的三色灯与振动器
-                            .setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.biaobiao))  //设置自定义的提示音
                             .setAutoCancel(true)                           //设置点击后取消Notification
                             .setContentIntent(pit);                        //设置PendingIntent
+
+
+                    SharedPreferences mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+//                    Map mpsq = mySharedPreferences.getAll();
+                    Boolean isOpen = mySharedPreferences.getBoolean("notifications_new_message", true);
+                    Boolean vibrate = mySharedPreferences.getBoolean("notifications_new_message_vibrate", true);
+                    String ringtoneStr = mySharedPreferences.getString("notifications_new_message_ringtone", "");
+                    if (isOpen) {
+                        if (vibrate && StringUtil.isEmpty(ringtoneStr)) {//默认为系统声音
+                            mBuilder.setDefaults(Notification.DEFAULT_LIGHTS |
+                                    Notification.DEFAULT_VIBRATE);
+//                                    | Notification.DEFAULT_SOUND);    //设置默认的三色灯与振动器与声音
+                        } else if (!vibrate && !StringUtil.isEmpty(ringtoneStr)) {//只声音
+                            mBuilder.setDefaults(Notification.DEFAULT_LIGHTS);    //设置默认的三色灯
+//                            Ringtone ringtone = RingtoneManager.getRingtone(
+//                                    preference.getContext(), Uri.parse(stringValue));
+                            mBuilder.setSound(Uri.parse(ringtoneStr));
+//                            mBuilder.setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.biaobiao));  //设置自定义的提示音
+                        } else if (vibrate && !StringUtil.isEmpty(ringtoneStr)) {//震动和声音
+                            mBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);    //设置默认的三色灯与振动器
+                            mBuilder.setSound(Uri.parse(ringtoneStr));
+//                            mBuilder.setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.biaobiao));  //设置自定义的提示音
+                        } else {
+
+                        }
+                    } else {
+
+                    }
+
                     notify1 = mBuilder.build();
                     mNManager.notify(NOTIFYID_1, notify1);
                 } else {

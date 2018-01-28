@@ -23,11 +23,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.houoy.www.gongxing.controller.GongXingController;
-import com.houoy.www.gongxing.dao.GongXingDao;
+import com.houoy.www.gongxing.dao.UserDao;
 import com.houoy.www.gongxing.event.LogoutEvent;
 import com.houoy.www.gongxing.fragment.MessageFragment;
 import com.houoy.www.gongxing.fragment.SearchFragment;
 import com.houoy.www.gongxing.model.ClientInfo;
+import com.houoy.www.gongxing.service.MQTTService;
 import com.houoy.www.gongxing.util.ImageUtil;
 import com.houoy.www.gongxing.util.StringUtil;
 
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private Context mContext;
     private long exitTime = 0;
-    private GongXingDao gongXingDao;
+    private UserDao userDao;
     private GongXingController gongXingController;
 
     @Override
@@ -79,9 +80,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         x.view().inject(this);
         EventBus.getDefault().register(this);
 
+        getApplication().startService(new Intent(getApplicationContext(), MQTTService.class));//启动service
+
         setSupportActionBar(toolbar);
         mContext = this;
-        gongXingDao = GongXingDao.getInstant();
+        userDao = UserDao.getInstant();
         gongXingController = GongXingController.getInstant();
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
@@ -107,15 +110,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         txt_channel.performClick();   //模拟一次点击，既进去后选择第一项
 
         try {
-            ClientInfo clientInfo = gongXingDao.findUser();
-            if(clientInfo != null){
+            ClientInfo clientInfo = userDao.findUser();
+            if (clientInfo != null) {
 //                View headerLayout = navigationView.getHeaderView(R.layout.nav_header_main);
                 View headerLayout = navigationView.getHeaderView(0);
                 ImageView nav_head_portal = (ImageView) headerLayout.findViewById(R.id.nav_head_portal);
                 TextView nav_head_person_name = (TextView) headerLayout.findViewById(R.id.nav_head_person_name);
 
-                if(!StringUtil.isEmpty(clientInfo.getHeadimgurl())){
-                    ImageUtil.setImageToImageView(nav_head_portal,clientInfo.getHeadimgurl());
+                if (!StringUtil.isEmpty(clientInfo.getHeadimgurl())) {
+                    ImageUtil.setImageToImageView(nav_head_portal, clientInfo.getHeadimgurl());
                 }
                 nav_head_person_name.setText(clientInfo.getName());
                 Menu menu = navigationView.getMenu();
@@ -126,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 menu.getItem(2).setTitle(clientInfo.getIDCode());
             }
         } catch (DbException e) {
-            Log.e(e.getMessage(),e.getLocalizedMessage());
+            Log.e(e.getMessage(), e.getLocalizedMessage());
         }
     }
 
@@ -168,17 +171,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 this.startActivity(Intent.createChooser(intent, "躬行监控"));
                 break;
-            case R.id.clear_cache:
-                try {
-                    gongXingDao.clearMessagePush();
-                    Toast.makeText(getApplicationContext(), "清除缓存成功", Toast.LENGTH_SHORT).show();
-                } catch (DbException e) {
-                    e.printStackTrace();
-                }
-                break;
             case R.id.help:
                 Intent intent1 = new Intent(MainActivity.this, HelpActivity.class);
                 startActivity(intent1);
+                break;
+            case R.id.clear_setting:
+                Intent intent2 = new Intent(MainActivity.this, SettingActivity.class);
+                startActivity(intent2);
                 break;
         }
 

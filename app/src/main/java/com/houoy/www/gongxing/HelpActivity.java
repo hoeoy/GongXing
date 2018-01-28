@@ -70,12 +70,29 @@ public class HelpActivity extends AppCompatActivity {
                 "</br>3 增加帮助页面" +
                 "</br></br>");
 
-        detail.insert(0,"更新2018-1-25：" +
+        detail.insert(0, "更新2018-1-25：" +
                 "</br>1 修改clientid为topic从而支持接收历史消息" +
                 "</br>2 升级数据库版本号" +
                 "</br>3 调整message格式增加sign从而解决消息内容为null的Bug" +
                 "</br></br>");
 
+        detail.insert(0, "更新2018-1-26：" +
+                "</br>1 解决查询页的报警数量不准确的bug" +
+                "</br>2 升级数据库版本号" +
+                "</br>3 将清楚缓存按钮移动到设置页面，增加清楚缓存界面" +
+                "</br></br>");
+
+        detail.insert(0, "更新2018-1-27：" +
+                "</br>1 设置页面增加消息通知设置功能" +
+                "</br>2 升级数据库版本号" +
+                "</br>3 提示音跟随系统或自定义" +
+                "</br></br>");
+
+        detail.insert(0, "更新2018-1-28：" +
+                "</br>1 增加splash页面" +
+                "</br>2 升级数据库版本号" +
+                "</br>3 提示音跟随系统或自定义" +
+                "</br></br>");
         webView.loadData(detail.toString(), "text/html; charset=UTF-8", null);
     }
 

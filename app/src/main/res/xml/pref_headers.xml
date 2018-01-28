@@ -1,0 +1,16 @@
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- These settings headers are only used on tablets. -->
+    <!--<header-->
+        <!--android:fragment="com.houoy.www.gongxing.SettingActivity$HelpPreferenceFragment"-->
+        <!--android:icon="@drawable/ic_help_black_24dp"-->
+        <!--android:title="@string/help" />-->
+    <header
+        android:fragment="com.houoy.www.gongxing.SettingActivity$NotificationPreferenceFragment"
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="@string/pref_header_notifications" />
+    <header
+        android:fragment="com.houoy.www.gongxing.SettingActivity$CachePreferenceFragment"
+        android:icon="@drawable/ic_info_black_24dp"
+        android:title="@string/clear_cache" />
+</preference-headers>

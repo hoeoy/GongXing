@@ -12,9 +12,9 @@
         android:title="@string/help"
         app:showAsAction="never" />
     <item
-        android:id="@+id/clear_cache"
+        android:id="@+id/clear_setting"
         android:orderInCategory="100"
-        android:title="@string/clear_cache"
+        android:title="@string/action_setting"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_out"

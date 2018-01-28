@@ -2,7 +2,6 @@ package com.houoy.www.gongxing.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -15,7 +14,7 @@ import android.widget.TextView;
 
 import com.houoy.www.gongxing.MessageDetailActivity;
 import com.houoy.www.gongxing.R;
-import com.houoy.www.gongxing.dao.GongXingDao;
+import com.houoy.www.gongxing.dao.MessagePushDao;
 import com.houoy.www.gongxing.model.MessagePush;
 
 import org.xutils.ex.DbException;
@@ -39,19 +38,19 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public static final int LOADING_MORE = 1;
     //没有更多数据了
     public static final int NO_MORE_DATA = 2;
-    private GongXingDao gongXingDao;
+    private MessagePushDao messagePushDao;
 
     private Integer limit = 10;
 
     public MessageListAdapter(Context context) {
         this.context = context;
-        gongXingDao = GongXingDao.getInstant();
+        messagePushDao = MessagePushDao.getInstant();
         initData(0);
     }
 
     public void initData(int start) {
         try {
-            messagePushes = gongXingDao.findMessagePush(start, limit);
+            messagePushes = messagePushDao.findMessagePush(start, limit);
             if (messagePushes == null) {
                 messagePushes = new ArrayList();
             }
@@ -62,7 +61,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public void pushData(int start) {
         try {
-            List<MessagePush> tempMessages = gongXingDao.findMessagePush(start, limit);
+            List<MessagePush> tempMessages = messagePushDao.findMessagePush(start, limit);
             if (messagePushes == null) {
                 messagePushes = new ArrayList();
             }

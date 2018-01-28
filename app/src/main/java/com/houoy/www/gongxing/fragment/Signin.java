@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import com.houoy.www.gongxing.R;
 import com.houoy.www.gongxing.controller.GongXingController;
-import com.houoy.www.gongxing.dao.GongXingDao;
+import com.houoy.www.gongxing.dao.MessagePushDao;
 import com.houoy.www.gongxing.element.ClearEditText;
 import com.houoy.www.gongxing.util.StringUtil;
 
@@ -30,7 +30,7 @@ public class Signin extends Fragment {
     private ClearEditText etxtEmail;
     @ViewInject(R.id.etxtPwd)
     private ClearEditText etxtPwd;
-    private GongXingDao gongXingDao;
+    private MessagePushDao messagePushDao;
     private GongXingController gongXingController;
 
     @Override
@@ -47,7 +47,7 @@ public class Signin extends Fragment {
         if (!injected) {
             x.view().inject(this, this.getView());
         }
-        gongXingDao = GongXingDao.getInstant();
+        messagePushDao = MessagePushDao.getInstant();
         gongXingController = GongXingController.getInstant();
     }
 
