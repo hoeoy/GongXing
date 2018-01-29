@@ -90,9 +90,22 @@ public class HelpActivity extends AppCompatActivity {
 
         detail.insert(0, "更新2018-1-28：" +
                 "</br>1 增加splash页面" +
-                "</br>2 升级数据库版本号" +
-                "</br>3 提示音跟随系统或自定义" +
+                "</br>2 消息页面显示时间" +
+                "</br>3 清空缓存后发送事件，清空消息页面的数据" +
                 "</br></br>");
+
+        detail.insert(0, "更新2018-1-29：" +
+                "</br>1 更新本地sqlite版本" +
+                "</br>2 查询页面：只有一个区域则默认展开。多个区域展开所有报警状态的。" +
+                "</br>3 报警消息确认收到之后按钮状态改变" +
+                "</br></br>");
+
+        detail.insert(0, "TODO:更新2018-1-30：" +
+                "</br>1 支持单条通知定位到第一条" +
+                "</br>2 点击顶部推送的消息进入APP后，消息列表直接定位到点击的那个消息" +
+                "</br>3 " +
+                "</br></br>");
+
         webView.loadData(detail.toString(), "text/html; charset=UTF-8", null);
     }
 

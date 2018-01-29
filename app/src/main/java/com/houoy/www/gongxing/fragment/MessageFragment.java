@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.houoy.www.gongxing.R;
 import com.houoy.www.gongxing.adapter.MessageListAdapter;
+import com.houoy.www.gongxing.event.RefreshMessageEvent;
 import com.houoy.www.gongxing.model.MessagePush;
 
 import org.greenrobot.eventbus.EventBus;
@@ -79,6 +80,13 @@ public class MessageFragment extends Fragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getMqttMessage(MessagePush messagePush) {
         Toast.makeText(adapter.context, "收到消息:" + messagePush.getTitle_value(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void refresh(RefreshMessageEvent refreshMessageEvent) {
+        adapter.initData(0);
+        swiperefreshlayout.setRefreshing(false);
+        adapter.notifyDataSetChanged();
     }
 
     @Override

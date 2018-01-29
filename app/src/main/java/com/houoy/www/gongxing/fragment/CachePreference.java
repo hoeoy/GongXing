@@ -14,7 +14,9 @@ import android.widget.Toast;
 
 import com.houoy.www.gongxing.R;
 import com.houoy.www.gongxing.dao.MessagePushDao;
+import com.houoy.www.gongxing.event.RefreshMessageEvent;
 
+import org.greenrobot.eventbus.EventBus;
 import org.xutils.ex.DbException;
 
 /**
@@ -51,9 +53,10 @@ public class CachePreference extends Preference {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         try {
-                            if(bm){
+                            if (bm) {
                                 messagePushDao.clearMessagePush();
                             }
+                            EventBus.getDefault().post(new RefreshMessageEvent("", ""));
                             Toast.makeText(mContext, "清除缓存成功", Toast.LENGTH_SHORT).show();
                         } catch (DbException e) {
                             e.printStackTrace();

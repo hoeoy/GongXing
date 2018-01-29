@@ -3,6 +3,7 @@ package com.houoy.www.gongxing.adapter;
 import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.houoy.www.gongxing.GongXingApplication;
 import com.houoy.www.gongxing.model.DeviceInfo;
@@ -55,6 +56,7 @@ public class SectionedExpandableLayoutHelper implements SectionStateChangeListen
         generateDataList();
         mSectionedExpandableGridAdapter.setFooter(footer);
         mSectionedExpandableGridAdapter.notifyDataSetChanged();
+//        mRecyclerView.smoothScrollToPosition(1);
     }
 
     public void addItem(String section, DeviceInfo item) {
@@ -69,26 +71,12 @@ public class SectionedExpandableLayoutHelper implements SectionStateChangeListen
         Section newSection;
         String state = GongXingApplication.State_normal;
         String wnum = place.getAlarmNum();
-//        for (DeviceInfo deviceInfo : deviceInfos) {
-//            if (deviceInfo.getState() != null && deviceInfo.getState().equals(GongXingApplication.State_normal)) {
-//
-//            } else {
-//                wnum++;
-//            }
-//            List<ParaInfo> paraInfos = deviceInfo.getParaInfo();
-//            for (ParaInfo paraInfo : paraInfos) {
-//                if (paraInfo.getParaState() != null && paraInfo.getParaState().getName() != null
-//                        && paraInfo.getParaState().getName().contains(GongXingApplication.State_warningName)) {
-//                    wnum++;
-//                }
-//            }
-//        }
-
         if (!StringUtil.isEmpty(wnum) && Integer.parseInt(wnum) > 0) {
             state = Integer.parseInt(wnum) + GongXingApplication.State_warning;
+            place.setIsExpanded(true);
         }
 
-        mSectionMap.put(place.getPlaceName(), (newSection = new Section(place.getPlaceName(), place.getTime(), state)));
+        mSectionMap.put(place.getPlaceName(), (newSection = new Section(place.getPlaceName(), place.getTime(), state,place.getIsExpanded())));
         mSectionDataMap.put(newSection, deviceInfos);
     }
 

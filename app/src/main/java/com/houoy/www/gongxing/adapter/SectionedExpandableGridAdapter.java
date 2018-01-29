@@ -86,7 +86,6 @@ public class SectionedExpandableGridAdapter extends RecyclerView.Adapter<Section
         return new ViewHolder(LayoutInflater.from(mContext).inflate(viewType, parent, false), viewType);
     }
 
-
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         switch (holder.viewType) {
@@ -211,8 +210,12 @@ public class SectionedExpandableGridAdapter extends RecyclerView.Adapter<Section
                     }
                 } else {
                     holder.sectionFooterLayout.setVisibility(View.GONE);
+
                     holder.cardView.setVisibility(View.GONE);
                 }
+
+                //
+
                 break;
         }
     }

@@ -20,4 +20,7 @@ public class Place implements Serializable {
     private String Time;
     private String Remark;
     private List<DeviceInfo> DeviceInfo;
+
+    //前端冗余字段
+    public Boolean isExpanded = false;
 }

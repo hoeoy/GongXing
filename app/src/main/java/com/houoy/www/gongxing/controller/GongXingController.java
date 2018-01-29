@@ -272,7 +272,8 @@ public class GongXingController {
     public void affirmOperate(ClientInfo clientInfo) throws DbException {
         String url = GongXingApplication.url + "/CloudWeChatPlatServer/AffirmOperate";
         Map<String, String> params = new HashMap();
-        params.put("touser", clientInfo.getOpenid());
+        ClientInfo user = userDao.findUser();
+        params.put("touser", user.getOpenid());
         params.put("RelationID", clientInfo.getRelationID());
         RequestVO requestVO = new RequestVO(GongXingApplication.sign, params);
         String paramStr = JSON.toJSONString(requestVO);
@@ -280,14 +281,13 @@ public class GongXingController {
         XUtil.Post(url, paramStr, new XUtilCallBack<String>() {
             @Override
             public void onSuccess(String result) {
-//                ResultVO<Data> resultVO = JSON.parseObject(result, new TypeReference<ResultVO<Data>>(){});
-//                if (resultVO.getCode().equals("success")) {
-//                    EventBus.getDefault().post(new SearchDailyMessageDataEvent("data", resultVO.getData()));
-//                } else {
-//                    Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_LONG).show();
-//                }
-
-                EventBus.getDefault().post(new AffirmOperateEvent("data", ""));
+                ResultVO<Data> resultVO = JSON.parseObject(result, new TypeReference<ResultVO<Data>>() {
+                });
+                if (resultVO.getCode().equals("success")) {
+                    EventBus.getDefault().post(new AffirmOperateEvent("data", ""));
+                } else {
+                    Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_LONG).show();
+                }
             }
         });
     }

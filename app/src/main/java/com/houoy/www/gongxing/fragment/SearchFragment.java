@@ -93,7 +93,6 @@ public class SearchFragment extends Fragment implements ItemClickListener {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onData(SearchMessageDataEvent event) {
-        searchSwipeRefreshLayout.setRefreshing(false);
         Data data = (Data) event.getData();
         if (data == null) {
 
@@ -102,8 +101,20 @@ public class SearchFragment extends Fragment implements ItemClickListener {
             sectionedExpandableLayoutHelper.clearData();
             //重新加载
             List<Place> places = data.getDataPart().getPlace();
-            for (Place place : places) {
-                sectionedExpandableLayoutHelper.addSection(place, place.getDeviceInfo());
+            if (places != null) {
+                if (places.size() == 1) {
+                    Place place = places.get(0);
+                    place.setIsExpanded(true);//只有一个区域，默认展开
+                    sectionedExpandableLayoutHelper.addSection(place, place.getDeviceInfo());
+                } else if (places.size() > 1) {
+                    for (Place place : places) {//有多个区域的话，只展开所有报警的。
+                        sectionedExpandableLayoutHelper.addSection(place, place.getDeviceInfo());
+                    }
+                } else {//为0
+
+                }
+            } else {
+
             }
 
             SectiondFooter sectiondFooter = new SectiondFooter();
@@ -114,7 +125,8 @@ public class SearchFragment extends Fragment implements ItemClickListener {
             sectionedExpandableLayoutHelper.setFooter(sectiondFooter);
 
             sectionedExpandableLayoutHelper.notifyDataSetChanged();
-        }
+        }searchSwipeRefreshLayout.setRefreshing(false);
+
     }
 
     @Override
@@ -127,4 +139,7 @@ public class SearchFragment extends Fragment implements ItemClickListener {
         section.isExpanded = !section.isExpanded;
         sectionedExpandableLayoutHelper.onSectionStateChanged(section, section.isExpanded);
     }
+
+
+
 }

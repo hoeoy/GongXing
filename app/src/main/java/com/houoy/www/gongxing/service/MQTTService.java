@@ -45,6 +45,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.xutils.ex.DbException;
 import org.xutils.x;
 
+import java.util.Date;
+import java.util.Random;
+
 /**
  * MQTT长连接服务
  *
@@ -223,7 +226,7 @@ public class MQTTService extends Service {
                         msg.setType("1");
                         ticker = "收到躬行监控的日报消息";
                     }
-
+                    msg.setTime(DateUtil.getNowDateTimeShanghai());
                     EventBus.getDefault().post(msg);
 
                     messagePushDao.addMessagePush(msg);
@@ -231,23 +234,6 @@ public class MQTTService extends Service {
                     //定义一个PendingIntent点击Notification后启动一个Activity
                     Intent it = new Intent(getBaseContext(), MainActivity.class);
                     PendingIntent pit = PendingIntent.getActivity(getBaseContext(), 0, it, 0);
-
-
-                    //设置图片,通知标题,发送时间,提示方式等属性
-//                    Notification.Builder mBuilder = new Notification.Builder(getBaseContext());
-//                    mBuilder.setContentTitle(msg.getTitle_value())                        //标题
-//                            .setContentText(msg.getRemark_value())      //内容
-//                            .setSubText(DateUtil.getNowDateTimeShanghai())                    //内容下面的一小段文字
-//                            .setTicker(ticker)             //收到信息后状态栏显示的文字信息
-//                            .setWhen(System.currentTimeMillis())           //设置通知时间
-//                            .setSmallIcon(R.drawable.ic_menu_send)            //设置小图标
-//                            .setLargeIcon(LargeBitmap)                     //设置大图标
-//                            .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)    //设置默认的三色灯与振动器
-//                            .setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.biaobiao))  //设置自定义的提示音
-//                            .setAutoCancel(true)                           //设置点击后取消Notification
-//                            .setContentIntent(pit);                        //设置PendingIntent
-//                    notify1 = mBuilder.build();
-//                    mNManager.notify(NOTIFYID_1, notify1);
 
 
                     //设置图片,通知标题,发送时间,提示方式等属性
@@ -291,7 +277,7 @@ public class MQTTService extends Service {
                     }
 
                     notify1 = mBuilder.build();
-                    mNManager.notify(NOTIFYID_1, notify1);
+                    mNManager.notify(NOTIFYID_1+ new Random().nextInt(), notify1);
                 } else {
 
                 }

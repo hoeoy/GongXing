@@ -105,13 +105,34 @@ public class MessageDetailActivity extends AppCompatActivity implements ItemClic
         if (data == null) {
 
         } else {
+//            //清空数据
+//            sectionedExpandableLayoutHelper.clearData();
+//            //重新加载
+//            List<Place> places = data.getDataPart().getPlace();
+//            for (Place place : places) {
+//                sectionedExpandableLayoutHelper.addSection(place, place.getDeviceInfo());
+//            }
+
             //清空数据
             sectionedExpandableLayoutHelper.clearData();
             //重新加载
             List<Place> places = data.getDataPart().getPlace();
-            for (Place place : places) {
-                sectionedExpandableLayoutHelper.addSection(place, place.getDeviceInfo());
+            if (places != null) {
+                if (places.size() == 1) {
+                    Place place = places.get(0);
+                    place.setIsExpanded(true);//只有一个区域，默认展开
+                    sectionedExpandableLayoutHelper.addSection(place, place.getDeviceInfo());
+                } else if (places.size() > 1) {
+                    for (Place place : places) {//有多个区域的话，只展开所有报警的。
+                        sectionedExpandableLayoutHelper.addSection(place, place.getDeviceInfo());
+                    }
+                } else {//为0
+
+                }
+            } else {
+
             }
+
             SectiondFooter sectiondFooter = new SectiondFooter();
             sectiondFooter.setOperatePart(data.getOperatePart());
             sectiondFooter.setRemarkPart(data.getRemarkPart());
