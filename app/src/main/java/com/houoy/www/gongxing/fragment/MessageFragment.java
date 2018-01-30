@@ -50,9 +50,10 @@ public class MessageFragment extends Fragment {
         swiperefreshlayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                adapter.initData(0);
-                swiperefreshlayout.setRefreshing(false);
-                Toast.makeText(container.getContext(), "获取消息成功", Toast.LENGTH_SHORT).show();
+                refresh(null);
+//                adapter.initData(0);
+//                swiperefreshlayout.setRefreshing(false);
+//                Toast.makeText(container.getContext(), "获取消息成功", Toast.LENGTH_SHORT).show();
             }
         });
 

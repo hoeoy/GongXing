@@ -130,6 +130,7 @@ public class MQTTService extends Service {
             conOpt.setUserName(userName);
             // 密码
             conOpt.setPassword(passWord.toCharArray());
+            conOpt.setAutomaticReconnect(true);
 
             // last will message
             boolean doConnect = true;
@@ -193,7 +194,8 @@ public class MQTTService extends Service {
             Log.i(TAG, "连接成功 ");
             try {
                 // 订阅myTopic话题
-                client.subscribe(clientInfo.getTopic(), 1);
+//                client.subscribe(clientInfo.getTopic(), 1);
+                client.subscribe(clientInfo.getTopic(),2);//只接受一次,确定到达
             } catch (MqttException e) {
                 e.printStackTrace();
             }
