@@ -131,6 +131,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } catch (DbException e) {
             Log.e(e.getMessage(), e.getLocalizedMessage());
         }
+
+        //删除上一个mainActivity
+        GongXingApplication application = (GongXingApplication) getApplication();
+        if (application.getLastMainActivity() != null) {
+            application.getLastMainActivity().finish();
+        }
+
+        application.setLastMainActivity(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -199,11 +212,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
     }
 
     @Override

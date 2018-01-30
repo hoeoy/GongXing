@@ -14,6 +14,7 @@
         android:foreground="?android:attr/selectableItemBackground"
         app:cardCornerRadius="3dp">
 
+        <!--报警-->
         <android.support.constraint.ConstraintLayout
             android:id="@+id/constraintLayout1"
             android:layout_width="match_parent"
@@ -145,10 +146,10 @@
                 android:id="@+id/remarkname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
                 android:gravity="left"
                 android:text="报警摘要："
                 android:textColor="@color/text_font_black"
+                android:visibility="gone"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/current_parameter" />
 
@@ -170,11 +171,12 @@
                 android:gravity="left"
                 android:paddingTop="@dimen/text_margin"
                 android:text="报警详细"
-                android:textColor="#7AD3E0"
+                android:textColor="@color/colorAccent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/remark" />
         </android.support.constraint.ConstraintLayout>
 
+        <!--日报-->
         <android.support.constraint.ConstraintLayout
             android:id="@+id/constraintLayout2"
             android:layout_width="match_parent"
@@ -286,10 +288,10 @@
                 android:id="@+id/remarkname2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
                 android:gravity="left"
                 android:text="报警摘要："
                 android:textColor="@color/text_font_black"
+                android:visibility="gone"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/alarm_num_value" />
 

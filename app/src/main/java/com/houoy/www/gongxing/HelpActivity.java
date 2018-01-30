@@ -103,7 +103,7 @@ public class HelpActivity extends AppCompatActivity {
         detail.insert(0, "TODO:更新2018-1-30：" +
                 "</br>1 支持单条通知定位到第一条" +
                 "</br>2 点击顶部推送的消息进入APP后，消息列表直接定位到点击的那个消息" +
-                "</br>3 " +
+                "</br>3 使用多线程处理mqtt消息" +
                 "</br></br>");
 
         webView.loadData(detail.toString(), "text/html; charset=UTF-8", null);

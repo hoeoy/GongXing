@@ -45,7 +45,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.xutils.ex.DbException;
 import org.xutils.x;
 
-import java.util.Date;
 import java.util.Random;
 
 /**
@@ -211,79 +210,89 @@ public class MQTTService extends Service {
     private MqttCallback mqttCallback = new MqttCallback() {
 
         @Override
-        public void messageArrived(String topic, MqttMessage message) throws Exception {
+        public void messageArrived(String topic, final MqttMessage message) throws Exception {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    String str1 = new String(message.getPayload());
+                    Message msgg = JSON.parseObject(str1, Message.class);
+                    if (msgg != null) {
+                        MessagePush msg = msgg.getParams();
+                        String ticker = "";
+                        if (msg != null) {
+                            if (msg.getRule_name_value() != null) {//报警类型属性
+                                msg.setType("2");
+                                ticker = "收到报警消息";
+                            } else {//日报类型属性
+                                msg.setType("1");
+                                ticker = "收到躬行监控的日报消息";
+                            }
+                            msg.setTime(DateUtil.getNowDateTimeShanghai());
+                            EventBus.getDefault().post(msg);
 
-            String str1 = new String(message.getPayload());
-            Message msgg = JSON.parseObject(str1, Message.class);
-            if (msgg != null) {
-                MessagePush msg = msgg.getParams();
-                String ticker = "";
-                if (msg != null) {
-                    if (msg.getRule_name_value() != null) {//报警类型属性
-                        msg.setType("2");
-                        ticker = "收到报警消息";
-                    } else {//日报类型属性
-                        msg.setType("1");
-                        ticker = "收到躬行监控的日报消息";
-                    }
-                    msg.setTime(DateUtil.getNowDateTimeShanghai());
-                    EventBus.getDefault().post(msg);
-
-                    messagePushDao.addMessagePush(msg);
-
-                    //定义一个PendingIntent点击Notification后启动一个Activity
-                    Intent it = new Intent(getBaseContext(), MainActivity.class);
-                    PendingIntent pit = PendingIntent.getActivity(getBaseContext(), 0, it, 0);
-
-
-                    //设置图片,通知标题,发送时间,提示方式等属性
-                    Notification.Builder mBuilder = new Notification.Builder(getBaseContext());
-                    mBuilder.setContentTitle(msg.getTitle_value())                        //标题
-                            .setContentText(msg.getRemark_value())      //内容
-                            .setSubText(DateUtil.getNowDateTimeShanghai())                    //内容下面的一小段文字
-                            .setTicker(ticker)             //收到信息后状态栏显示的文字信息
-                            .setWhen(System.currentTimeMillis())           //设置通知时间
-                            .setSmallIcon(R.drawable.ic_menu_send)            //设置小图标
-                            .setLargeIcon(LargeBitmap)                     //设置大图标
-                            .setAutoCancel(true)                           //设置点击后取消Notification
-                            .setContentIntent(pit);                        //设置PendingIntent
+                            try {
+                                messagePushDao.addMessagePush(msg);
+                                //定义一个PendingIntent点击Notification后启动一个Activity
+                                Intent it = new Intent(getBaseContext(), MainActivity.class);
+//                    it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);//应用内只保留一个mainActivity
+                                PendingIntent pit = PendingIntent.getActivity(getBaseContext(), 0, it, 0);
 
 
-                    SharedPreferences mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                                //设置图片,通知标题,发送时间,提示方式等属性
+                                Notification.Builder mBuilder = new Notification.Builder(getBaseContext());
+                                mBuilder.setContentTitle(msg.getTitle_value())                        //标题
+                                        .setContentText(msg.getRemark_value())      //内容
+                                        .setSubText(DateUtil.getNowDateTimeShanghai())                    //内容下面的一小段文字
+                                        .setTicker(ticker)             //收到信息后状态栏显示的文字信息
+                                        .setWhen(System.currentTimeMillis())           //设置通知时间
+                                        .setSmallIcon(R.drawable.ic_menu_send)            //设置小图标
+                                        .setLargeIcon(LargeBitmap)                     //设置大图标
+                                        .setAutoCancel(true)                           //设置点击后取消Notification
+                                        .setContentIntent(pit);                        //设置PendingIntent
+
+
+                                SharedPreferences mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 //                    Map mpsq = mySharedPreferences.getAll();
-                    Boolean isOpen = mySharedPreferences.getBoolean("notifications_new_message", true);
-                    Boolean vibrate = mySharedPreferences.getBoolean("notifications_new_message_vibrate", true);
-                    String ringtoneStr = mySharedPreferences.getString("notifications_new_message_ringtone", "");
-                    if (isOpen) {
-                        if (vibrate && StringUtil.isEmpty(ringtoneStr)) {//默认为系统声音
-                            mBuilder.setDefaults(Notification.DEFAULT_LIGHTS |
-                                    Notification.DEFAULT_VIBRATE);
+                                Boolean isOpen = mySharedPreferences.getBoolean("notifications_new_message", true);
+                                Boolean vibrate = mySharedPreferences.getBoolean("notifications_new_message_vibrate", true);
+                                String ringtoneStr = mySharedPreferences.getString("notifications_new_message_ringtone", "");
+                                if (isOpen) {
+                                    if (vibrate && StringUtil.isEmpty(ringtoneStr)) {//默认为系统声音
+                                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS |
+                                                Notification.DEFAULT_VIBRATE);
 //                                    | Notification.DEFAULT_SOUND);    //设置默认的三色灯与振动器与声音
-                        } else if (!vibrate && !StringUtil.isEmpty(ringtoneStr)) {//只声音
-                            mBuilder.setDefaults(Notification.DEFAULT_LIGHTS);    //设置默认的三色灯
+                                    } else if (!vibrate && !StringUtil.isEmpty(ringtoneStr)) {//只声音
+                                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS);    //设置默认的三色灯
 //                            Ringtone ringtone = RingtoneManager.getRingtone(
 //                                    preference.getContext(), Uri.parse(stringValue));
-                            mBuilder.setSound(Uri.parse(ringtoneStr));
+                                        mBuilder.setSound(Uri.parse(ringtoneStr));
 //                            mBuilder.setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.biaobiao));  //设置自定义的提示音
-                        } else if (vibrate && !StringUtil.isEmpty(ringtoneStr)) {//震动和声音
-                            mBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);    //设置默认的三色灯与振动器
-                            mBuilder.setSound(Uri.parse(ringtoneStr));
+                                    } else if (vibrate && !StringUtil.isEmpty(ringtoneStr)) {//震动和声音
+                                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);    //设置默认的三色灯与振动器
+                                        mBuilder.setSound(Uri.parse(ringtoneStr));
 //                            mBuilder.setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.biaobiao));  //设置自定义的提示音
+                                    } else {
+
+                                    }
+                                } else {
+
+                                }
+
+                                notify1 = mBuilder.build();
+//                                mNManager.notify(NOTIFYID_1 + new Random().nextInt(), notify1);
+                                mNManager.notify(NOTIFYID_1, notify1);
+                            } catch (DbException e) {
+                                e.printStackTrace();
+                                Log.e(e.getMessage(), e.getLocalizedMessage());
+                            }
                         } else {
 
                         }
                     } else {
 
                     }
-
-                    notify1 = mBuilder.build();
-                    mNManager.notify(NOTIFYID_1+ new Random().nextInt(), notify1);
-                } else {
-
                 }
-            } else {
-
-            }
+            }).start();
         }
 
         @Override
