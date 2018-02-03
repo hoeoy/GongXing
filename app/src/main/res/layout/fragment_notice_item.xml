@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:padding="5dp">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardCornerRadius="3dp">
+
+        <!--日报-->
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/constraintLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/fab_margin">
+
+            <TextView
+                android:id="@+id/title_value2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="title"
+                android:textColor="@color/text_font_black"
+                android:textSize="@dimen/regular17"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/date2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:paddingBottom="@dimen/text_margin"
+                android:text="date"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/title_value2" />
+
+            <TextView
+                android:id="@+id/temperaturevalue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="当前温度："
+                android:textColor="@color/text_font_black"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/date2" />
+
+            <TextView
+                android:id="@+id/temperature_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="当前温度"
+                android:textColor="@color/text_font_black"
+                app:layout_constraintLeft_toRightOf="@id/temperaturevalue"
+                app:layout_constraintTop_toBottomOf="@id/date2" />
+
+            <TextView
+                android:id="@+id/humidityvalue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="当前湿度："
+                android:textColor="@color/text_font_black"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/temperature_value" />
+
+            <TextView
+                android:id="@+id/humidity_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="当前湿度"
+                android:textColor="@color/text_font_black"
+                app:layout_constraintLeft_toRightOf="@id/humidityvalue"
+                app:layout_constraintTop_toBottomOf="@id/temperature_value" />
+
+            <TextView
+                android:id="@+id/statevalue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="空调状态："
+                android:textColor="@color/text_font_black"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/humidity_value" />
+
+            <TextView
+                android:id="@+id/state_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="空调状态"
+                android:textColor="@color/text_font_black"
+                app:layout_constraintLeft_toRightOf="@id/statevalue"
+                app:layout_constraintTop_toBottomOf="@id/humidity_value" />
+
+            <TextView
+                android:id="@+id/alarmnumvalue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="今日告警："
+                android:textColor="@color/text_font_black"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/state_value" />
+
+            <TextView
+                android:id="@+id/alarm_num_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="今日告警"
+                android:textColor="@color/text_font_black"
+                app:layout_constraintLeft_toRightOf="@id/alarmnumvalue"
+                app:layout_constraintTop_toBottomOf="@id/state_value" />
+
+            <TextView
+                android:id="@+id/remarkname2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="报警摘要："
+                android:textColor="@color/text_font_black"
+                android:visibility="gone"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/alarm_num_value" />
+
+            <TextView
+                android:id="@+id/remark2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="备注"
+                android:textColor="@color/text_font_black"
+                app:layout_constraintLeft_toRightOf="@id/remarkname2"
+                app:layout_constraintTop_toBottomOf="@id/alarm_num_value" />
+
+            <Button
+                android:id="@+id/btn_more2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00000000"
+                android:gravity="left"
+                android:paddingTop="@dimen/text_margin"
+                android:text="日报详细"
+                android:textColor="#7AD3E0"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/remark2" />
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v7.widget.CardView>
+</RelativeLayout>
