@@ -65,6 +65,7 @@ public class RegisterAndSignInActivity extends AppCompatActivity implements Radi
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
         super.onCreate(savedInstanceState);
         //注入view和事件
         x.view().inject(this);

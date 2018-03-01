@@ -25,7 +25,9 @@ import android.widget.Toast;
 import com.houoy.www.gongxing.controller.GongXingController;
 import com.houoy.www.gongxing.dao.UserDao;
 import com.houoy.www.gongxing.event.LogoutEvent;
+import com.houoy.www.gongxing.fragment.ChatFragment;
 import com.houoy.www.gongxing.fragment.MessageFragment;
+import com.houoy.www.gongxing.fragment.NoticeFragment;
 import com.houoy.www.gongxing.fragment.SearchFragment;
 import com.houoy.www.gongxing.model.ClientInfo;
 import com.houoy.www.gongxing.service.MQTTService;
@@ -56,15 +58,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private NavigationView navigationView;
 
 
-    @ViewInject(R.id.txt_channel)
-    private TextView txt_channel;
+    @ViewInject(R.id.txt_chat)
+    private TextView txt_chat;
     @ViewInject(R.id.txt_message)
     private TextView txt_message;
+    @ViewInject(R.id.txt_search)
+    private TextView txt_search;
+    @ViewInject(R.id.txt_notice)
+    private TextView txt_notice;
     @ViewInject(R.id.ly_content)
     private FrameLayout ly_content;
 
     //Fragment Object
     private MessageFragment messageFragment;
+    private ChatFragment chatFragment;
+    private NoticeFragment noticeFragment;
     private SearchFragment searchFragment;
     private FragmentManager fManager;
 
@@ -75,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
         super.onCreate(savedInstanceState);
         //注入view和事件
         x.view().inject(this);
@@ -105,9 +114,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         fManager = getFragmentManager();
-        txt_channel.setOnClickListener(this);
         txt_message.setOnClickListener(this);
-        txt_channel.performClick();   //模拟一次点击，既进去后选择第一项
+        txt_search.setOnClickListener(this);
+        txt_notice.setOnClickListener(this);
+        txt_chat.setOnClickListener(this);
+
+        txt_search.performClick();   //模拟一次点击，既进去后选择第一项
 
         try {
             ClientInfo clientInfo = userDao.findUser();
@@ -219,9 +231,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FragmentTransaction fTransaction = fManager.beginTransaction();
         hideAllFragment(fTransaction);
         switch (v.getId()) {
-            case R.id.txt_channel:
+            case R.id.txt_search:
                 setSelected();
-                txt_channel.setSelected(true);
+                txt_search.setSelected(true);
+                if (searchFragment == null) {
+                    searchFragment = new SearchFragment();
+                    fTransaction.add(R.id.ly_content, searchFragment);
+                } else {
+                    fTransaction.show(searchFragment);
+                }
+                break;
+            case R.id.txt_message:
+                setSelected();
+                txt_message.setSelected(true);
                 if (messageFragment == null) {
                     messageFragment = new MessageFragment();
                     fTransaction.add(R.id.ly_content, messageFragment);
@@ -229,14 +251,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     fTransaction.show(messageFragment);
                 }
                 break;
-            case R.id.txt_message:
+            case R.id.txt_chat:
                 setSelected();
-                txt_message.setSelected(true);
-                if (searchFragment == null) {
-                    searchFragment = new SearchFragment();
-                    fTransaction.add(R.id.ly_content, searchFragment);
+                txt_chat.setSelected(true);
+                if (chatFragment == null) {
+                    chatFragment = new ChatFragment();
+                    fTransaction.add(R.id.ly_content, chatFragment);
                 } else {
-                    fTransaction.show(searchFragment);
+                    fTransaction.show(chatFragment);
+                }
+                break;
+            case R.id.txt_notice:
+                setSelected();
+                txt_notice.setSelected(true);
+                if (noticeFragment == null) {
+                    noticeFragment = new NoticeFragment();
+                    fTransaction.add(R.id.ly_content, noticeFragment);
+                } else {
+                    fTransaction.show(noticeFragment);
                 }
                 break;
         }
@@ -255,12 +287,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void hideAllFragment(FragmentTransaction fragmentTransaction) {
         if (searchFragment != null) fragmentTransaction.hide(searchFragment);
         if (messageFragment != null) fragmentTransaction.hide(messageFragment);
+        if (noticeFragment != null) fragmentTransaction.hide(noticeFragment);
+        if (chatFragment != null) fragmentTransaction.hide(chatFragment);
     }
 
     //重置所有文本的选中状态
     private void setSelected() {
-        txt_channel.setSelected(false);
         txt_message.setSelected(false);
+        txt_search.setSelected(false);
+        txt_notice.setSelected(false);
+        txt_chat.setSelected(false);
     }
 
     @Override

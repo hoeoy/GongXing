@@ -77,4 +77,11 @@ public class SplashActivity extends AppCompatActivity {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);//结束的动画
+    }
+
 }
