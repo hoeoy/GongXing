@@ -1,5 +1,7 @@
 package com.houoy.www.gongxing.model;
 
+import com.houoy.www.gongxing.vo.MessageVO;
+
 import lombok.NoArgsConstructor;
 
 /**
@@ -9,5 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Message {
     private String sign;
-    private MessagePush Params;
+    private MessageVO Params;
 }

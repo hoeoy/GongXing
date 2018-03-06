@@ -6,7 +6,6 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.houoy.www.gongxing.GongXingApplication;
-import com.houoy.www.gongxing.dao.MessagePushDao;
 import com.houoy.www.gongxing.dao.UserDao;
 import com.houoy.www.gongxing.event.AffirmOperateEvent;
 import com.houoy.www.gongxing.event.GoToSigninEvent;
@@ -18,9 +17,9 @@ import com.houoy.www.gongxing.event.SearchMessageDataEvent;
 import com.houoy.www.gongxing.event.SearchWarningMessageDataEvent;
 import com.houoy.www.gongxing.model.ClientInfo;
 import com.houoy.www.gongxing.model.Data;
-import com.houoy.www.gongxing.model.MessagePush;
 import com.houoy.www.gongxing.util.XUtil;
 import com.houoy.www.gongxing.util.XUtilCallBack;
+import com.houoy.www.gongxing.vo.MessageVO;
 import com.houoy.www.gongxing.vo.RequestVO;
 import com.houoy.www.gongxing.vo.ResultVO;
 
@@ -38,12 +37,9 @@ import java.util.Map;
 public class GongXingController {
 
     private static GongXingController gongXingController = null;
-    private MessagePushDao messagePushDao;
-
     private UserDao userDao;
 
     private GongXingController() {
-        messagePushDao = MessagePushDao.getInstant();
         userDao = UserDao.getInstant();
     }
 
@@ -96,7 +92,7 @@ public class GongXingController {
 
     public void logout() {
         //登出
-        String url = GongXingApplication.url + "CloudWeChatPlatServer/Logout";
+        String url = GongXingApplication.url + "CloudWeChatPlatServer/APPLogout";
         try {
             ClientInfo clientInfo = userDao.findUser();
             Map<String, String> params = new HashMap();
@@ -129,7 +125,7 @@ public class GongXingController {
 
     public void getDentifyingCode(String mobile) {
         //获取验证码
-        String url = GongXingApplication.url + "CloudWeChatPlatServer/PhoneDentifyingCode";
+        String url = GongXingApplication.url + "CloudWeChatPlatServer/APPPhoneDentifyingCode";
         Map<String, String> params = new HashMap();
         params.put("mobile", mobile);
         RequestVO requestVO = new RequestVO(GongXingApplication.sign, params);
@@ -150,12 +146,58 @@ public class GongXingController {
 
     public void register(final ClientInfo clientInfo) {
         //识别码验证
-        String url = GongXingApplication.url + "CloudWeChatPlatServer/CheckProjectID";
+//        String url = GongXingApplication.url + "CloudWeChatPlatServer/CheckProjectID";
+//        Map<String, String> params = new HashMap();
+//        params.put("IDENTIFYINGCODE", clientInfo.getVerification());
+//        params.put("IDCode", clientInfo.getIDCode());
+//        params.put("PhoneNum", clientInfo.getPhoneNum());
+//        final RequestVO requestVO = new RequestVO(GongXingApplication.sign, params);
+//        String paramStr = JSON.toJSONString(requestVO);
+//
+//        XUtil.Post(url, paramStr, new XUtilCallBack<String>() {
+//            @Override
+//            public void onSuccess(String result) {
+//                ResultVO resultVO = JSON.parseObject(result, ResultVO.class);
+//                if (resultVO.getCode().equals("success")) {
+//                    //注册
+//                    String url = GongXingApplication.url + "CloudWeChatPlatServer/Register";
+//                    Map<String, String> params = new HashMap();
+//                    params.put("UserID", clientInfo.getUserID());
+//                    params.put("Password", clientInfo.getPassword());
+//                    params.put("IDCode", clientInfo.getIDCode());
+//                    params.put("PhoneNum", clientInfo.getPhoneNum());
+//                    params.put("openid", clientInfo.getOpenid());
+//                    params.put("verification", clientInfo.getVerification());//手机验证码
+//                    RequestVO requestVO = new RequestVO(GongXingApplication.sign, params);
+//                    String paramStr = JSON.toJSONString(requestVO);
+//
+//                    XUtil.Post(url, paramStr, new XUtilCallBack<String>() {
+//                        @Override
+//                        public void onSuccess(String result) {
+//                            ResultVO resultVO = JSON.parseObject(result, ResultVO.class);
+//                            if (resultVO.getCode().equals("success")) {
+//                                EventBus.getDefault().post(new RegisterEvent(RegisterEvent.Register, resultVO.getData()));
+//                            } else {
+//                                Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_LONG).show();
+//                            }
+//                        }
+//                    });
+//                } else {
+//                    Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_LONG).show();
+//                }
+//            }
+//        });
+
+        //注册
+        String url = GongXingApplication.url + "CloudWeChatPlatServer/APPRegister";
         Map<String, String> params = new HashMap();
-        params.put("IDENTIFYINGCODE", clientInfo.getVerification());
+        params.put("UserID", clientInfo.getUserID());
+        params.put("Password", clientInfo.getPassword());
         params.put("IDCode", clientInfo.getIDCode());
         params.put("PhoneNum", clientInfo.getPhoneNum());
-        final RequestVO requestVO = new RequestVO(GongXingApplication.sign, params);
+        params.put("openid", "");
+        params.put("verification", clientInfo.getVerification());//手机验证码
+        RequestVO requestVO = new RequestVO(GongXingApplication.sign, params);
         String paramStr = JSON.toJSONString(requestVO);
 
         XUtil.Post(url, paramStr, new XUtilCallBack<String>() {
@@ -163,32 +205,15 @@ public class GongXingController {
             public void onSuccess(String result) {
                 ResultVO resultVO = JSON.parseObject(result, ResultVO.class);
                 if (resultVO.getCode().equals("success")) {
-                    //注册
-                    String url = GongXingApplication.url + "CloudWeChatPlatServer/Register";
-                    Map<String, String> params = new HashMap();
-                    params.put("UserID", clientInfo.getUserID());
-                    params.put("Password", clientInfo.getPassword());
-                    params.put("IDCode", clientInfo.getIDCode());
-                    params.put("PhoneNum", clientInfo.getPhoneNum());
-                    params.put("openid", clientInfo.getOpenid());
-                    params.put("verification", clientInfo.getVerification());//手机验证码
-                    RequestVO requestVO = new RequestVO(GongXingApplication.sign, params);
-                    String paramStr = JSON.toJSONString(requestVO);
-
-                    XUtil.Post(url, paramStr, new XUtilCallBack<String>() {
-                        @Override
-                        public void onSuccess(String result) {
-                            ResultVO resultVO = JSON.parseObject(result, ResultVO.class);
-                            if (resultVO.getCode().equals("success")) {
-                                EventBus.getDefault().post(new RegisterEvent(RegisterEvent.Register, resultVO.getData()));
-                            } else {
-                                Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    });
+                    EventBus.getDefault().post(new RegisterEvent(RegisterEvent.Register, resultVO.getData()));
                 } else {
                     Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_LONG).show();
                 }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                super.onError(ex, isOnCallback);
             }
         });
     }
@@ -217,11 +242,11 @@ public class GongXingController {
     }
 
     //查询报警消息详细
-    public void queryWarningData(MessagePush messagePush) throws DbException {
+    public void queryWarningData(MessageVO messageVO) throws DbException {
         String url = GongXingApplication.url + "/CloudWeChatPlatServer/MessageDetail";
         Map<String, String> params = new HashMap();
-        params.put("touser", messagePush.getTouser());
-        params.put("RelationID", messagePush.getRelationID());
+        params.put("touser", messageVO.getTouser());
+        params.put("RelationID", messageVO.getRelationID());
         RequestVO requestVO = new RequestVO(GongXingApplication.sign, params);
         String paramStr = JSON.toJSONString(requestVO);
 
@@ -243,11 +268,11 @@ public class GongXingController {
     }
 
     //查询日报消息详细
-    public void queryDailyData(MessagePush messagePush) throws DbException {
+    public void queryDailyData(MessageVO messageVO) throws DbException {
         String url = GongXingApplication.url + "/CloudWeChatPlatServer/MessageDetail";
         Map<String, String> params = new HashMap();
-        params.put("touser", messagePush.getTouser());
-        params.put("RelationID", messagePush.getRelationID());
+        params.put("touser", messageVO.getTouser());
+        params.put("RelationID", messageVO.getRelationID());
         RequestVO requestVO = new RequestVO(GongXingApplication.sign, params);
         String paramStr = JSON.toJSONString(requestVO);
 

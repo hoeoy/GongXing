@@ -77,4 +77,12 @@ public class Register extends Fragment {
         clientInfo.setPassword(password.getText().toString());
         return clientInfo;
     }
+
+    public String getUserid() {
+        return userid.getText().toString();
+    }
+
+    public String getPassword() {
+        return password.getText().toString();
+    }
 }

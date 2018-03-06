@@ -14,6 +14,7 @@
         android:layout_marginTop="30dp"
         android:drawableLeft="@drawable/phone"
         android:drawablePadding="10dp"
+        android:inputType="phone"
         android:hint="请输入手机号" />
 
     <android.support.v7.widget.GridLayout
@@ -58,7 +59,7 @@
         android:drawableLeft="@drawable/project"
         android:drawablePadding="10dp"
         android:hint="请输入识别码"
-        android:inputType="textPassword" />
+        android:inputType="text" />
 
     <Button
         android:id="@+id/btnSure"

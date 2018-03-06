@@ -13,7 +13,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.houoy.www.gongxing.R;
-import com.houoy.www.gongxing.dao.MessagePushDao;
+import com.houoy.www.gongxing.dao.MessagePushAlertDao;
+import com.houoy.www.gongxing.dao.MessagePushDailyDao;
 import com.houoy.www.gongxing.event.RefreshMessageEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -28,12 +29,14 @@ public class CachePreference extends Preference {
     public Button btnCleanCache = null;
     private CheckBoxPreference key_message = null;
     private CheckBoxPreference key_user_cache = null;
-    private MessagePushDao messagePushDao;
+    private MessagePushAlertDao messagePushAlertDao;
+    private MessagePushDailyDao messagePushDailyDao;
 
     public CachePreference(Context context, AttributeSet attrs) {
         super(context, attrs);    // 注：必须是2个参数的，否则会报错
         mContext = context;
-        messagePushDao = MessagePushDao.getInstant();
+        messagePushAlertDao = MessagePushAlertDao.getInstant();
+        messagePushDailyDao = MessagePushDailyDao.getInstant();
     }
 
     // 重点来了，复写onCreateView方法，就可以对自定义布局做各种操作啦
@@ -54,7 +57,8 @@ public class CachePreference extends Preference {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         try {
                             if (bm) {
-                                messagePushDao.clearMessagePush();
+                                messagePushAlertDao.clear();
+                                messagePushDailyDao.clear();
                             }
                             EventBus.getDefault().post(new RefreshMessageEvent("", ""));
                             Toast.makeText(mContext, "清除缓存成功", Toast.LENGTH_SHORT).show();

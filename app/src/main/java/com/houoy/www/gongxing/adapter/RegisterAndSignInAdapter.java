@@ -4,17 +4,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.houoy.www.gongxing.RegisterAndSignInActivity;
-import com.houoy.www.gongxing.event.RegisterEvent;
 import com.houoy.www.gongxing.fragment.Register;
 import com.houoy.www.gongxing.fragment.Register2;
 import com.houoy.www.gongxing.fragment.Signin;
 import com.houoy.www.gongxing.model.ClientInfo;
-import com.houoy.www.gongxing.util.StringUtil;
-
-import org.greenrobot.eventbus.EventBus;
 
 /**
  * Created by Jay on 2015/8/31 0031.
@@ -34,6 +29,13 @@ public class RegisterAndSignInAdapter extends FragmentPagerAdapter {
         myFragment3 = new Register2();
     }
 
+    public Signin getSignin() {
+        return myFragment1;
+    }
+
+    public Register getRegister() {
+        return myFragment2;
+    }
 
     @Override
     public int getCount() {
@@ -68,7 +70,7 @@ public class RegisterAndSignInAdapter extends FragmentPagerAdapter {
         return fragment;
     }
 
-    public ClientInfo getClientInfo(){
+    public ClientInfo getClientInfo() {
         ClientInfo clientInfo3 = myFragment3.getInputClientInfo();
         ClientInfo clientInfo2 = myFragment2.getInputClientInfo();
         clientInfo3.setPassword(clientInfo2.getPassword());

@@ -177,6 +177,10 @@ public class RegisterAndSignInActivity extends AppCompatActivity implements Radi
                 gongXingController.getDentifyingCode((String) event.getData());
                 break;
             case RegisterEvent.Register:
+                Toast.makeText(x.app(), "注册成功,请尝试登录", Toast.LENGTH_SHORT).show();
+                vpager.setCurrentItem(PAGE_ONE);
+                mAdapter.getSignin().setUserid(mAdapter.getRegister().getUserid());
+                mAdapter.getSignin().setPassword(mAdapter.getRegister().getPassword());
                 break;
             case RegisterEvent.DentifyingCode:
                 break;

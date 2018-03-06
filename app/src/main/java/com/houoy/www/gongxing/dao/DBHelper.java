@@ -3,8 +3,12 @@ package com.houoy.www.gongxing.dao;
 import android.util.Log;
 
 import com.houoy.www.gongxing.GongXingApplication;
+import com.houoy.www.gongxing.model.ChatHouse;
+import com.houoy.www.gongxing.model.ChatTalker;
 import com.houoy.www.gongxing.model.ClientInfo;
-import com.houoy.www.gongxing.model.MessagePush;
+import com.houoy.www.gongxing.model.MessagePushAlert;
+import com.houoy.www.gongxing.model.MessagePushDaily;
+import com.houoy.www.gongxing.vo.MessageVO;
 import com.houoy.www.gongxing.model.Setting;
 
 import org.xutils.DbManager;
@@ -38,8 +42,11 @@ public class DBHelper {
                     public void onUpgrade(DbManager db, int oldVersion, int newVersion) {
                         try {
                             db.dropTable(ClientInfo.class);
-                            db.dropTable(MessagePush.class);
+                            db.dropTable(MessagePushAlert.class);
+                            db.dropTable(MessagePushDaily.class);
                             db.dropTable(Setting.class);
+                            db.dropTable(ChatHouse.class);
+                            db.dropTable(ChatTalker.class);
                         } catch (DbException e) {
                             Log.e(e.getMessage(), e.getLocalizedMessage());
                         }

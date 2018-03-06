@@ -25,13 +25,20 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSON;
 import com.houoy.www.gongxing.MainActivity;
 import com.houoy.www.gongxing.R;
-import com.houoy.www.gongxing.dao.MessagePushDao;
+import com.houoy.www.gongxing.dao.HouseDao;
+import com.houoy.www.gongxing.dao.MessagePushAlertDao;
+import com.houoy.www.gongxing.dao.MessagePushDailyDao;
+import com.houoy.www.gongxing.dao.TalkerDao;
 import com.houoy.www.gongxing.dao.UserDao;
+import com.houoy.www.gongxing.model.ChatHouse;
+import com.houoy.www.gongxing.model.ChatTalker;
 import com.houoy.www.gongxing.model.ClientInfo;
 import com.houoy.www.gongxing.model.Message;
-import com.houoy.www.gongxing.model.MessagePush;
+import com.houoy.www.gongxing.model.MessagePushAlert;
+import com.houoy.www.gongxing.model.MessagePushDaily;
 import com.houoy.www.gongxing.util.DateUtil;
 import com.houoy.www.gongxing.util.StringUtil;
+import com.houoy.www.gongxing.vo.MessageVO;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -44,8 +51,6 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.greenrobot.eventbus.EventBus;
 import org.xutils.ex.DbException;
 import org.xutils.x;
-
-import java.util.Random;
 
 /**
  * MQTT长连接服务
@@ -73,12 +78,19 @@ public class MQTTService extends Service {
     private Notification notify1;
     private static final int NOTIFYID_1 = 1;
     Bitmap LargeBitmap = null;
-    private MessagePushDao messagePushDao;
+    private MessagePushAlertDao messagePushAlertDao;
+    private MessagePushDailyDao messagePushDailyDao;
+    private TalkerDao talkerDao;
+    private HouseDao houseDao;
     private UserDao userDao;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        messagePushDao = MessagePushDao.getInstant();
+        messagePushAlertDao = MessagePushAlertDao.getInstant();
+        messagePushDailyDao = MessagePushDailyDao.getInstant();
+        talkerDao = TalkerDao.getInstant();
+        houseDao = HouseDao.getInstant();
+
         userDao = UserDao.getInstant();
 
         try {
@@ -195,7 +207,7 @@ public class MQTTService extends Service {
             try {
                 // 订阅myTopic话题
 //                client.subscribe(clientInfo.getTopic(), 1);
-                client.subscribe(clientInfo.getTopic(),2);//只接受一次,确定到达
+                client.subscribe(clientInfo.getTopic(), 2);//只接受一次,确定到达
             } catch (MqttException e) {
                 e.printStackTrace();
             }
@@ -217,23 +229,58 @@ public class MQTTService extends Service {
                 @Override
                 public void run() {
                     String str1 = new String(message.getPayload());
-                    Message msgg = JSON.parseObject(str1, Message.class);
-                    if (msgg != null) {
-                        MessagePush msg = msgg.getParams();
+                    Message message = JSON.parseObject(str1, Message.class);
+                    if (message != null) {
+                        MessageVO msgVO = message.getParams();
                         String ticker = "";
-                        if (msg != null) {
-                            if (msg.getRule_name_value() != null) {//报警类型属性
-                                msg.setType("2");
-                                ticker = "收到报警消息";
-                            } else {//日报类型属性
-                                msg.setType("1");
-                                ticker = "收到躬行监控的日报消息";
-                            }
-                            msg.setTime(DateUtil.getNowDateTimeShanghai());
-                            EventBus.getDefault().post(msg);
-
+                        if (msgVO != null) {
                             try {
-                                messagePushDao.addMessagePush(msg);
+                                msgVO.setTime(DateUtil.getNowDateTimeShanghai());
+
+                                ChatHouse chatHouse = null;
+                                ChatTalker chatTalker = null;
+                                String house_name = "";
+                                Integer house_type = -1;
+                                if (msgVO.getRule_name_value() != null) {//报警类型属性
+                                    msgVO.setType("2");
+                                    ticker = "来自躬行监控的报警消息";
+                                    MessagePushAlert messagePushAlert = new MessagePushAlert(msgVO);
+                                    messagePushAlertDao.add(messagePushAlert);
+                                    house_name = "报警";
+                                    house_type = ChatHouse.HouseTypeSystemAlert;
+                                } else {//日报类型属性
+                                    msgVO.setType("1");
+                                    ticker = "来自躬行监控的日报消息";
+                                    MessagePushDaily messagePushDaily = new MessagePushDaily(msgVO);
+                                    messagePushDailyDao.add(messagePushDaily);
+                                    house_name = "日报";
+                                    house_type = ChatHouse.HouseTypeSystemDaily;
+                                }
+
+                                //chathouse,chatUser
+                                chatHouse = houseDao.findByName(house_name);
+                                if (chatHouse == null) {
+                                    chatHouse = new ChatHouse();
+                                    chatHouse.setHouse_name(house_name);
+                                    chatHouse.setTs(DateUtil.getNowDateShanghai());
+                                    chatHouse.setLast_essage(ticker);
+                                    chatHouse.setHouse_type(house_type);
+                                    chatHouse.addUnreadNum();
+                                    houseDao.add(chatHouse);
+                                } else {
+                                    chatHouse.addUnreadNum();
+                                    houseDao.update(chatHouse);
+                                }
+                                chatTalker = talkerDao.findByName(house_name);
+                                if (chatTalker == null) {
+                                    chatTalker = new ChatTalker();
+                                    chatTalker.setTalker_name(house_name);
+                                    chatTalker.setTs(DateUtil.getNowDateShanghai());
+                                    talkerDao.add(chatTalker);
+                                }
+
+                                EventBus.getDefault().post(msgVO);
+
                                 //定义一个PendingIntent点击Notification后启动一个Activity
                                 Intent it = new Intent(getBaseContext(), MainActivity.class);
 //                    it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);//应用内只保留一个mainActivity
@@ -242,8 +289,8 @@ public class MQTTService extends Service {
 
                                 //设置图片,通知标题,发送时间,提示方式等属性
                                 Notification.Builder mBuilder = new Notification.Builder(getBaseContext());
-                                mBuilder.setContentTitle(msg.getTitle_value())                        //标题
-                                        .setContentText(msg.getRemark_value())      //内容
+                                mBuilder.setContentTitle(msgVO.getTitle_value())                        //标题
+                                        .setContentText(msgVO.getRemark_value())      //内容
                                         .setSubText(DateUtil.getNowDateTimeShanghai())                    //内容下面的一小段文字
                                         .setTicker(ticker)             //收到信息后状态栏显示的文字信息
                                         .setWhen(System.currentTimeMillis())           //设置通知时间

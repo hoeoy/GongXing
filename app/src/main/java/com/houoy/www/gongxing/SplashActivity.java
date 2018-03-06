@@ -54,7 +54,7 @@ public class SplashActivity extends AppCompatActivity {
                     Toast.makeText(x.app(), "获取本地缓存用户信息失败，所以无法登录", Toast.LENGTH_SHORT).show();
                 }
             }
-        }, 500 * 3);
+        }, 400);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

@@ -1,8 +1,10 @@
 package com.houoy.www.gongxing;
 
+import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -26,8 +28,6 @@ import com.houoy.www.gongxing.controller.GongXingController;
 import com.houoy.www.gongxing.dao.UserDao;
 import com.houoy.www.gongxing.event.LogoutEvent;
 import com.houoy.www.gongxing.fragment.ChatFragment;
-import com.houoy.www.gongxing.fragment.MessageFragment;
-import com.houoy.www.gongxing.fragment.NoticeFragment;
 import com.houoy.www.gongxing.fragment.SearchFragment;
 import com.houoy.www.gongxing.model.ClientInfo;
 import com.houoy.www.gongxing.service.MQTTService;
@@ -60,19 +60,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @ViewInject(R.id.txt_chat)
     private TextView txt_chat;
-    @ViewInject(R.id.txt_message)
-    private TextView txt_message;
+    //    @ViewInject(R.id.txt_message)
+//    private TextView txt_message;
     @ViewInject(R.id.txt_search)
     private TextView txt_search;
-    @ViewInject(R.id.txt_notice)
-    private TextView txt_notice;
+    //    @ViewInject(R.id.txt_notice)
+//    private TextView txt_notice;
     @ViewInject(R.id.ly_content)
     private FrameLayout ly_content;
 
     //Fragment Object
-    private MessageFragment messageFragment;
+//    private MessageFragment messageFragment;
     private ChatFragment chatFragment;
-    private NoticeFragment noticeFragment;
+    //    private NoticeFragment noticeFragment;
     private SearchFragment searchFragment;
     private FragmentManager fManager;
 
@@ -114,9 +114,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         fManager = getFragmentManager();
-        txt_message.setOnClickListener(this);
+//        txt_message.setOnClickListener(this);
+//
+//        txt_notice.setOnClickListener(this);
         txt_search.setOnClickListener(this);
-        txt_notice.setOnClickListener(this);
         txt_chat.setOnClickListener(this);
 
         txt_search.performClick();   //模拟一次点击，既进去后选择第一项
@@ -186,7 +187,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (id) {
             case R.id.action_out:
                 //登出
-                gongXingController.logout();
+                showMsgDialog("确定退出登录", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        gongXingController.logout();
+                    }
+                }, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
                 return true;
             case R.id.action_share:
                 Intent intent = new Intent(Intent.ACTION_SEND);
@@ -241,16 +252,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     fTransaction.show(searchFragment);
                 }
                 break;
-            case R.id.txt_message:
-                setSelected();
-                txt_message.setSelected(true);
-                if (messageFragment == null) {
-                    messageFragment = new MessageFragment();
-                    fTransaction.add(R.id.ly_content, messageFragment);
-                } else {
-                    fTransaction.show(messageFragment);
-                }
-                break;
+//            case R.id.txt_message:
+//                setSelected();
+//                txt_message.setSelected(true);
+//                if (messageFragment == null) {
+//                    messageFragment = new MessageFragment();
+//                    fTransaction.add(R.id.ly_content, messageFragment);
+//                } else {
+//                    fTransaction.show(messageFragment);
+//                }
+//                break;
+//            case R.id.txt_notice:
+//                setSelected();
+//                txt_notice.setSelected(true);
+//                if (noticeFragment == null) {
+//                    noticeFragment = new NoticeFragment();
+//                    fTransaction.add(R.id.ly_content, noticeFragment);
+//                } else {
+//                    fTransaction.show(noticeFragment);
+//                }
+//                break;
+
             case R.id.txt_chat:
                 setSelected();
                 txt_chat.setSelected(true);
@@ -259,16 +281,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     fTransaction.add(R.id.ly_content, chatFragment);
                 } else {
                     fTransaction.show(chatFragment);
-                }
-                break;
-            case R.id.txt_notice:
-                setSelected();
-                txt_notice.setSelected(true);
-                if (noticeFragment == null) {
-                    noticeFragment = new NoticeFragment();
-                    fTransaction.add(R.id.ly_content, noticeFragment);
-                } else {
-                    fTransaction.show(noticeFragment);
                 }
                 break;
         }
@@ -286,16 +298,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //隐藏所有Fragment
     private void hideAllFragment(FragmentTransaction fragmentTransaction) {
         if (searchFragment != null) fragmentTransaction.hide(searchFragment);
-        if (messageFragment != null) fragmentTransaction.hide(messageFragment);
-        if (noticeFragment != null) fragmentTransaction.hide(noticeFragment);
+//        if (messageFragment != null) fragmentTransaction.hide(messageFragment);
+//        if (noticeFragment != null) fragmentTransaction.hide(noticeFragment);
         if (chatFragment != null) fragmentTransaction.hide(chatFragment);
     }
 
     //重置所有文本的选中状态
     private void setSelected() {
-        txt_message.setSelected(false);
+//        txt_message.setSelected(false);
+//
+//        txt_notice.setSelected(false);
         txt_search.setSelected(false);
-        txt_notice.setSelected(false);
         txt_chat.setSelected(false);
     }
 
@@ -318,5 +331,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
+    }
+
+    //显示基本的AlertDialog
+    public void showMsgDialog(String message, DialogInterface.OnClickListener sure, DialogInterface.OnClickListener cancel) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setTitle("系统提示");
+        builder.setMessage(message);
+        if (sure != null) {
+            builder.setPositiveButton("确定", sure);
+        }
+        if (cancel != null) {
+            builder.setNegativeButton("取消", cancel);
+        }
+        AlertDialog dialog = null;
+        dialog = builder.show();
     }
 }

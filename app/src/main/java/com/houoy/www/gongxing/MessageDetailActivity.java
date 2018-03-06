@@ -19,7 +19,7 @@ import com.houoy.www.gongxing.event.SearchDailyMessageDataEvent;
 import com.houoy.www.gongxing.event.SearchWarningMessageDataEvent;
 import com.houoy.www.gongxing.model.Data;
 import com.houoy.www.gongxing.model.DeviceInfo;
-import com.houoy.www.gongxing.model.MessagePush;
+import com.houoy.www.gongxing.vo.MessageVO;
 import com.houoy.www.gongxing.model.Place;
 
 import org.greenrobot.eventbus.EventBus;
@@ -62,17 +62,17 @@ public class MessageDetailActivity extends AppCompatActivity implements ItemClic
 
     private void refreshData() {
         Intent intent = getIntent();
-        MessagePush messagePush = (MessagePush) intent.getSerializableExtra("messagePush");
+        MessageVO messageVO = (MessageVO) intent.getSerializableExtra("messagePush");
 
         try {
-            switch (messagePush.getType()) {
+            switch (messageVO.getType()) {
                 case "1"://日报
                     actionBar.setTitle("日报");
-                    gongXingController.queryDailyData(messagePush);
+                    gongXingController.queryDailyData(messageVO);
                     break;
                 case "2"://告警
                     actionBar.setTitle("报警");
-                    gongXingController.queryWarningData(messagePush);
+                    gongXingController.queryWarningData(messageVO);
                     break;
             }
         } catch (DbException e) {
