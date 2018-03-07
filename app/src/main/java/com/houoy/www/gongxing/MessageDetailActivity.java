@@ -68,10 +68,10 @@ public class MessageDetailActivity extends MyAppCompatActivity implements ItemCl
         actionBar.setTitle(messageVO.getTitle_value());
         try {
             switch (messageVO.getType()) {
-                case "1"://日报
+                case 1://日报
                     gongXingController.queryDailyData(messageVO);
                     break;
-                case "2"://告警
+                case 2://告警
                     gongXingController.queryWarningData(messageVO);
                     break;
             }

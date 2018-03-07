@@ -1,11 +1,13 @@
 package com.houoy.www.gongxing;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 
 import com.houoy.www.gongxing.adapter.MessageAdapter;
@@ -42,6 +44,7 @@ public class MessageActivity extends MyAppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
         super.onCreate(savedInstanceState);
         x.view().inject(this);
         EventBus.getDefault().register(this);
@@ -49,21 +52,11 @@ public class MessageActivity extends MyAppCompatActivity {
         houseDao = HouseDao.getInstant();
         actionBar = this.getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+
         chatHouse = (ChatHouse) getIntent().getSerializableExtra(intentStr);
         actionBar.setTitle(chatHouse.getHouse_name());
-
-        //更新unreadnum
-        try {
-            chatHouse = houseDao.findByName(chatHouse.getHouse_name());
-            chatHouse.setUnread_num(0);
-            houseDao.update(chatHouse);
-            EventBus.getDefault().post(new RefreshChatEvent("", ""));
-        } catch (DbException e) {
-            e.printStackTrace();
-        }
-
-
         adapter = new MessageAdapter(mContext, chatHouse);
+
         final LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
 //        layoutManager.setStackFromEnd(true);//列表再底部开始展示，反转后由上面开始展示
         layoutManager.setReverseLayout(true);//列表翻转
@@ -104,6 +97,15 @@ public class MessageActivity extends MyAppCompatActivity {
                 lastVisibleItem = layoutManager.findLastVisibleItemPosition();
             }
         });
+
+//        Intent intent = getIntent();
+//        ChatHouse chatHouse = (ChatHouse) intent.getSerializableExtra(MessageActivity.intentStr);
+//        if (chatHouse != null) {
+//            intent = new Intent();
+//            intent.setClass(mContext, MessageActivity.class);
+//            intent.putExtra(MessageActivity.intentStr, chatHouse);
+//            mContext.startActivity(intent);
+//        }
     }
 
 //    @Subscribe(threadMode = ThreadMode.MAIN)
@@ -113,6 +115,23 @@ public class MessageActivity extends MyAppCompatActivity {
 //        refresh(null);
 //    }
 
+    @Override
+    protected void onResume() {
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
+        super.onResume();
+        chatHouse = (ChatHouse) getIntent().getSerializableExtra(intentStr);
+        adapter.setChatHouse(chatHouse);
+        actionBar.setTitle(chatHouse.getHouse_name());
+        //更新unreadnum
+        try {
+            chatHouse = houseDao.findByName(chatHouse.getHouse_name());
+            chatHouse.setUnread_num(0);
+            houseDao.update(chatHouse);
+            EventBus.getDefault().post(new RefreshChatEvent("", ""));
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void refresh(RefreshMessageEvent refreshMessageEvent) {
@@ -121,13 +140,34 @@ public class MessageActivity extends MyAppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            finish();
+            gotoMain();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            gotoMain();
+            return false;
+        }
+
+        return super.onKeyUp(keyCode, event);
+    }
+
+    private void gotoMain() {
+//    Stack<Activity> activities = activityPool.getActivityStack();
+        Intent intent = new Intent();
+        intent.setClass(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(intent);
+        finish();
+//        overridePendingTransition(R.anim.slide_left_out, R.anim.slide_right_in);
     }
 
     @Override

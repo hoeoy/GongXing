@@ -11,7 +11,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -29,7 +28,9 @@ import com.houoy.www.gongxing.dao.UserDao;
 import com.houoy.www.gongxing.event.LogoutEvent;
 import com.houoy.www.gongxing.fragment.ChatFragment;
 import com.houoy.www.gongxing.fragment.SearchFragment;
+import com.houoy.www.gongxing.model.ChatHouse;
 import com.houoy.www.gongxing.model.ClientInfo;
+import com.houoy.www.gongxing.model.MessagePushBase;
 import com.houoy.www.gongxing.service.MQTTService;
 import com.houoy.www.gongxing.util.ImageUtil;
 import com.houoy.www.gongxing.util.StringUtil;
@@ -144,18 +145,19 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
         } catch (DbException e) {
             Log.e(e.getMessage(), e.getLocalizedMessage());
         }
-
-        //删除上一个mainActivity
-        GongXingApplication application = (GongXingApplication) getApplication();
-        if (application.getLastMainActivity() != null) {
-            application.getLastMainActivity().finish();
-        }
-
-        application.setLastMainActivity(this);
+//
+//        //删除上一个mainActivity
+//        GongXingApplication application = (GongXingApplication) getApplication();
+//        if (application.getLastMainActivity() != null) {
+//            application.getLastMainActivity().finish();
+//        }
+//
+//        application.setLastMainActivity(this);
     }
 
     @Override
     protected void onResume() {
+        overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
         super.onResume();
     }
 

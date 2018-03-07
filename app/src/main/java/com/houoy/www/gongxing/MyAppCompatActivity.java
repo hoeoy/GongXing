@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
  * Created by andyzhao on 3/6/2018.
  */
 public class MyAppCompatActivity extends AppCompatActivity {
-    private ActivityPool activityPool;
+    protected ActivityPool activityPool;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

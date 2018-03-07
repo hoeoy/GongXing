@@ -28,6 +28,7 @@ public class SplashActivity extends MyAppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         EventBus.getDefault().register(this);
@@ -63,6 +64,7 @@ public class SplashActivity extends MyAppCompatActivity {
         intent.setClass(this, MainActivity.class);
         startActivity(intent);
         finish();
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -70,6 +72,7 @@ public class SplashActivity extends MyAppCompatActivity {
         Intent intent = new Intent(this, RegisterAndSignInActivity.class);
         startActivity(intent);
         finish();
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
     }
 
     @Override

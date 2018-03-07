@@ -35,8 +35,6 @@ public class ChatFragment extends Fragment {
 
     private ChatListAdapter chatListAdapter;
 
-    private Integer lastVisibleItem;
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

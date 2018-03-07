@@ -20,7 +20,7 @@ public class MessageVO implements Serializable {
     private String remark_value;//备注
     private String remark_color;//备注颜色，默认为#000000
     private String time;//消息到达日期
-    private String type;//消息类型 1 日报， 2 报警
+    private Integer type;//消息类型 1 日报， 2 报警
 
     //报警类型属性
     private String rule_name_value;//规则名称

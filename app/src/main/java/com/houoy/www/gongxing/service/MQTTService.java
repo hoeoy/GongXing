@@ -83,7 +83,7 @@ public class MQTTService extends Service {
     private ClientInfo clientInfo;
     private NotificationManager mNManager;
     private Notification notify1;
-    private static final int NOTIFYID_1 = 1;
+    //    private static final int NOTIFYID_1 = 1;
     Bitmap LargeBitmap = null;
     private MessagePushAlertDao messagePushAlertDao;
     private MessagePushDailyDao messagePushDailyDao;
@@ -255,12 +255,12 @@ public class MQTTService extends Service {
                                 Integer house_type = -1;
                                 //处理消息表
                                 if (msgVO.getRule_name_value() != null) {//报警类型属性
-                                    msgVO.setType("2");
+                                    msgVO.setType(2);
                                     ticker = "来自躬行监控的报警消息";
                                     house_name = "报警";
                                     house_type = ChatHouse.HouseTypeSystemAlert;
                                 } else {//日报类型属性
-                                    msgVO.setType("1");
+                                    msgVO.setType(1);
                                     ticker = "来自躬行监控的日报消息";
                                     house_name = "日报";
                                     house_type = ChatHouse.HouseTypeSystemDaily;
@@ -304,13 +304,13 @@ public class MQTTService extends Service {
                                     }
                                 }
 
-                                switch (msgVO.getType()){
-                                    case "1"://日报
+                                switch (msgVO.getType()) {
+                                    case 1://日报
                                         messagePushDaily = new MessagePushDaily(msgVO);
                                         messagePushDaily.setHouse_id(chatHouse.getId());
                                         messagePushDailyDao.add(messagePushDaily);
                                         break;
-                                    case "2"://报警
+                                    case 2://报警
                                         messagePushAlert = new MessagePushAlert(msgVO);
                                         messagePushAlert.setHouse_id(chatHouse.getId());
                                         messagePushAlertDao.add(messagePushAlert);
@@ -331,9 +331,9 @@ public class MQTTService extends Service {
                                     int i = 0;
                                 } else {//如果是在后端
                                     if (msgVO.getRule_name_value() != null) {//报警类型属性
-                                        sendNotification(messagePushAlert, ticker);
+                                        sendNotification(messagePushAlert, chatHouse);
                                     } else {//日报类型属性
-                                        sendNotification(messagePushDaily, ticker);
+                                        sendNotification(messagePushDaily, chatHouse);
                                     }
                                 }
 
@@ -366,18 +366,19 @@ public class MQTTService extends Service {
         }
     };
 
-    private void sendNotification(MessagePushBase messagePushBase, String ticker) {
+    private void sendNotification(MessagePushBase messagePushBase, ChatHouse chatHouse) {
         //定义一个PendingIntent点击Notification后启动一个Activity
-        Intent it = new Intent(getBaseContext(), MainActivity.class);
-//                    it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);//应用内只保留一个mainActivity
-        PendingIntent pit = PendingIntent.getActivity(getBaseContext(), 0, it, 0);
+        Intent it = new Intent(getBaseContext(), MessageActivity.class);
+//        it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);//应用内只保留一个 MessageActivity
+        it.putExtra(MessageActivity.intentStr, chatHouse);
+        PendingIntent pit = PendingIntent.getActivity(getBaseContext(), messagePushBase.getType(), it, PendingIntent.FLAG_UPDATE_CURRENT);
 
         //设置图片,通知标题,发送时间,提示方式等属性
         Notification.Builder mBuilder = new Notification.Builder(getBaseContext());
         mBuilder.setContentTitle(messagePushBase.getTitle_value())                        //标题
                 .setContentText(messagePushBase.getRemark_value())      //内容
                 .setSubText(DateUtil.getNowDateTimeShanghai())                    //内容下面的一小段文字
-                .setTicker(ticker)             //收到信息后状态栏显示的文字信息
+                .setTicker(chatHouse.getHouse_name())             //收到信息后状态栏显示的文字信息
                 .setWhen(System.currentTimeMillis())           //设置通知时间
                 .setSmallIcon(R.drawable.ic_menu_send)            //设置小图标
                 .setLargeIcon(LargeBitmap)                     //设置大图标
@@ -413,7 +414,7 @@ public class MQTTService extends Service {
 
         notify1 = mBuilder.build();
 //                                mNManager.notify(NOTIFYID_1 + new Random().nextInt(), notify1);
-        mNManager.notify(NOTIFYID_1, notify1);
+        mNManager.notify(messagePushBase.getType(), notify1);
     }
 
     /**

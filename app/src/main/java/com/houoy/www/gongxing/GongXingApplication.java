@@ -15,9 +15,9 @@ public class GongXingApplication extends Application {
     public final static String State_warning = "项异常";
     public final static String State_warningName = "报警";
     public final static String DB_Name = "gongxing_db";//本地sqlite数据库名称
-    public final static Integer DB_Version = 11;//数据库版本
+    public final static Integer DB_Version = 12;//数据库版本
 
-    private MainActivity lastMainActivity;
+//    private MainActivity lastMainActivity;
 
     private MyActivityLifecycle lifecycle;
 
@@ -39,11 +39,11 @@ public class GongXingApplication extends Application {
         return lifecycle;
     }
 
-    public MainActivity getLastMainActivity() {
-        return lastMainActivity;
-    }
-
-    public void setLastMainActivity(MainActivity lastMainActivity) {
-        this.lastMainActivity = lastMainActivity;
-    }
+//    public MainActivity getLastMainActivity() {
+//        return lastMainActivity;
+//    }
+//
+//    public void setLastMainActivity(MainActivity lastMainActivity) {
+//        this.lastMainActivity = lastMainActivity;
+//    }
 }

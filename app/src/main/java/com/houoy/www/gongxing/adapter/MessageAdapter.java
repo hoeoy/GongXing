@@ -53,6 +53,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private ChatHouse chatHouse;
     private Integer limit = 10;
 
+
     public MessageAdapter(Context context, ChatHouse _chatHouse) {
         this.context = context;
         messagePushAlertDao = MessagePushAlertDao.getInstant();
@@ -324,5 +325,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void changeMoreStatus(int status) {
         load_more_status = status;
         notifyDataSetChanged();
+    }
+
+
+    public void setChatHouse(ChatHouse chatHouse) {
+        this.chatHouse = chatHouse;
     }
 }

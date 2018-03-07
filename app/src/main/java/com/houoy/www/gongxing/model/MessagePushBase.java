@@ -35,5 +35,5 @@ public class MessagePushBase extends ChatMessage implements Serializable {
     @Column(name = "time")
     private String time;//消息到达日期
     @Column(name = "type")
-    private String type;//消息类型 1 日报， 2 报警
+    private Integer type;//消息类型 1 日报， 2 报警
 }

@@ -19,6 +19,10 @@ public class ActivityPool {
     protected ActivityPool() {
     }
 
+    public Stack<Activity> getActivityStack() {
+        return activityStack;
+    }
+
     public static ActivityPool getInstant() {
         if (pool == null) {
             pool = new ActivityPool();
@@ -55,7 +59,7 @@ public class ActivityPool {
     public void finishActivity(Activity activity) {
         if (activity != null) {
             activityStack.remove(activity);
-            if (!activity.isFinishing()) {
+            if (!activity.isFinishing() && !activity.isDestroyed()) {
                 activity.finish();
             }
         }
