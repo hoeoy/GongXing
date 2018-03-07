@@ -95,7 +95,7 @@ public class GongXingController {
         //登出
         String url = GongXingApplication.url + "CloudWeChatPlatServer/APPLogout";
         try {
-            ClientInfo clientInfo = userDao.findUser();
+            final ClientInfo clientInfo = userDao.findUser();
             Map<String, String> params = new HashMap();
             params.put("UserID", clientInfo.getUserID());
             params.put("openid", clientInfo.getOpenid());
@@ -109,11 +109,12 @@ public class GongXingController {
                     if (resultVO.getCode().equals("success")) {
                         try {
                             userDao.clearUser();
+                            Toast.makeText(x.app(), "退出登录成功", Toast.LENGTH_SHORT).show();
                         } catch (DbException e) {
                             Log.e(e.getMessage(), e.getLocalizedMessage());
                             Toast.makeText(x.app(), "删除本地缓存用户信息失败", Toast.LENGTH_SHORT).show();
                         }
-                        EventBus.getDefault().post(new LogoutEvent("logout", resultVO));
+                        EventBus.getDefault().post(new LogoutEvent("logout", clientInfo));
                     } else {
                         Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_LONG).show();
                     }

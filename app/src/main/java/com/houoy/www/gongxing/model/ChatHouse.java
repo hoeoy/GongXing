@@ -32,6 +32,9 @@ public class ChatHouse extends BaseModel {
     @Column(name = "house_type")
     private Integer house_type;//聊天室类别
 
+    @Column(name = "userid")
+    private String userid;//此聊天室属于哪个登录用户
+
     public void addUnreadNum() {
         if (unread_num == null) {
             unread_num = 0;

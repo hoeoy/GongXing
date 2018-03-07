@@ -28,13 +28,12 @@ import com.houoy.www.gongxing.dao.UserDao;
 import com.houoy.www.gongxing.event.LogoutEvent;
 import com.houoy.www.gongxing.fragment.ChatFragment;
 import com.houoy.www.gongxing.fragment.SearchFragment;
-import com.houoy.www.gongxing.model.ChatHouse;
 import com.houoy.www.gongxing.model.ClientInfo;
-import com.houoy.www.gongxing.model.MessagePushBase;
 import com.houoy.www.gongxing.service.MQTTService;
 import com.houoy.www.gongxing.util.ImageUtil;
 import com.houoy.www.gongxing.util.StringUtil;
 
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -81,6 +80,7 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
     private long exitTime = 0;
     private UserDao userDao;
     private GongXingController gongXingController;
+    private MQTTService mqttMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +91,7 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
         EventBus.getDefault().register(this);
 
         getApplication().startService(new Intent(getApplicationContext(), MQTTService.class));//启动service
+        mqttMessage = MQTTService.getInstant();
 
         setSupportActionBar(toolbar);
         mContext = this;
@@ -291,10 +292,13 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLogout(LogoutEvent event) {
+        ClientInfo clientInfo = (ClientInfo) event.getData();
+        //取消订阅
+        mqttMessage.unSubscribe(clientInfo.getTopic());
         Intent intent = new Intent();
         intent.setClass(mContext, RegisterAndSignInActivity.class);
         startActivity(intent);
-        this.finish();
+        finish();
     }
 
     //隐藏所有Fragment

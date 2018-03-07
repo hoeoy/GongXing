@@ -67,13 +67,13 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         try {
             switch (chatHouse.getHouse_type()) {
                 case ChatHouse.HouseTypeSystemDaily:
-                    messagePushDailies = messagePushDailyDao.findPage(start, limit, "time");
+                    messagePushDailies = messagePushDailyDao.findPageByHouseId(start, limit, "time", chatHouse.getId());
                     if (messagePushDailies == null) {
                         messagePushDailies = new ArrayList();
                     }
                     break;
                 case ChatHouse.HouseTypeSystemAlert:
-                    messagePushAlerts = messagePushAlertDao.findPage(start, limit, "time");
+                    messagePushAlerts = messagePushAlertDao.findPageByHouseId(start, limit, "time", chatHouse.getId());
                     if (messagePushAlerts == null) {
                         messagePushAlerts = new ArrayList();
                     }
@@ -81,6 +81,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 default:
                     break;
             }
+            setLayout();
         } catch (DbException e) {
             e.printStackTrace();
         }
@@ -93,7 +94,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     if (messagePushDailies == null) {
                         messagePushDailies = new ArrayList();
                     }
-                    List<MessagePushDaily> tempMessages = messagePushDailyDao.findPage(start, limit, "time");
+                    List<MessagePushDaily> tempMessages = messagePushDailyDao.findPageByHouseId(start, limit, "time", chatHouse.getId());
                     if (tempMessages != null) {
                         messagePushDailies.addAll(tempMessages);
                     }
@@ -102,7 +103,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     if (messagePushAlerts == null) {
                         messagePushAlerts = new ArrayList();
                     }
-                    List<MessagePushAlert> tempMessages2 = messagePushAlertDao.findPage(start, limit, "time");
+                    List<MessagePushAlert> tempMessages2 = messagePushAlertDao.findPageByHouseId(start, limit, "time", chatHouse.getId());
                     if (tempMessages2 != null) {
                         messagePushAlerts.addAll(tempMessages2);
                     }
@@ -110,8 +111,17 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 default:
                     break;
             }
+            setLayout();
         } catch (DbException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void setLayout() {
+        if (getItemCount() > 2) {
+            ((MessageActivity) context).getLayoutManager().setStackFromEnd(false);//列表再底部开始展示，反转后由上面开始展示
+        } else {
+            ((MessageActivity) context).getLayoutManager().setStackFromEnd(true);
         }
     }
 

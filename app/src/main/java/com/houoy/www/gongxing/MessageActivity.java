@@ -12,6 +12,7 @@ import android.view.MenuItem;
 
 import com.houoy.www.gongxing.adapter.MessageAdapter;
 import com.houoy.www.gongxing.dao.HouseDao;
+import com.houoy.www.gongxing.dao.UserDao;
 import com.houoy.www.gongxing.event.RefreshChatEvent;
 import com.houoy.www.gongxing.event.RefreshMessageEvent;
 import com.houoy.www.gongxing.model.ChatHouse;
@@ -41,6 +42,8 @@ public class MessageActivity extends MyAppCompatActivity {
     private ActionBar actionBar;
     private ChatHouse chatHouse;
     private HouseDao houseDao;
+    private UserDao userDao;
+    private LinearLayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,18 +53,24 @@ public class MessageActivity extends MyAppCompatActivity {
         EventBus.getDefault().register(this);
         mContext = this;
         houseDao = HouseDao.getInstant();
+        userDao = UserDao.getInstant();
         actionBar = this.getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         chatHouse = (ChatHouse) getIntent().getSerializableExtra(intentStr);
         actionBar.setTitle(chatHouse.getHouse_name());
-        adapter = new MessageAdapter(mContext, chatHouse);
 
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
+
+        layoutManager = new LinearLayoutManager(mContext);
 //        layoutManager.setStackFromEnd(true);//列表再底部开始展示，反转后由上面开始展示
         layoutManager.setReverseLayout(true);//列表翻转
+        layoutManager.setAutoMeasureEnabled(true);
+
         notice_messageList.setLayoutManager(layoutManager);
+        adapter = new MessageAdapter(mContext, chatHouse);
         notice_messageList.setAdapter(adapter);
+
+
 
         notice_swiperefreshlayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -124,7 +133,7 @@ public class MessageActivity extends MyAppCompatActivity {
         actionBar.setTitle(chatHouse.getHouse_name());
         //更新unreadnum
         try {
-            chatHouse = houseDao.findByName(chatHouse.getHouse_name());
+            chatHouse = houseDao.findByNameAndUserid(chatHouse.getHouse_name(), chatHouse.getUserid());
             chatHouse.setUnread_num(0);
             houseDao.update(chatHouse);
             EventBus.getDefault().post(new RefreshChatEvent("", ""));
@@ -178,5 +187,9 @@ public class MessageActivity extends MyAppCompatActivity {
 
     public ChatHouse getChatHouse() {
         return chatHouse;
+    }
+
+    public LinearLayoutManager getLayoutManager() {
+        return layoutManager;
     }
 }

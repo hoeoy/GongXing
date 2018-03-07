@@ -17,6 +17,7 @@ import com.houoy.www.gongxing.dao.HouseDao;
 import com.houoy.www.gongxing.dao.MessagePushAlertDao;
 import com.houoy.www.gongxing.dao.MessagePushDailyDao;
 import com.houoy.www.gongxing.dao.TalkerDao;
+import com.houoy.www.gongxing.event.RefreshChatEvent;
 import com.houoy.www.gongxing.event.RefreshMessageEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -69,6 +70,7 @@ public class CachePreference extends Preference {
                                 talkerDao.clear();
                             }
                             EventBus.getDefault().post(new RefreshMessageEvent("", ""));
+                            EventBus.getDefault().post(new RefreshChatEvent("", ""));
                             Toast.makeText(mContext, "清除缓存成功", Toast.LENGTH_SHORT).show();
                         } catch (DbException e) {
                             e.printStackTrace();

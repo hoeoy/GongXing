@@ -14,7 +14,9 @@ import com.houoy.www.gongxing.dao.HouseDao;
 import com.houoy.www.gongxing.dao.MessagePushAlertDao;
 import com.houoy.www.gongxing.dao.MessagePushDailyDao;
 import com.houoy.www.gongxing.dao.TalkerDao;
+import com.houoy.www.gongxing.dao.UserDao;
 import com.houoy.www.gongxing.model.ChatHouse;
+import com.houoy.www.gongxing.model.ClientInfo;
 import com.houoy.www.gongxing.util.StringUtil;
 
 import org.xutils.ex.DbException;
@@ -30,6 +32,7 @@ import cn.bingoogolapple.badgeview.BGADragDismissDelegate;
 public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatHolder> {
     private HouseDao dao;
     private TalkerDao talkerDao;
+    private UserDao userDao;
     private MessagePushAlertDao messagePushAlertDao;
     private MessagePushDailyDao messagePushDailyDao;
 
@@ -41,6 +44,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatHo
         this.context = context;
         dao = HouseDao.getInstant();
         talkerDao = TalkerDao.getInstant();
+        userDao = UserDao.getInstant();
         messagePushAlertDao = MessagePushAlertDao.getInstant();
         messagePushDailyDao = MessagePushDailyDao.getInstant();
         initData(0);
@@ -60,8 +64,8 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatHo
             if (houses != null) {
                 houses.clear();
             }
-
-            houses = dao.findAll();
+            ClientInfo clientInfo = userDao.findUser();
+            houses = dao.findByUserid(clientInfo.getUserID());
             if (houses == null) {
                 houses = new ArrayList();
             }
