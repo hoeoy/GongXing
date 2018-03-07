@@ -14,8 +14,11 @@ import android.view.ViewGroup;
 import com.houoy.www.gongxing.R;
 import com.houoy.www.gongxing.adapter.ChatListAdapter;
 import com.houoy.www.gongxing.element.SwipeItemLayout;
-import com.houoy.www.gongxing.event.RefreshMessageEvent;
+import com.houoy.www.gongxing.event.RefreshChatEvent;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
@@ -58,8 +61,8 @@ public class ChatFragment extends Fragment {
         return view;
     }
 
-    //    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void refresh(RefreshMessageEvent refreshMessageEvent) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void refresh(RefreshChatEvent refreshChatEvent) {
         chatListAdapter.initData(0);
         chat_swiperefreshlayout.setRefreshing(false);
         chatListAdapter.notifyDataSetChanged();
@@ -68,7 +71,7 @@ public class ChatFragment extends Fragment {
     @Override
     public void onViewCreated(View v, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);
-        // EventBus.getDefault().register(this);
+        EventBus.getDefault().register(this);
         if (!injected) {
             x.view().inject(this, this.getView());
         }
@@ -76,7 +79,7 @@ public class ChatFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        //  EventBus.getDefault().unregister(this);
+        EventBus.getDefault().unregister(this);
         super.onDestroyView();
     }
 }

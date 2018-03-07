@@ -21,7 +21,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.xutils.ex.DbException;
 import org.xutils.x;
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends MyAppCompatActivity {
 
     private UserDao userDao;
     private GongXingController gongXingController;
@@ -78,10 +78,5 @@ public class SplashActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);//结束的动画
-    }
 
 }

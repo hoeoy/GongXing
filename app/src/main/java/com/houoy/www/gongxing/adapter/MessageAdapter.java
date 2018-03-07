@@ -12,12 +12,14 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.houoy.www.gongxing.MessageActivity;
 import com.houoy.www.gongxing.MessageDetailActivity;
 import com.houoy.www.gongxing.R;
 import com.houoy.www.gongxing.dao.MessagePushAlertDao;
 import com.houoy.www.gongxing.dao.MessagePushDailyDao;
 import com.houoy.www.gongxing.model.ChatHouse;
 import com.houoy.www.gongxing.model.MessagePushAlert;
+import com.houoy.www.gongxing.model.MessagePushBase;
 import com.houoy.www.gongxing.model.MessagePushDaily;
 
 import org.xutils.ex.DbException;
@@ -209,32 +211,32 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (holder instanceof NewsViewHolder) {
             switch (chatHouse.getHouse_type()) {
                 case ChatHouse.HouseTypeSystemDaily:
+                    final MessagePushDaily mpd = messagePushDailies.get(i);
                     ((NewsViewHolder) holder).constraintLayout1.setVisibility(View.GONE);
                     ((NewsViewHolder) holder).constraintLayout2.setVisibility(View.VISIBLE);
-                    ((NewsViewHolder) holder).title_value2.setText(messagePushDailies.get(i).getTitle_value());
-                    ((NewsViewHolder) holder).date2.setText(messagePushDailies.get(i).getTime());
-                    ((NewsViewHolder) holder).temperature_value.setText(messagePushDailies.get(i).getTemperature_value());
-                    ((NewsViewHolder) holder).humidity_value.setText(messagePushDailies.get(i).getHumidity_value());
-                    ((NewsViewHolder) holder).state_value.setText(messagePushDailies.get(i).getState_value());
-                    ((NewsViewHolder) holder).alarm_num_value.setText(messagePushDailies.get(i).getAlarm_num_value());
-                    ((NewsViewHolder) holder).remark2.setText(messagePushDailies.get(i).getRemark_value());
+                    ((NewsViewHolder) holder).title_value2.setText(mpd.getTitle_value());
+                    ((NewsViewHolder) holder).date2.setText(mpd.getTime());
+                    ((NewsViewHolder) holder).temperature_value.setText(mpd.getTemperature_value());
+                    ((NewsViewHolder) holder).humidity_value.setText(mpd.getHumidity_value());
+                    ((NewsViewHolder) holder).state_value.setText(mpd.getState_value());
+                    ((NewsViewHolder) holder).alarm_num_value.setText(mpd.getAlarm_num_value());
+                    ((NewsViewHolder) holder).remark2.setText(mpd.getRemark_value());
 
                     ((NewsViewHolder) holder).btn_more2.setText("日报详细");
                     ((NewsViewHolder) holder).btn_more2.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent intent = new Intent(context, MessageDetailActivity.class);
-                            intent.putExtra("messagePush", messagePushDailies.get(i));
-                            context.startActivity(intent);
+//                            Intent intent = new Intent(context, MessageDetailActivity.class);
+//                            intent.putExtra("messagePush", messagePushDailies.get(i));
+//                            context.startActivity(intent);
+                            gotoDetail(mpd);
                         }
                     });
                     //为btn_share btn_readMore cardView设置点击事件
                     ((NewsViewHolder) holder).cardView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent intent = new Intent(context, MessageDetailActivity.class);
-                            intent.putExtra("messagePush", messagePushDailies.get(i));
-                            context.startActivity(intent);
+                            gotoDetail(mpd);
                         }
                     });
                     break;
@@ -254,18 +256,14 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     ((NewsViewHolder) holder).readMore.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent intent = new Intent(context, MessageDetailActivity.class);
-                            intent.putExtra("messagePush", mpa);
-                            context.startActivity(intent);
+                            gotoDetail(mpa);
                         }
                     });
                     //为btn_share btn_readMore cardView设置点击事件
                     ((NewsViewHolder) holder).cardView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent intent = new Intent(context, MessageDetailActivity.class);
-                            intent.putExtra("messagePush", mpa);
-                            context.startActivity(intent);
+                            gotoDetail(mpa);
                         }
                     });
                     break;
@@ -292,6 +290,13 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     break;
             }
         }
+    }
+
+    private void gotoDetail(MessagePushBase mpa) {
+        Intent intent = new Intent(context, MessageDetailActivity.class);
+        intent.putExtra("messagePush", mpa);
+        intent.putExtra(MessageActivity.intentStr, chatHouse);
+        context.startActivity(intent);
     }
 
     @Override

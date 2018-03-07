@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
@@ -17,9 +16,10 @@ import com.houoy.www.gongxing.controller.GongXingController;
 import com.houoy.www.gongxing.event.AffirmOperateEvent;
 import com.houoy.www.gongxing.event.SearchDailyMessageDataEvent;
 import com.houoy.www.gongxing.event.SearchWarningMessageDataEvent;
+import com.houoy.www.gongxing.model.ChatHouse;
 import com.houoy.www.gongxing.model.Data;
 import com.houoy.www.gongxing.model.DeviceInfo;
-import com.houoy.www.gongxing.vo.MessageVO;
+import com.houoy.www.gongxing.model.MessagePushBase;
 import com.houoy.www.gongxing.model.Place;
 
 import org.greenrobot.eventbus.EventBus;
@@ -33,7 +33,7 @@ import org.xutils.x;
 import java.util.List;
 
 @ContentView(R.layout.activity_message_detail)
-public class MessageDetailActivity extends AppCompatActivity implements ItemClickListener {
+public class MessageDetailActivity extends MyAppCompatActivity implements ItemClickListener {
 
     @ViewInject(R.id.message_detail_recyclerview)
     private RecyclerView message_detail_recyclerview;
@@ -42,6 +42,7 @@ public class MessageDetailActivity extends AppCompatActivity implements ItemClic
     private GongXingController gongXingController;
     private SectionedExpandableLayoutHelper sectionedExpandableLayoutHelper;
     private ActionBar actionBar;
+    private ChatHouse chatHouse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,16 +63,15 @@ public class MessageDetailActivity extends AppCompatActivity implements ItemClic
 
     private void refreshData() {
         Intent intent = getIntent();
-        MessageVO messageVO = (MessageVO) intent.getSerializableExtra("messagePush");
-
+        MessagePushBase messageVO = (MessagePushBase) intent.getSerializableExtra("messagePush");
+        chatHouse = (ChatHouse) getIntent().getSerializableExtra(MessageActivity.intentStr);
+        actionBar.setTitle(messageVO.getTitle_value());
         try {
             switch (messageVO.getType()) {
                 case "1"://日报
-                    actionBar.setTitle("日报");
                     gongXingController.queryDailyData(messageVO);
                     break;
                 case "2"://告警
-                    actionBar.setTitle("报警");
                     gongXingController.queryWarningData(messageVO);
                     break;
             }
@@ -169,5 +169,9 @@ public class MessageDetailActivity extends AppCompatActivity implements ItemClic
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
+    }
+
+    public ChatHouse getChatHouse() {
+        return chatHouse;
     }
 }

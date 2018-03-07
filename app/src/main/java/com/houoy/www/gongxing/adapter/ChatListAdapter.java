@@ -11,24 +11,38 @@ import android.widget.TextView;
 import com.houoy.www.gongxing.MessageActivity;
 import com.houoy.www.gongxing.R;
 import com.houoy.www.gongxing.dao.HouseDao;
+import com.houoy.www.gongxing.dao.MessagePushAlertDao;
+import com.houoy.www.gongxing.dao.MessagePushDailyDao;
+import com.houoy.www.gongxing.dao.TalkerDao;
 import com.houoy.www.gongxing.model.ChatHouse;
 import com.houoy.www.gongxing.util.StringUtil;
 
 import org.xutils.ex.DbException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import circletextimage.viviant.com.circletextimagelib.view.CircleTextImage;
 import cn.bingoogolapple.badgeview.BGABadgeTextView;
+import cn.bingoogolapple.badgeview.BGABadgeable;
+import cn.bingoogolapple.badgeview.BGADragDismissDelegate;
 
 public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatHolder> {
     private HouseDao dao;
+    private TalkerDao talkerDao;
+    private MessagePushAlertDao messagePushAlertDao;
+    private MessagePushDailyDao messagePushDailyDao;
+
+    private TalkerDao talkerDaodao;
     private List<ChatHouse> houses;
     public Context context;
 
     public ChatListAdapter(Context context) {
         this.context = context;
         dao = HouseDao.getInstant();
+        talkerDao = TalkerDao.getInstant();
+        messagePushAlertDao = MessagePushAlertDao.getInstant();
+        messagePushDailyDao = MessagePushDailyDao.getInstant();
         initData(0);
     }
 
@@ -43,7 +57,14 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatHo
 //            dao.add(chatHouse);
 //        }
         try {
+            if (houses != null) {
+                houses.clear();
+            }
+
             houses = dao.findAll();
+            if (houses == null) {
+                houses = new ArrayList();
+            }
         } catch (DbException e) {
             e.printStackTrace();
         }
@@ -71,7 +92,20 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatHo
 
             main.setOnClickListener(this);
             main.setOnLongClickListener(this);
-
+            chat_item_message_num.setDragDismissDelegage(new BGADragDismissDelegate() {
+                @Override
+                public void onDismiss(BGABadgeable badgeable) {
+                    //更新unreadnum
+                    try {
+                        int pos = getAdapterPosition();
+                        ChatHouse chatHouse = houses.get(pos);
+                        chatHouse.setUnread_num(0);
+                        dao.update(chatHouse);
+                    } catch (DbException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
             View delete = itemView.findViewById(R.id.chat_delete);
             delete.setOnClickListener(this);
         }
@@ -88,6 +122,25 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatHo
 
                 case R.id.chat_delete:
                     int pos = getAdapterPosition();
+
+                    try {
+                        ChatHouse chatHouse = houses.get(pos);
+                        //删除message
+                        switch (chatHouse.getHouse_type()) {
+                            case ChatHouse.HouseTypeSystemAlert://报警
+                                messagePushAlertDao.deleteByHouse(chatHouse.getId());
+                                break;
+                            case ChatHouse.HouseTypeSystemDaily://日报
+                                messagePushDailyDao.deleteByHouse(chatHouse.getId());
+                                break;
+                        }
+                        //删除house
+                        dao.delete(chatHouse.getId());
+                    } catch (DbException e) {
+                        e.printStackTrace();
+                    }
+
+
                     houses.remove(pos);
                     notifyItemRemoved(pos);
                     break;
@@ -135,6 +188,8 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatHo
                 ur = "+99";
             }
             holder.chat_item_message_num.showTextBadge(ur);
+        } else {
+            holder.chat_item_message_num.hiddenBadge();
         }
     }
 
@@ -145,5 +200,9 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatHo
         }
 
         return houses.size();
+    }
+
+    public void changeMoreStatus(int status) {
+        notifyDataSetChanged();
     }
 }

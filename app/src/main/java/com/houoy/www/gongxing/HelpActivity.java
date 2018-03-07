@@ -2,7 +2,6 @@ package com.houoy.www.gongxing;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
@@ -14,7 +13,7 @@ import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
 @ContentView(R.layout.activity_help)
-public class HelpActivity extends AppCompatActivity {
+public class HelpActivity extends MyAppCompatActivity {
     private ActionBar actionBar;
 
     @ViewInject(R.id.webView)
@@ -100,10 +99,9 @@ public class HelpActivity extends AppCompatActivity {
                 "</br>3 报警消息确认收到之后按钮状态改变" +
                 "</br></br>");
 
-        detail.insert(0, "TODO:更新2018-1-30：" +
-                "</br>1 支持单条通知定位到第一条" +
-                "</br>2 点击顶部推送的消息进入APP后，消息列表直接定位到点击的那个消息" +
-                "</br>3 使用多线程处理mqtt消息" +
+        detail.insert(0, "更新2018-3-7：" +
+                "</br>1 重构消息接收模块" +
+                "</br>2 更改一些BUG" +
                 "</br></br>");
 
         webView.loadData(detail.toString(), "text/html; charset=UTF-8", null);

@@ -43,7 +43,7 @@ import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
 @ContentView(R.layout.activity_main)
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+public class MainActivity extends MyAppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     @ViewInject(R.id.recycler_view)
     private RecyclerView mRecyclerView;

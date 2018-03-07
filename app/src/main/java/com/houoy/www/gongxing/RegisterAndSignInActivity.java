@@ -34,7 +34,7 @@ import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
 @ContentView(R.layout.activity_register_and_sign_in)
-public class RegisterAndSignInActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener,
+public class RegisterAndSignInActivity extends MyAppCompatActivity implements RadioGroup.OnCheckedChangeListener,
         ViewPager.OnPageChangeListener {
 
     //UI Objects

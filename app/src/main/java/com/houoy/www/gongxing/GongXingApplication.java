@@ -1,6 +1,7 @@
 package com.houoy.www.gongxing;
 
 import android.app.Application;
+import android.os.Build;
 
 import com.houoy.www.gongxing.dao.DBHelper;
 
@@ -14,9 +15,11 @@ public class GongXingApplication extends Application {
     public final static String State_warning = "项异常";
     public final static String State_warningName = "报警";
     public final static String DB_Name = "gongxing_db";//本地sqlite数据库名称
-    public final static Integer DB_Version = 10;//数据库版本
+    public final static Integer DB_Version = 11;//数据库版本
 
     private MainActivity lastMainActivity;
+
+    private MyActivityLifecycle lifecycle;
 
     @Override
     public void onCreate() {
@@ -25,6 +28,15 @@ public class GongXingApplication extends Application {
 //        x.view().inject(this); //使用注解模块一定要注意初始化视图注解框架
 //        Mqtt.getInstance(this).connect();
         DBHelper.initDb();
+
+        if (Build.VERSION.SDK_INT >= 14) {
+            lifecycle = new MyActivityLifecycle();
+            registerActivityLifecycleCallbacks(lifecycle);
+        }
+    }
+
+    public MyActivityLifecycle getLifecycle() {
+        return lifecycle;
     }
 
     public MainActivity getLastMainActivity() {

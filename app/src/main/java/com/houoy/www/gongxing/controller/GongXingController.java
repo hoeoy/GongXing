@@ -17,6 +17,7 @@ import com.houoy.www.gongxing.event.SearchMessageDataEvent;
 import com.houoy.www.gongxing.event.SearchWarningMessageDataEvent;
 import com.houoy.www.gongxing.model.ClientInfo;
 import com.houoy.www.gongxing.model.Data;
+import com.houoy.www.gongxing.model.MessagePushBase;
 import com.houoy.www.gongxing.util.XUtil;
 import com.houoy.www.gongxing.util.XUtilCallBack;
 import com.houoy.www.gongxing.vo.MessageVO;
@@ -242,7 +243,7 @@ public class GongXingController {
     }
 
     //查询报警消息详细
-    public void queryWarningData(MessageVO messageVO) throws DbException {
+    public void queryWarningData(MessagePushBase messageVO) throws DbException {
         String url = GongXingApplication.url + "/CloudWeChatPlatServer/MessageDetail";
         Map<String, String> params = new HashMap();
         params.put("touser", messageVO.getTouser());
@@ -268,7 +269,7 @@ public class GongXingController {
     }
 
     //查询日报消息详细
-    public void queryDailyData(MessageVO messageVO) throws DbException {
+    public void queryDailyData(MessagePushBase messageVO) throws DbException {
         String url = GongXingApplication.url + "/CloudWeChatPlatServer/MessageDetail";
         Map<String, String> params = new HashMap();
         params.put("touser", messageVO.getTouser());

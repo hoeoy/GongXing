@@ -13,8 +13,10 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.houoy.www.gongxing.R;
+import com.houoy.www.gongxing.dao.HouseDao;
 import com.houoy.www.gongxing.dao.MessagePushAlertDao;
 import com.houoy.www.gongxing.dao.MessagePushDailyDao;
+import com.houoy.www.gongxing.dao.TalkerDao;
 import com.houoy.www.gongxing.event.RefreshMessageEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -31,12 +33,16 @@ public class CachePreference extends Preference {
     private CheckBoxPreference key_user_cache = null;
     private MessagePushAlertDao messagePushAlertDao;
     private MessagePushDailyDao messagePushDailyDao;
+    private HouseDao houseDao;
+    private TalkerDao talkerDao;
 
     public CachePreference(Context context, AttributeSet attrs) {
         super(context, attrs);    // 注：必须是2个参数的，否则会报错
         mContext = context;
         messagePushAlertDao = MessagePushAlertDao.getInstant();
         messagePushDailyDao = MessagePushDailyDao.getInstant();
+        houseDao = HouseDao.getInstant();
+        talkerDao = TalkerDao.getInstant();
     }
 
     // 重点来了，复写onCreateView方法，就可以对自定义布局做各种操作啦
@@ -59,6 +65,8 @@ public class CachePreference extends Preference {
                             if (bm) {
                                 messagePushAlertDao.clear();
                                 messagePushDailyDao.clear();
+                                houseDao.clear();
+                                talkerDao.clear();
                             }
                             EventBus.getDefault().post(new RefreshMessageEvent("", ""));
                             Toast.makeText(mContext, "清除缓存成功", Toast.LENGTH_SHORT).show();

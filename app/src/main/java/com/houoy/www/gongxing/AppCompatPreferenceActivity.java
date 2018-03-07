@@ -19,12 +19,14 @@ import android.view.ViewGroup;
 public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
 
     private AppCompatDelegate mDelegate;
-
+    private ActivityPool activityPool;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getDelegate().installViewFactory();
         getDelegate().onCreate(savedInstanceState);
         super.onCreate(savedInstanceState);
+        activityPool = ActivityPool.getInstant();
+        activityPool.push(this);
     }
 
     @Override
@@ -92,6 +94,7 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
 
     @Override
     protected void onDestroy() {
+        activityPool.pop();
         super.onDestroy();
         getDelegate().onDestroy();
     }

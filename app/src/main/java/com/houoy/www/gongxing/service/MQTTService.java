@@ -4,6 +4,7 @@ package com.houoy.www.gongxing.service;
  * Created by andyzhao on 1/7/2018.
  */
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -23,18 +24,25 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
+import com.houoy.www.gongxing.ActivityPool;
+import com.houoy.www.gongxing.GongXingApplication;
 import com.houoy.www.gongxing.MainActivity;
+import com.houoy.www.gongxing.MessageActivity;
+import com.houoy.www.gongxing.MessageDetailActivity;
 import com.houoy.www.gongxing.R;
 import com.houoy.www.gongxing.dao.HouseDao;
 import com.houoy.www.gongxing.dao.MessagePushAlertDao;
 import com.houoy.www.gongxing.dao.MessagePushDailyDao;
 import com.houoy.www.gongxing.dao.TalkerDao;
 import com.houoy.www.gongxing.dao.UserDao;
+import com.houoy.www.gongxing.event.RefreshChatEvent;
+import com.houoy.www.gongxing.event.RefreshMessageEvent;
 import com.houoy.www.gongxing.model.ChatHouse;
 import com.houoy.www.gongxing.model.ChatTalker;
 import com.houoy.www.gongxing.model.ClientInfo;
 import com.houoy.www.gongxing.model.Message;
 import com.houoy.www.gongxing.model.MessagePushAlert;
+import com.houoy.www.gongxing.model.MessagePushBase;
 import com.houoy.www.gongxing.model.MessagePushDaily;
 import com.houoy.www.gongxing.util.DateUtil;
 import com.houoy.www.gongxing.util.StringUtil;
@@ -59,12 +67,11 @@ import org.xutils.x;
  * @version 创建时间：2016/9/16 22:06
  */
 public class MQTTService extends Service {
-
     public static final String TAG = MQTTService.class.getSimpleName();
 
     private static MqttAndroidClient client;
     private MqttConnectOptions conOpt;
-
+    private ActivityPool activityPool;
     //    private String host = "tcp://10.0.2.2:61613";
 //    private String host = "tcp://192.168.1.103:61613";
 //    private String host = "tcp://192.168.0.102:61613";
@@ -83,6 +90,7 @@ public class MQTTService extends Service {
     private TalkerDao talkerDao;
     private HouseDao houseDao;
     private UserDao userDao;
+    private GongXingApplication gongXingApplication;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -92,6 +100,8 @@ public class MQTTService extends Service {
         houseDao = HouseDao.getInstant();
 
         userDao = UserDao.getInstant();
+        activityPool = ActivityPool.getInstant();
+        gongXingApplication = (GongXingApplication) getApplication();
 
         try {
             clientInfo = userDao.findUser();
@@ -236,28 +246,46 @@ public class MQTTService extends Service {
                         if (msgVO != null) {
                             try {
                                 msgVO.setTime(DateUtil.getNowDateTimeShanghai());
+                                MessagePushAlert messagePushAlert = null;
+                                MessagePushDaily messagePushDaily = null;
 
                                 ChatHouse chatHouse = null;
                                 ChatTalker chatTalker = null;
                                 String house_name = "";
                                 Integer house_type = -1;
+                                //处理消息表
                                 if (msgVO.getRule_name_value() != null) {//报警类型属性
                                     msgVO.setType("2");
                                     ticker = "来自躬行监控的报警消息";
-                                    MessagePushAlert messagePushAlert = new MessagePushAlert(msgVO);
-                                    messagePushAlertDao.add(messagePushAlert);
                                     house_name = "报警";
                                     house_type = ChatHouse.HouseTypeSystemAlert;
                                 } else {//日报类型属性
                                     msgVO.setType("1");
                                     ticker = "来自躬行监控的日报消息";
-                                    MessagePushDaily messagePushDaily = new MessagePushDaily(msgVO);
-                                    messagePushDailyDao.add(messagePushDaily);
                                     house_name = "日报";
                                     house_type = ChatHouse.HouseTypeSystemDaily;
                                 }
 
-                                //chathouse,chatUser
+                                //判断是否在当前聊天室中
+                                Activity currentActivity = activityPool.currentActivity();
+                                Boolean isJustInTheHouse = false;//是否接收消息时候正在此聊天室中
+                                if (currentActivity instanceof MessageActivity) {//聊天室消息列表
+                                    MessageActivity ca = (MessageActivity) currentActivity;
+                                    //如果正好在当前聊天室中\
+                                    if (ca.getChatHouse().getHouse_name().equals(house_name)) {
+                                        isJustInTheHouse = true;
+                                    }
+                                }
+
+                                if (currentActivity instanceof MessageDetailActivity) {//是否在消息相信中
+                                    MessageDetailActivity ca = (MessageDetailActivity) currentActivity;
+                                    //如果正好在当前聊天室中\
+                                    if (ca.getChatHouse().getHouse_name().equals(house_name)) {
+                                        isJustInTheHouse = true;
+                                    }
+                                }
+
+                                //chathouse,chatUser处理聊天室和聊天用户表
                                 chatHouse = houseDao.findByName(house_name);
                                 if (chatHouse == null) {
                                     chatHouse = new ChatHouse();
@@ -265,12 +293,31 @@ public class MQTTService extends Service {
                                     chatHouse.setTs(DateUtil.getNowDateShanghai());
                                     chatHouse.setLast_essage(ticker);
                                     chatHouse.setHouse_type(house_type);
-                                    chatHouse.addUnreadNum();
+                                    if (!isJustInTheHouse) {//不在当前聊天室，需要更新unreadnum
+                                        chatHouse.addUnreadNum();
+                                    }
                                     houseDao.add(chatHouse);
                                 } else {
-                                    chatHouse.addUnreadNum();
-                                    houseDao.update(chatHouse);
+                                    if (!isJustInTheHouse) {//不在当前聊天室，需要更新unreadnum
+                                        chatHouse.addUnreadNum();
+                                        houseDao.update(chatHouse);
+                                    }
                                 }
+
+                                switch (msgVO.getType()){
+                                    case "1"://日报
+                                        messagePushDaily = new MessagePushDaily(msgVO);
+                                        messagePushDaily.setHouse_id(chatHouse.getId());
+                                        messagePushDailyDao.add(messagePushDaily);
+                                        break;
+                                    case "2"://报警
+                                        messagePushAlert = new MessagePushAlert(msgVO);
+                                        messagePushAlert.setHouse_id(chatHouse.getId());
+                                        messagePushAlertDao.add(messagePushAlert);
+                                        break;
+                                }
+
+                                //处理聊天用户
                                 chatTalker = talkerDao.findByName(house_name);
                                 if (chatTalker == null) {
                                     chatTalker = new ChatTalker();
@@ -279,57 +326,21 @@ public class MQTTService extends Service {
                                     talkerDao.add(chatTalker);
                                 }
 
-                                EventBus.getDefault().post(msgVO);
-
-                                //定义一个PendingIntent点击Notification后启动一个Activity
-                                Intent it = new Intent(getBaseContext(), MainActivity.class);
-//                    it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);//应用内只保留一个mainActivity
-                                PendingIntent pit = PendingIntent.getActivity(getBaseContext(), 0, it, 0);
-
-
-                                //设置图片,通知标题,发送时间,提示方式等属性
-                                Notification.Builder mBuilder = new Notification.Builder(getBaseContext());
-                                mBuilder.setContentTitle(msgVO.getTitle_value())                        //标题
-                                        .setContentText(msgVO.getRemark_value())      //内容
-                                        .setSubText(DateUtil.getNowDateTimeShanghai())                    //内容下面的一小段文字
-                                        .setTicker(ticker)             //收到信息后状态栏显示的文字信息
-                                        .setWhen(System.currentTimeMillis())           //设置通知时间
-                                        .setSmallIcon(R.drawable.ic_menu_send)            //设置小图标
-                                        .setLargeIcon(LargeBitmap)                     //设置大图标
-                                        .setAutoCancel(true)                           //设置点击后取消Notification
-                                        .setContentIntent(pit);                        //设置PendingIntent
-
-
-                                SharedPreferences mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-//                    Map mpsq = mySharedPreferences.getAll();
-                                Boolean isOpen = mySharedPreferences.getBoolean("notifications_new_message", true);
-                                Boolean vibrate = mySharedPreferences.getBoolean("notifications_new_message_vibrate", true);
-                                String ringtoneStr = mySharedPreferences.getString("notifications_new_message_ringtone", "");
-                                if (isOpen) {
-                                    if (vibrate && StringUtil.isEmpty(ringtoneStr)) {//默认为系统声音
-                                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS |
-                                                Notification.DEFAULT_VIBRATE);
-//                                    | Notification.DEFAULT_SOUND);    //设置默认的三色灯与振动器与声音
-                                    } else if (!vibrate && !StringUtil.isEmpty(ringtoneStr)) {//只声音
-                                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS);    //设置默认的三色灯
-//                            Ringtone ringtone = RingtoneManager.getRingtone(
-//                                    preference.getContext(), Uri.parse(stringValue));
-                                        mBuilder.setSound(Uri.parse(ringtoneStr));
-//                            mBuilder.setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.biaobiao));  //设置自定义的提示音
-                                    } else if (vibrate && !StringUtil.isEmpty(ringtoneStr)) {//震动和声音
-                                        mBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);    //设置默认的三色灯与振动器
-                                        mBuilder.setSound(Uri.parse(ringtoneStr));
-//                            mBuilder.setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.biaobiao));  //设置自定义的提示音
-                                    } else {
-
+                                //处理消息通知
+                                if (gongXingApplication.getLifecycle().isForeground()) {//如果在前端运行
+                                    int i = 0;
+                                } else {//如果是在后端
+                                    if (msgVO.getRule_name_value() != null) {//报警类型属性
+                                        sendNotification(messagePushAlert, ticker);
+                                    } else {//日报类型属性
+                                        sendNotification(messagePushDaily, ticker);
                                     }
-                                } else {
-
                                 }
 
-                                notify1 = mBuilder.build();
-//                                mNManager.notify(NOTIFYID_1 + new Random().nextInt(), notify1);
-                                mNManager.notify(NOTIFYID_1, notify1);
+                                //发送刷新布局事件
+//                                EventBus.getDefault().post(msgVO);
+                                EventBus.getDefault().post(new RefreshMessageEvent("", ""));
+                                EventBus.getDefault().post(new RefreshChatEvent("", ""));
                             } catch (DbException e) {
                                 e.printStackTrace();
                                 Log.e(e.getMessage(), e.getLocalizedMessage());
@@ -354,6 +365,56 @@ public class MQTTService extends Service {
             // 失去连接，重连
         }
     };
+
+    private void sendNotification(MessagePushBase messagePushBase, String ticker) {
+        //定义一个PendingIntent点击Notification后启动一个Activity
+        Intent it = new Intent(getBaseContext(), MainActivity.class);
+//                    it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);//应用内只保留一个mainActivity
+        PendingIntent pit = PendingIntent.getActivity(getBaseContext(), 0, it, 0);
+
+        //设置图片,通知标题,发送时间,提示方式等属性
+        Notification.Builder mBuilder = new Notification.Builder(getBaseContext());
+        mBuilder.setContentTitle(messagePushBase.getTitle_value())                        //标题
+                .setContentText(messagePushBase.getRemark_value())      //内容
+                .setSubText(DateUtil.getNowDateTimeShanghai())                    //内容下面的一小段文字
+                .setTicker(ticker)             //收到信息后状态栏显示的文字信息
+                .setWhen(System.currentTimeMillis())           //设置通知时间
+                .setSmallIcon(R.drawable.ic_menu_send)            //设置小图标
+                .setLargeIcon(LargeBitmap)                     //设置大图标
+                .setAutoCancel(true)                           //设置点击后取消Notification
+                .setContentIntent(pit);                        //设置PendingIntent
+
+        SharedPreferences mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+//                    Map mpsq = mySharedPreferences.getAll();
+        Boolean isOpen = mySharedPreferences.getBoolean("notifications_new_message", true);
+        Boolean vibrate = mySharedPreferences.getBoolean("notifications_new_message_vibrate", true);
+        String ringtoneStr = mySharedPreferences.getString("notifications_new_message_ringtone", "");
+        if (isOpen) {
+            if (vibrate && StringUtil.isEmpty(ringtoneStr)) {//默认为系统声音
+                mBuilder.setDefaults(Notification.DEFAULT_LIGHTS |
+                        Notification.DEFAULT_VIBRATE);
+//                                    | Notification.DEFAULT_SOUND);    //设置默认的三色灯与振动器与声音
+            } else if (!vibrate && !StringUtil.isEmpty(ringtoneStr)) {//只声音
+                mBuilder.setDefaults(Notification.DEFAULT_LIGHTS);    //设置默认的三色灯
+//                            Ringtone ringtone = RingtoneManager.getRingtone(
+//                                    preference.getContext(), Uri.parse(stringValue));
+                mBuilder.setSound(Uri.parse(ringtoneStr));
+//                            mBuilder.setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.biaobiao));  //设置自定义的提示音
+            } else if (vibrate && !StringUtil.isEmpty(ringtoneStr)) {//震动和声音
+                mBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);    //设置默认的三色灯与振动器
+                mBuilder.setSound(Uri.parse(ringtoneStr));
+//                            mBuilder.setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.biaobiao));  //设置自定义的提示音
+            } else {
+
+            }
+        } else {
+
+        }
+
+        notify1 = mBuilder.build();
+//                                mNManager.notify(NOTIFYID_1 + new Random().nextInt(), notify1);
+        mNManager.notify(NOTIFYID_1, notify1);
+    }
 
     /**
      * 判断网络是否连接
