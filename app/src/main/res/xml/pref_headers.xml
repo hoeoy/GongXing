@@ -13,4 +13,8 @@
         android:fragment="com.houoy.www.gongxing.SettingActivity$CachePreferenceFragment"
         android:icon="@drawable/ic_info_black_24dp"
         android:title="@string/clear_cache" />
+    <header
+        android:fragment="com.houoy.www.gongxing.SettingActivity$ServerUrlFragment"
+        android:icon="@drawable/project"
+        android:title="设置url(正式版本没有）" />
 </preference-headers>

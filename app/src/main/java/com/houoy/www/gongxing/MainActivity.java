@@ -122,7 +122,7 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
         txt_search.setOnClickListener(this);
         txt_chat.setOnClickListener(this);
 
-        txt_search.performClick();   //模拟一次点击，既进去后选择第一项
+        txt_chat.performClick();   //模拟一次点击，既进去后选择第一项
 
         try {
             ClientInfo clientInfo = userDao.findUser();

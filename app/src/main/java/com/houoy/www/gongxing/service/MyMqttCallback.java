@@ -138,7 +138,7 @@ public class MyMqttCallback implements MqttCallback {
                             if (chatHouse == null) {
                                 chatHouse = new ChatHouse();
                                 chatHouse.setHouse_name(house_name);
-                                chatHouse.setTs(DateUtil.getNowDateShanghai());
+                                chatHouse.setTs(DateUtil.getNowDateTimeShanghai());
                                 chatHouse.setLast_essage(ticker);
                                 chatHouse.setHouse_type(house_type);
                                 chatHouse.setUserid(clientInfo.getUserID());
@@ -149,6 +149,7 @@ public class MyMqttCallback implements MqttCallback {
                             } else {
                                 if (!isJustInTheHouse) {//不在当前聊天室，需要更新unreadnum
                                     chatHouse.addUnreadNum();
+                                    chatHouse.setTs(DateUtil.getNowDateTimeShanghai());
                                     houseDao.update(chatHouse);
                                 }
                             }
@@ -171,7 +172,7 @@ public class MyMqttCallback implements MqttCallback {
                             if (chatTalker == null) {
                                 chatTalker = new ChatTalker();
                                 chatTalker.setTalker_name(house_name);
-                                chatTalker.setTs(DateUtil.getNowDateShanghai());
+                                chatTalker.setTs(DateUtil.getNowDateTimeShanghai());
                                 talkerDao.add(chatTalker);
                             }
 

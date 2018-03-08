@@ -1,0 +1,10 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:defaultValue="@string/server_url_array_default"
+        android:dialogTitle="选择服务器地址"
+        android:entries="@array/server_url_array"
+        android:entryValues="@array/server_url_array"
+        android:key="app_server_url"
+        android:summary="选择服务器地址，此功能只在测试版本"
+        android:title="服务器地址"></ListPreference>
+</PreferenceScreen>

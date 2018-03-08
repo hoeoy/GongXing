@@ -15,20 +15,6 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/txt_search"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/tab_menu_bg"
-            android:drawablePadding="3dp"
-            android:drawableTop="@drawable/tab_menu_search"
-            android:gravity="center"
-            android:padding="5dp"
-            android:text="@string/search"
-            android:textColor="@drawable/tab_menu_text"
-            android:textSize="@dimen/regular11" />
-
-        <TextView
             android:id="@+id/txt_chat"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -39,6 +25,20 @@
             android:gravity="center"
             android:padding="5dp"
             android:text="@string/message"
+            android:textColor="@drawable/tab_menu_text"
+            android:textSize="@dimen/regular11" />
+
+        <TextView
+            android:id="@+id/txt_search"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/tab_menu_bg"
+            android:drawablePadding="3dp"
+            android:drawableTop="@drawable/tab_menu_search"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="@string/search"
             android:textColor="@drawable/tab_menu_text"
             android:textSize="@dimen/regular11" />
 
