@@ -97,11 +97,11 @@ public class MQTTService extends Service {
             if (clientInfo != null) {
                 String topic = clientInfo.getTopic();
                 if (!StringUtil.isEmpty(topic)) {
-                    Integer qos = 0;
+                    int qos = 1;
                     Boolean retained = false;
                     if ((!message.trim().equals("")) || (!topic.trim().equals(""))) {
                         try {
-                            conOpt.setWill(topic, message.getBytes(), qos.intValue(), retained.booleanValue());
+                            conOpt.setWill(topic, message.getBytes(), qos, retained.booleanValue());
                         } catch (Exception e) {
                             Log.i(TAG, "Exception Occured", e);
                             doConnect = false;
@@ -169,7 +169,7 @@ public class MQTTService extends Service {
             // 订阅myTopic话题
 //                client.subscribe(clientInfo.getTopic(), 1);
             ClientInfo clientInfo = userDao.findUser();
-            client.subscribe(clientInfo.getTopic(), 2);//只接受一次,确定到达
+            client.subscribe(clientInfo.getTopic(), 1);//只接受一次,确定到达
         } catch (MqttException e) {
             e.printStackTrace();
             Toast.makeText(x.app(), e.getMessage(), Toast.LENGTH_LONG).show();

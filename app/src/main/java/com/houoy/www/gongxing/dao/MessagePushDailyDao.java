@@ -41,4 +41,10 @@ public class MessagePushDailyDao extends BaseDao<MessagePushDailyDao, MessagePus
                 .findAll();
         return models;
     }
+
+    public MessagePushDaily findByRelationID(String RelationID) throws DbException {
+        MessagePushDaily model = DBHelper.db.selector(MessagePushDaily.class)
+                .where("RelationID", "=", RelationID).findFirst();
+        return model;
+    }
 }

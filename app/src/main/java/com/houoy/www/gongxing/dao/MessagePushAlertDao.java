@@ -42,4 +42,10 @@ public class MessagePushAlertDao extends BaseDao<MessagePushAlertDao, MessagePus
                 .findAll();
         return models;
     }
+
+    public MessagePushAlert findByRelationID(String RelationID) throws DbException {
+        MessagePushAlert model = DBHelper.db.selector(MessagePushAlert.class)
+                .where("RelationID", "=", RelationID).findFirst();
+        return model;
+    }
 }

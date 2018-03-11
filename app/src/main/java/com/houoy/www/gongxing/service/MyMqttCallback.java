@@ -100,17 +100,28 @@ public class MyMqttCallback implements MqttCallback {
                             ChatTalker chatTalker = null;
                             String house_name = "";
                             Integer house_type = -1;
+
                             //处理消息表
                             if (msgVO.getRule_name_value() != null) {//报警类型属性
                                 msgVO.setType(2);
                                 ticker = "来自躬行监控的报警消息";
                                 house_name = "报警";
                                 house_type = ChatHouse.HouseTypeSystemAlert;
+                                //验证是否有此relationid的消息，如果有，说明收到重复消息不再存储
+                                MessagePushAlert has = messagePushAlertDao.findByRelationID(msgVO.getRelationID());
+                                if (has != null) {
+                                    return;
+                                }
                             } else {//日报类型属性
                                 msgVO.setType(1);
                                 ticker = "来自躬行监控的日报消息";
                                 house_name = "日报";
                                 house_type = ChatHouse.HouseTypeSystemDaily;
+                                //验证是否有此relationid的消息，如果有，说明收到重复消息不再存储
+                                MessagePushDaily has = messagePushDailyDao.findByRelationID(msgVO.getRelationID());
+                                if (has != null) {
+                                    return;
+                                }
                             }
 
                             //判断是否在当前聊天室中
