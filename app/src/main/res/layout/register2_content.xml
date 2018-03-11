@@ -18,37 +18,47 @@
         android:hint="请输入手机号" />
 
     <android.support.v7.widget.GridLayout
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        app:columnCount="5"
-        app:orientation="horizontal"
-        app:rowCount="1">
+        app:orientation="horizontal">
 
         <com.houoy.www.gongxing.element.ClearEditText
             android:id="@+id/dentifyingCode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/person_little"
             android:layout_marginRight="0dp"
+            android:drawableLeft="@drawable/person_little"
             android:drawablePadding="10dp"
             android:hint="请输入验证码"
+            android:inputType="numberSigned"
             app:layout_column="0"
-            app:layout_columnSpan="3"
-            app:layout_gravity="fill"
-            android:inputType="numberSigned" />
+            app:layout_columnSpan="1"
+            app:layout_columnWeight="10"/>
 
         <Button
             android:id="@+id/btnDentifyingCode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
             android:background="#00000000"
             android:textSize="@dimen/regular17"
             android:textColor="@color/text_font_blue"
-            app:layout_gravity="fill"
+            android:text="获取验证码"
+            app:layout_column="1"
             app:layout_columnSpan="1"
-            app:layout_column="3"
-            android:text="获取验证码" />
+            app:layout_columnWeight="2"
+            android:gravity="center"
+         />
+
+        <TextView
+            android:id="@+id/lastTimeTextView"
+            android:layout_width="144dp"
+            android:layout_height="wrap_content"
+            android:text="倒计时"
+            app:layout_column="1"
+            android:visibility="gone"
+            app:layout_columnSpan="1"
+            app:layout_columnWeight="2"
+            android:gravity="center"/>
     </android.support.v7.widget.GridLayout>
 
     <com.houoy.www.gongxing.element.ClearEditText

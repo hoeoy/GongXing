@@ -3,12 +3,11 @@ package com.houoy.www.gongxing;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -21,7 +20,7 @@ import com.houoy.www.gongxing.event.LoginEvent;
 import com.houoy.www.gongxing.event.NetBroadcastReceiver;
 import com.houoy.www.gongxing.event.NetworkChangeEvent;
 import com.houoy.www.gongxing.event.RegisterEvent;
-import com.houoy.www.gongxing.event.SMSContentObserver;
+import com.houoy.www.gongxing.event.RegisterTimerEvent;
 import com.houoy.www.gongxing.model.ClientInfo;
 import com.houoy.www.gongxing.util.StringUtil;
 
@@ -60,8 +59,11 @@ public class RegisterAndSignInActivity extends MyAppCompatActivity implements Ra
     private GongXingController gongXingController;
 
     NetBroadcastReceiver netWorkStateReceiver;
-    SMSContentObserver smsContentObserver;
+//    SMSContentObserver smsContentObserver;
     //    SMSBroadcastReceiver oSMSBroadcastReceiver;
+
+    public Handler mHandler = new Handler();
+    public long timer = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,17 +71,18 @@ public class RegisterAndSignInActivity extends MyAppCompatActivity implements Ra
         super.onCreate(savedInstanceState);
         //注入view和事件
         x.view().inject(this);
-        smsContentObserver = new SMSContentObserver(this, new Handler(),
-                new SMSContentObserver.SmsListener() {
-                    @Override
-                    public void onResult(String smsContent) {
-                        //todo
-                    }
-                });
+//        smsContentObserver = new SMSContentObserver(this, new Handler(),
+//                new SMSContentObserver.SmsListener() {
+//                    @Override
+//                    public void onResult(String smsContent) {
+//                        //todo
+//                    }
+//                });
         mAdapter = new RegisterAndSignInAdapter(getSupportFragmentManager());
         bindViews();
         rb_channel.setChecked(true);
         EventBus.getDefault().register(this);
+        EventBus.getDefault().register(mAdapter.getRegister2());
         userDao = UserDao.getInstant();
         gongXingController = GongXingController.getInstant();
     }
@@ -100,10 +103,10 @@ public class RegisterAndSignInActivity extends MyAppCompatActivity implements Ra
 //        iff.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
 //        registerReceiver(oSMSBroadcastReceiver, iff);
         super.onResume();
-        if (smsContentObserver != null) {
-            getContentResolver().registerContentObserver(
-                    Uri.parse("content://sms/"), true, smsContentObserver);// 注册监听短信数据库的变化
-        }
+//        if (smsContentObserver != null) {
+//            getContentResolver().registerContentObserver(
+//                    Uri.parse("content://sms/"), true, smsContentObserver);// 注册监听短信数据库的变化
+//        }
     }
 
     private void trySignin() {
@@ -121,18 +124,38 @@ public class RegisterAndSignInActivity extends MyAppCompatActivity implements Ra
     @Override
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
+        EventBus.getDefault().unregister(mAdapter.getRegister2());
         unregisterReceiver(netWorkStateReceiver);
 //        unregisterReceiver(oSMSBroadcastReceiver);
         super.onDestroy();
+        mHandler.removeCallbacks(TimerRunnable);
+    }
+
+    private Runnable TimerRunnable = new Runnable() {
+        @Override
+        public void run() {
+            timer += 1000;
+            if (timer> 60 * 1000) {//倒计时结束
+                EventBus.getDefault().post(new RegisterTimerEvent("timer", 1));
+                timer = 0;
+            } else {
+                EventBus.getDefault().post(new RegisterTimerEvent("timer", 0));
+                countTimer();//下一次计时
+            }
+        }
+    };
+
+    public void countTimer() {
+        mHandler.postDelayed(TimerRunnable, 1000);
     }
 
     @Override
     protected void onPause() {
         // TODO Auto-generated method stub
         super.onPause();
-        if (smsContentObserver != null) {
-            getContentResolver().unregisterContentObserver(smsContentObserver);// 取消监听短信数据库的变化
-        }
+//        if (smsContentObserver != null) {
+//            getContentResolver().unregisterContentObserver(smsContentObserver);// 取消监听短信数据库的变化
+//        }
 
     }
 

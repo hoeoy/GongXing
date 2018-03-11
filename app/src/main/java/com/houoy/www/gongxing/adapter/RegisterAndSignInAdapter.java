@@ -37,6 +37,9 @@ public class RegisterAndSignInAdapter extends FragmentPagerAdapter {
         return myFragment2;
     }
 
+    public Register2 getRegister2() {
+        return myFragment3;
+    }
     @Override
     public int getCount() {
         return PAGER_COUNT;

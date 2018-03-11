@@ -6,12 +6,15 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.houoy.www.gongxing.R;
+import com.houoy.www.gongxing.RegisterAndSignInActivity;
 import com.houoy.www.gongxing.controller.GongXingController;
 import com.houoy.www.gongxing.element.ClearEditText;
 import com.houoy.www.gongxing.event.RegisterEvent;
+import com.houoy.www.gongxing.event.RegisterTimerEvent;
 import com.houoy.www.gongxing.model.ClientInfo;
 import com.houoy.www.gongxing.util.StringUtil;
 
@@ -36,12 +39,18 @@ public class Register2 extends Fragment {
     private ClearEditText etxtPhone;
     @ViewInject(R.id.dentifyingCode)
     private ClearEditText dentifyingCode;
+    @ViewInject(R.id.lastTimeTextView)
+    private TextView lastTimeTextView;
+    @ViewInject(R.id.btnDentifyingCode)
+    private TextView btnDentifyingCode;
     @ViewInject(R.id.idcode)
     private ClearEditText idcode;
 
     private GongXingController gongXingController;
+    RegisterAndSignInActivity activity;
 
     public Register2() {
+
     }
 
     @Override
@@ -50,14 +59,44 @@ public class Register2 extends Fragment {
         View view = x.view().inject(this, inflater, container); //使用注解模块一定要注意初始化视图注解框架
 //        EventBus.getDefault().register(this);
         gongXingController = GongXingController.getInstant();
+
+        activity = (RegisterAndSignInActivity) inflater.getContext();
+        if (activity.timer > 0) {
+            lastTimeTextView.setVisibility(View.VISIBLE);
+            btnDentifyingCode.setVisibility(View.GONE);
+            lastTimeTextView.setText(60 - activity.timer / 1000 + "秒后重新获取");
+        } else {
+            lastTimeTextView.setVisibility(View.GONE);
+            btnDentifyingCode.setVisibility(View.VISIBLE);
+        }
+
         return view;
     }
 
-    @Override
-    public void onDestroy() {
-//        EventBus.getDefault().unregister(this);
-        super.onDestroy();
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void handleTImer(RegisterTimerEvent event) {
+        Integer type = (Integer) event.getData();
+        switch (type) {
+            case 0:
+                lastTimeTextView.setText(60 - activity.timer / 1000 + "秒后重新获取");
+                break;
+            case 1:
+                lastTimeTextView.setVisibility(View.GONE);
+                btnDentifyingCode.setVisibility(View.VISIBLE);
+                break;
+        }
     }
+
+//    @Override
+//    public void onDetach() {
+//        super.onDetach();
+//    }
+//
+//    @Override
+//    public void onDestroy() {
+//        EventBus.getDefault().unregister(this);
+//        super.onDestroy();
+//    }
 
     @Override
     public void onViewCreated(View v, @Nullable Bundle savedInstanceState) {
@@ -96,6 +135,10 @@ public class Register2 extends Fragment {
         if (Strings.isEmpty(mobile) || mobile.length() < 11 || mobile.length() > 11) {
             Toast.makeText(view.getContext(), "请输入正确手机号", Toast.LENGTH_LONG).show();
         } else {
+            activity.timer = 0;
+            lastTimeTextView.setVisibility(View.VISIBLE);
+            btnDentifyingCode.setVisibility(View.GONE);
+            activity.countTimer();//开始计时
             EventBus.getDefault().post(new RegisterEvent(RegisterEvent.Begin_DentifyingCode, mobile));
         }
     }
