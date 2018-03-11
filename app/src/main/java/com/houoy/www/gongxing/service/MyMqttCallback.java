@@ -224,6 +224,7 @@ public class MyMqttCallback implements MqttCallback {
     @Override
     public void connectionLost(Throwable arg0) {
         // 失去连接，重连
+        service.doClientConnection();
     }
 
     private void sendNotification(MessagePushBase messagePushBase, ChatHouse chatHouse) {

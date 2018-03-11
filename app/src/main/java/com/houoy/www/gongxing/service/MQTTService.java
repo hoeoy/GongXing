@@ -136,7 +136,7 @@ public class MQTTService extends Service {
     /**
      * 连接MQTT服务器
      */
-    private void doClientConnection() {
+    public void doClientConnection() {
         if (!client.isConnected() && isConnectIsNomarl()) {
             try {
                 client.connect(conOpt, null, iMqttActionListener);
@@ -161,6 +161,7 @@ public class MQTTService extends Service {
         public void onFailure(IMqttToken arg0, Throwable arg1) {
             arg1.printStackTrace();
             // 连接失败，重连
+            doClientConnection();
         }
     };
 

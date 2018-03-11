@@ -1,8 +1,6 @@
 package com.houoy.www.gongxing;
 
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.content.Context;
 
 import java.util.Stack;
 
@@ -69,7 +67,9 @@ public class ActivityPool {
      * 结束指定类名的Activity
      */
     public void finishActivity(Class<?> cls) {
-        for (Activity activity : activityStack) {
+//        for (Activity activity : activityStack) {
+        for (int i = 0; i < activityStack.size(); i++) {
+            Activity activity = activityStack.get(i);
             if (activity.getClass().equals(cls)) {
                 finishActivity(activity);
             }
@@ -88,19 +88,19 @@ public class ActivityPool {
         activityStack.clear();
     }
 
-    /**
-     * 退出应用程序
-     */
-    public void AppExit(Context context) {
-        try {
-            finishAllActivity();
-            ActivityManager manager = (ActivityManager) context
-                    .getSystemService(Context.ACTIVITY_SERVICE);
-            manager.killBackgroundProcesses(context.getPackageName());
-            System.exit(0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    /**
+//     * 退出应用程序
+//     */
+//    public void AppExit(Context context) {
+//        try {
+//            finishAllActivity();
+//            ActivityManager manager = (ActivityManager) context
+//                    .getSystemService(Context.ACTIVITY_SERVICE);
+//            manager.killBackgroundProcesses(context.getPackageName());
+//            System.exit(0);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 }
