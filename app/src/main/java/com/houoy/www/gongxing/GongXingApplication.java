@@ -16,7 +16,7 @@ public class GongXingApplication extends Application {
     public final static String State_warning = "项异常";
     public final static String State_warningName = "报警";
     public final static String DB_Name = "gongxing_db";//本地sqlite数据库名称
-    public final static Integer DB_Version = 14;//数据库版本
+    public final static Integer DB_Version = 16;//数据库版本
 
 //    private MainActivity lastMainActivity;
 

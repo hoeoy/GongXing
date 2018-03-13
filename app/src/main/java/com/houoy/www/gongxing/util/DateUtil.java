@@ -41,6 +41,19 @@ public class DateUtil {
     }
 
     /**
+     * 获得当前时间对应的上海所在时区的时间
+     *
+     * @return 日期字符串
+     */
+    public static String getNowDateTimeShanghaiNo() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        TimeZone tz = TimeZone.getTimeZone("Asia/Shanghai");
+        sdf.setTimeZone(tz);
+        String dateStr = sdf.format(new Date());
+        return dateStr;
+    }
+
+    /**
      * 获得指定日期的上海所在时区日期
      *
      * @param date

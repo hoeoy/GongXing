@@ -21,6 +21,7 @@ import com.houoy.www.gongxing.event.SearchWarningMessageDataEvent;
 import com.houoy.www.gongxing.model.ClientInfo;
 import com.houoy.www.gongxing.model.Data;
 import com.houoy.www.gongxing.model.MessagePushBase;
+import com.houoy.www.gongxing.util.DateUtil;
 import com.houoy.www.gongxing.util.XUtil;
 import com.houoy.www.gongxing.util.XUtilCallBack;
 import com.houoy.www.gongxing.vo.RequestVO;
@@ -86,6 +87,14 @@ public class GongXingController {
                         clientInfo.setPassword(password);
                         clientInfo.setIDCode(clientInfo.getIDENTIFYINGCODE());
                         clientInfo.setOpenid(clientInfo.getWeChatID());
+                        ClientInfo clientInfoSave = userDao.findUser();
+                        if (clientInfoSave != null && clientInfo != null
+                                && clientInfo.getUserID().equals(clientInfoSave.getUserID())) {
+                            clientInfo.setClientId(clientInfoSave.getClientId());
+                        }else{
+                            clientInfo.setClientId(clientInfo.getUserID() + DateUtil.getNowDateTimeShanghaiNo());
+                        }
+
                         userDao.setUser(clientInfo);
                         EventBus.getDefault().post(new LoginEvent("login", resultVO));
                     } catch (DbException e) {

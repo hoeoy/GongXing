@@ -46,4 +46,10 @@ public class ClientInfo implements Serializable {
     private String Topic;//用于用户接受消息推送需要订阅的topic
     @Column(name = "headimgurl")
     private String headimgurl;//用户头像url
+
+
+    //冗余字段clientid
+    @Column(name = "clientId")
+    private String clientId;
+
 }

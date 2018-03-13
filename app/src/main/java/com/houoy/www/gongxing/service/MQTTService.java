@@ -40,16 +40,17 @@ public class MQTTService extends Service {
 
     //    private String host = "tcp://10.0.2.2:61613";
 //    private String host = "tcp://192.168.1.103:61613";
-//    private String host = "tcp://192.168.0.102:61613";
-    private String host = "tcp://101.201.67.36:61613";
+    private String host = "tcp://192.168.253.1:61613";
+//    private String host = "tcp://101.201.67.36:61613";
     private String userName = "admin";
     private String passWord = "password";
     //    private static String myTopic = "topic";
 //    private String clientId = "test123456789";
 
     private UserDao userDao;
-
+    private MyMqttCallback myMqttCallback = null;
     private static MQTTService mqttService = null;
+    private int qos = 0;
 
     public static MQTTService getInstant() {
         if (mqttService == null) {
@@ -66,9 +67,10 @@ public class MQTTService extends Service {
             if (clientInfo == null || StringUtil.isEmpty(clientInfo.getTopic())) {
                 Toast.makeText(x.app(), "无法获得用户的Topic，无法接收到推送消息，请尝试清空缓存后重启应用。", Toast.LENGTH_LONG).show();
             }
-            String clientId = clientInfo.getTopic();
+            String clientId = clientInfo.getClientId();
 
-            MyMqttCallback myMqttCallback = new MyMqttCallback(this);
+            myMqttCallback = MyMqttCallback.getInstant();
+            myMqttCallback.init(this);
 
             // 服务器地址（协议+地址+端口号）
             String uri = host;
@@ -77,7 +79,7 @@ public class MQTTService extends Service {
             client.setCallback(myMqttCallback);
 
             conOpt = new MqttConnectOptions();
-            // 清除缓存
+            //设置是否清空session,这里如果设置为false表示服务器会保留客户端的连接记录，设置为true表示每次连接到服务器都以新的身份连接
             conOpt.setCleanSession(true);
             // 设置超时时间，单位：秒
             conOpt.setConnectionTimeout(10);
@@ -170,7 +172,7 @@ public class MQTTService extends Service {
             // 订阅myTopic话题
 //                client.subscribe(clientInfo.getTopic(), 1);
             ClientInfo clientInfo = userDao.findUser();
-            client.subscribe(clientInfo.getTopic(), 1);//只接受一次,确定到达
+            client.subscribe(clientInfo.getTopic(), qos);//只接受一次,确定到达
         } catch (MqttException e) {
             e.printStackTrace();
             Toast.makeText(x.app(), e.getMessage(), Toast.LENGTH_LONG).show();
@@ -221,5 +223,4 @@ public class MQTTService extends Service {
 //            e.printStackTrace();
 //        }
 //    }
-
 }
