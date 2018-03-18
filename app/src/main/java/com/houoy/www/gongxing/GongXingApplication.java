@@ -10,6 +10,11 @@ import org.xutils.x;
 
 public class GongXingApplication extends Application {
 
+    public static String mqtt_host = "tcp://101.201.67.36:61613";
+//    public static String mqtt_host = "tcp://192.168.0.103:61613";
+    public static String mqtt_userName = "admin";
+    public static String mqtt_password = "password";
+
     //    public static String url = "http://101.201.67.36:9011/CloudWeChatPlatServer/";
     public static String sign = "dff687bbfd840d3484e2091b09c8c424";
     public final static String State_normal = "正常";

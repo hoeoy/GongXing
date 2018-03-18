@@ -6,6 +6,8 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -26,6 +28,8 @@ import android.widget.Toast;
 import com.houoy.www.gongxing.controller.GongXingController;
 import com.houoy.www.gongxing.dao.UserDao;
 import com.houoy.www.gongxing.event.LogoutEvent;
+import com.houoy.www.gongxing.event.NetBroadcastReceiver;
+import com.houoy.www.gongxing.event.NetworkChangeEvent;
 import com.houoy.www.gongxing.fragment.ChatFragment;
 import com.houoy.www.gongxing.fragment.SearchFragment;
 import com.houoy.www.gongxing.model.ClientInfo;
@@ -80,8 +84,12 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
     private long exitTime = 0;
     private UserDao userDao;
     private GongXingController gongXingController;
-    private MQTTService mqttMessage;
+    private MQTTService mqttService;
     private MyMqttCallback myMqttCallback = null;
+
+    NetBroadcastReceiver netWorkStateReceiver;
+
+    Intent serviceIntent = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,9 +100,10 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
         EventBus.getDefault().register(this);
 
 //        startService(new Intent(getApplicationContext(), MQTTService.class));//启动service
-        getApplication().startService(new Intent(getApplicationContext(), MQTTService.class));//启动service
+        serviceIntent = new Intent(getApplicationContext(), MQTTService.class);
+        getApplication().startService(serviceIntent);//启动service
 
-        mqttMessage = MQTTService.getInstant();
+        mqttService = MQTTService.getInstant();
         myMqttCallback = MyMqttCallback.getInstant();
 
         setSupportActionBar(toolbar);
@@ -166,6 +175,16 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
         if (myMqttCallback != null) {
             myMqttCallback.cleanAllNotification();
         }
+        if (netWorkStateReceiver == null) {
+            netWorkStateReceiver = new NetBroadcastReceiver();
+        }
+//        if (oSMSBroadcastReceiver == null) {
+//            oSMSBroadcastReceiver = new SMSBroadcastReceiver();
+//        }
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(netWorkStateReceiver, filter);
+
         super.onResume();
     }
 
@@ -301,7 +320,7 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
     public void onLogout(LogoutEvent event) {
         ClientInfo clientInfo = (ClientInfo) event.getData();
         //取消订阅
-        mqttMessage.unSubscribe(clientInfo.getTopic());
+        mqttService.unSubscribe(clientInfo.getTopic());
         Intent intent = new Intent();
         intent.setClass(mContext, RegisterAndSignInActivity.class);
         startActivity(intent);
@@ -333,7 +352,7 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
                 exitTime = System.currentTimeMillis();
             } else {
                 finish();
-                System.exit(0);
+//                System.exit(0);
             }
             return false;
         }
@@ -342,8 +361,54 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
 
     @Override
     protected void onDestroy() {
+        ClientInfo clientInfo = null;
+        try {
+            clientInfo = userDao.findUser();
+            //取消订阅
+            if(clientInfo!=null){
+                mqttService.unSubscribe(clientInfo.getTopic());
+            }
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+
+        if (serviceIntent != null) {
+            getApplication().stopService(serviceIntent);
+        }
+
+        getApplication().startService(new Intent(getApplicationContext(), MQTTService.class));//启动service
         EventBus.getDefault().unregister(this);
+        unregisterReceiver(netWorkStateReceiver);
         super.onDestroy();
+    }
+
+    /**
+     * 网络变化之后的类型
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onNetChange(NetworkChangeEvent event) {
+        Boolean hasNet = isNetConnect((Integer) event.getData());
+        if (hasNet) {
+            //如果有网络，尝试重新连接
+            mqttService.doClientConnection();
+        }
+    }
+
+    /**
+     * 判断有无网络 。
+     *
+     * @return true 有网, false 没有网络.
+     */
+    public boolean isNetConnect(int netMobile) {
+        if (netMobile == 1) {
+            return true;
+        } else if (netMobile == 0) {
+            return true;
+        } else if (netMobile == -1) {
+            return false;
+
+        }
+        return false;
     }
 
     //显示基本的AlertDialog

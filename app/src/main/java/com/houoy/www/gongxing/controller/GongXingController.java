@@ -21,7 +21,7 @@ import com.houoy.www.gongxing.event.SearchWarningMessageDataEvent;
 import com.houoy.www.gongxing.model.ClientInfo;
 import com.houoy.www.gongxing.model.Data;
 import com.houoy.www.gongxing.model.MessagePushBase;
-import com.houoy.www.gongxing.util.DateUtil;
+import com.houoy.www.gongxing.util.AppUtil;
 import com.houoy.www.gongxing.util.XUtil;
 import com.houoy.www.gongxing.util.XUtilCallBack;
 import com.houoy.www.gongxing.vo.RequestVO;
@@ -45,7 +45,8 @@ public class GongXingController {
 
     private SharedPreferences mySharedPreferences;
     private Context appContext;
-    private String defaultUrl = "http://101.201.67.36:9011/CloudWeChatPlatServer/";
+//    private String defaultUrl = "http://101.201.67.36:9011/CloudWeChatPlatServer/";
+    private String defaultUrl = "http://app.51jfjk.com:9017/CloudAPPServer/";
 
     private GongXingController() {
         userDao = UserDao.getInstant();
@@ -91,8 +92,9 @@ public class GongXingController {
                         if (clientInfoSave != null && clientInfo != null
                                 && clientInfo.getUserID().equals(clientInfoSave.getUserID())) {
                             clientInfo.setClientId(clientInfoSave.getClientId());
-                        }else{
-                            clientInfo.setClientId(clientInfo.getUserID() + DateUtil.getNowDateTimeShanghaiNo());
+                        } else {
+                            String uniqueID = AppUtil.getPesudoUniqueID();
+                            clientInfo.setClientId(clientInfo.getUserID() + uniqueID);
                         }
 
                         userDao.setUser(clientInfo);

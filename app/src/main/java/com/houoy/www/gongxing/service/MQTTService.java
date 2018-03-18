@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.houoy.www.gongxing.GongXingApplication;
 import com.houoy.www.gongxing.dao.UserDao;
 import com.houoy.www.gongxing.model.ClientInfo;
 import com.houoy.www.gongxing.util.StringUtil;
@@ -38,19 +39,13 @@ public class MQTTService extends Service {
     private static MqttAndroidClient client;
     private MqttConnectOptions conOpt;
 
-    //    private String host = "tcp://10.0.2.2:61613";
-//    private String host = "tcp://192.168.1.103:61613";
-    private String host = "tcp://192.168.253.1:61613";
-//    private String host = "tcp://101.201.67.36:61613";
-    private String userName = "admin";
-    private String passWord = "password";
     //    private static String myTopic = "topic";
 //    private String clientId = "test123456789";
 
     private UserDao userDao;
     private MyMqttCallback myMqttCallback = null;
     private static MQTTService mqttService = null;
-    private int qos = 0;
+    private int qos = 1;
 
     public static MQTTService getInstant() {
         if (mqttService == null) {
@@ -66,6 +61,7 @@ public class MQTTService extends Service {
             ClientInfo clientInfo = userDao.findUser();
             if (clientInfo == null || StringUtil.isEmpty(clientInfo.getTopic())) {
                 Toast.makeText(x.app(), "无法获得用户的Topic，无法接收到推送消息，请尝试清空缓存后重启应用。", Toast.LENGTH_LONG).show();
+                return super.onStartCommand(intent, flags, startId);
             }
             String clientId = clientInfo.getClientId();
 
@@ -73,24 +69,22 @@ public class MQTTService extends Service {
             myMqttCallback.init(this);
 
             // 服务器地址（协议+地址+端口号）
-            String uri = host;
-            client = new MqttAndroidClient(this, uri, clientId);
+            client = new MqttAndroidClient(this, GongXingApplication.mqtt_host, clientId);
             // 设置MQTT监听并且接受消息
             client.setCallback(myMqttCallback);
 
             conOpt = new MqttConnectOptions();
             //设置是否清空session,这里如果设置为false表示服务器会保留客户端的连接记录，设置为true表示每次连接到服务器都以新的身份连接
-            conOpt.setCleanSession(true);
+            conOpt.setCleanSession(false);
             // 设置超时时间，单位：秒
-            conOpt.setConnectionTimeout(10);
+//            conOpt.setConnectionTimeout(10);
             // 心跳包发送间隔，单位：秒
-            conOpt.setKeepAliveInterval(20);
+//            conOpt.setKeepAliveInterval(20);
             // 用户名
-            conOpt.setUserName(userName);
+            conOpt.setUserName(GongXingApplication.mqtt_userName);
             // 密码
-            conOpt.setPassword(passWord.toCharArray());
-            conOpt.setAutomaticReconnect(true);
-
+            conOpt.setPassword(GongXingApplication.mqtt_password.toCharArray());
+//            conOpt.setAutomaticReconnect(true);
             // last will message
             boolean doConnect = true;
             String message = "{\"terminal_uid\":\"" + clientId + "\"}";
@@ -127,6 +121,17 @@ public class MQTTService extends Service {
     @Override
     public void onDestroy() {
         try {
+            ClientInfo clientInfo = null;
+            try {
+                clientInfo = userDao.findUser();
+                //取消订阅
+                if (clientInfo != null) {
+                    mqttService.unSubscribe(clientInfo.getTopic());
+                }
+            } catch (DbException e) {
+                e.printStackTrace();
+            }
+
             client.disconnect();
         } catch (MqttException e) {
             e.printStackTrace();
@@ -139,15 +144,14 @@ public class MQTTService extends Service {
      * 连接MQTT服务器
      */
     public void doClientConnection() {
-        if (!client.isConnected() && isConnectIsNomarl()) {
-            try {
+        try {
+            if (!client.isConnected() && conOpt != null && isConnectIsNomarl()) {
                 client.connect(conOpt, null, iMqttActionListener);
-            } catch (MqttException e) {
-                e.printStackTrace();
-                Toast.makeText(x.app(), e.getMessage(), Toast.LENGTH_LONG).show();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(x.app(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
-
     }
 
     // MQTT是否连接成功
@@ -172,7 +176,9 @@ public class MQTTService extends Service {
             // 订阅myTopic话题
 //                client.subscribe(clientInfo.getTopic(), 1);
             ClientInfo clientInfo = userDao.findUser();
-            client.subscribe(clientInfo.getTopic(), qos);//只接受一次,确定到达
+            if (clientInfo != null) {
+                IMqttToken mqttToken = client.subscribe(clientInfo.getTopic(), qos);//只接受一次,确定到达
+            }
         } catch (MqttException e) {
             e.printStackTrace();
             Toast.makeText(x.app(), e.getMessage(), Toast.LENGTH_LONG).show();
@@ -195,16 +201,22 @@ public class MQTTService extends Service {
      * 判断网络是否连接
      */
     private boolean isConnectIsNomarl() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) this.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo info = connectivityManager.getActiveNetworkInfo();
-        if (info != null && info.isAvailable()) {
-            String name = info.getTypeName();
-            Log.i(TAG, "MQTT当前网络名称：" + name);
-            return true;
-        } else {
-            Log.i(TAG, "MQTT 没有可用网络");
-            return false;
+        Context context = this.getApplicationContext();
+        if (context != null) {
+            ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (connectivityManager != null) {
+                NetworkInfo info = connectivityManager.getActiveNetworkInfo();
+                if (info != null && info.isAvailable()) {
+                    String name = info.getTypeName();
+                    Log.i(TAG, "MQTT当前网络名称：" + name);
+                    return true;
+                } else {
+                    Log.i(TAG, "MQTT 没有可用网络");
+                    return false;
+                }
+            }
         }
+        return true;
     }
 
     @Nullable
@@ -223,4 +235,5 @@ public class MQTTService extends Service {
 //            e.printStackTrace();
 //        }
 //    }
+
 }
