@@ -12,7 +12,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.houoy.www.gongxing.ActivityPool;
@@ -43,7 +42,6 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.greenrobot.eventbus.EventBus;
 import org.xutils.ex.DbException;
-import org.xutils.x;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
@@ -229,7 +227,10 @@ public class MyMqttCallback implements MqttCallback {
                         Log.i("message是空的", "message是空的");
                     }
                 } catch (Exception e) {
-                    Log.e(e.getMessage(), e.getLocalizedMessage());
+                    e.printStackTrace();
+                    if (e != null) {
+                        Log.e("消费消息出错",e.toString());
+                    }
                 }
             }
         }).start();

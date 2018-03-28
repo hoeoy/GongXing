@@ -84,7 +84,7 @@ public class MQTTService extends Service {
             conOpt.setUserName(GongXingApplication.mqtt_userName);
             // 密码
             conOpt.setPassword(GongXingApplication.mqtt_password.toCharArray());
-//            conOpt.setAutomaticReconnect(true);
+            conOpt.setAutomaticReconnect(true);
             // last will message
             boolean doConnect = true;
             String message = "{\"terminal_uid\":\"" + clientId + "\"}";
@@ -150,7 +150,7 @@ public class MQTTService extends Service {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(x.app(), e.getMessage(), Toast.LENGTH_LONG).show();
+//            Toast.makeText(x.app(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -166,8 +166,6 @@ public class MQTTService extends Service {
         @Override
         public void onFailure(IMqttToken arg0, Throwable arg1) {
             arg1.printStackTrace();
-            // 连接失败，重连
-            doClientConnection();
         }
     };
 

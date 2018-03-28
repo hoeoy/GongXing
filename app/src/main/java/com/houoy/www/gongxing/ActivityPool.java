@@ -40,7 +40,11 @@ public class ActivityPool {
      * 获取当前Activity（堆栈中最后一个压入的）
      */
     public Activity currentActivity() {
-        return activityStack.lastElement();
+        if(activityStack !=null && activityStack.size()>0){
+            return activityStack.lastElement();
+        }else{
+            return null;
+        }
     }
 
     /**
