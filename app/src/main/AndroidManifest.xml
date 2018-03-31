@@ -18,6 +18,14 @@
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.RESTART_PACKAGES" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.REORDER_TASKS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
 
     <application
         android:name=".GongXingApplication"
@@ -27,6 +35,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.alibaba.app.appkey"
+            android:value="24835721" /> <!-- 请填写你自己的- appKey -->
+        <meta-data
+            android:name="com.alibaba.app.appsecret"
+            android:value="d10d31bae28e0f6f9b63ac84481e438d" /> <!-- 请填写你自己的appSecret -->
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -56,9 +71,39 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- 消息接收监听器 （用户可自主扩展） -->
+        <receiver
+            android:name=".service.MyMessageReceiver"
+            android:exported="false">
+            <intent-filter> 
+                <action android:name="com.alibaba.push2.action.NOTIFICATION_OPENED" />
+            </intent-filter>
+            <intent-filter>     
+                <action android:name="com.alibaba.push2.action.NOTIFICATION_REMOVED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.alibaba.sdk.android.push.RECEIVE" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".service.MyMessageIntentService"
+            android:exported="false">
+            <intent-filter> 
+                <action android:name="com.alibaba.push2.action.NOTIFICATION_OPENED" />
+            </intent-filter>
+            <intent-filter>     
+                <action android:name="com.alibaba.push2.action.NOTIFICATION_REMOVED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.alibaba.sdk.android.push.RECEIVE" />
+            </intent-filter>
+        </service>
+
         <!-- Mqtt Service -->
-        <service android:name="org.eclipse.paho.android.service.MqttService" />
-        <service android:name=".service.MQTTService" />
+        <!--<service android:name="org.eclipse.paho.android.service.MqttService" />-->
+        <!--<service android:name=".service.MQTTService" />-->
         <!--
           android:enabled="true"
           android:process="system" />

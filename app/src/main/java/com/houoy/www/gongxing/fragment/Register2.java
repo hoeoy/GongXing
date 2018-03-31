@@ -17,8 +17,6 @@ import com.houoy.www.gongxing.event.RegisterEvent;
 import com.houoy.www.gongxing.event.RegisterTimerEvent;
 import com.houoy.www.gongxing.model.ClientInfo;
 import com.houoy.www.gongxing.util.StringUtil;
-
-import org.eclipse.paho.client.mqttv3.util.Strings;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -132,7 +130,7 @@ public class Register2 extends Fragment {
     private void onbtnDentifyingCodeClick(View view) {
         String mobile = etxtPhone.getText().toString();
         //输入验证
-        if (Strings.isEmpty(mobile) || mobile.length() < 11 || mobile.length() > 11) {
+        if (StringUtil.isEmpty(mobile) || mobile.length() < 11 || mobile.length() > 11) {
             Toast.makeText(view.getContext(), "请输入正确手机号", Toast.LENGTH_LONG).show();
         } else {
             activity.timer = 0;
