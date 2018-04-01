@@ -30,7 +30,7 @@ public class GongXingApplication extends Application {
     public final static String State_warning = "项异常";
     public final static String State_warningName = "报警";
     public final static String DB_Name = "gongxing_db";//本地sqlite数据库名称
-    public final static Integer DB_Version = 17;//数据库版本
+    public final static Integer DB_Version = 18;//数据库版本
 
 //    private MainActivity lastMainActivity;
 
@@ -40,9 +40,11 @@ public class GongXingApplication extends Application {
 
     public CloudPushService pushService;
 
+    public static GongXingApplication gongXingApplication = null;
     @Override
     public void onCreate() {
         super.onCreate();
+        gongXingApplication = this;
         initCloudChannel(this);
 
         x.Ext.init(this);//注入view和事件

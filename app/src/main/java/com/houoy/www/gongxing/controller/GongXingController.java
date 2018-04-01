@@ -89,13 +89,13 @@ public class GongXingController {
                         clientInfo.setIDCode(clientInfo.getIDENTIFYINGCODE());
                         clientInfo.setOpenid(clientInfo.getWeChatID());
                         ClientInfo clientInfoSave = userDao.findUser();
-                        if (clientInfoSave != null && clientInfo != null
-                                && clientInfo.getUserID().equals(clientInfoSave.getUserID())) {
-                            clientInfo.setClientId(clientInfoSave.getClientId());
-                        } else {
-                            String uniqueID = AppUtil.getPesudoUniqueID();
-                            clientInfo.setClientId(clientInfo.getUserID() + uniqueID);
-                        }
+//                        if (clientInfoSave != null && clientInfo != null
+//                                && clientInfo.getUserID().equals(clientInfoSave.getUserID())) {
+//                            clientInfo.setClientId(clientInfoSave.getClientId());
+//                        } else {
+//                            String uniqueID = AppUtil.getPesudoUniqueID();
+//                            clientInfo.setClientId(clientInfo.getUserID() + uniqueID);
+//                        }
 
                         userDao.setUser(clientInfo);
                         EventBus.getDefault().post(new LoginEvent("login", resultVO));

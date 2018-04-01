@@ -1,15 +1,26 @@
 package com.houoy.www.gongxing.service;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.sdk.android.push.MessageReceiver;
 import com.alibaba.sdk.android.push.notification.CPushMessage;
 import com.houoy.www.gongxing.ActivityPool;
+import com.houoy.www.gongxing.GongXingApplication;
 import com.houoy.www.gongxing.MessageActivity;
 import com.houoy.www.gongxing.MessageDetailActivity;
+import com.houoy.www.gongxing.R;
 import com.houoy.www.gongxing.dao.HouseDao;
 import com.houoy.www.gongxing.dao.MessagePushAlertDao;
 import com.houoy.www.gongxing.dao.MessagePushDailyDao;
@@ -22,14 +33,18 @@ import com.houoy.www.gongxing.model.ChatTalker;
 import com.houoy.www.gongxing.model.ClientInfo;
 import com.houoy.www.gongxing.model.Message;
 import com.houoy.www.gongxing.model.MessagePushAlert;
+import com.houoy.www.gongxing.model.MessagePushBase;
 import com.houoy.www.gongxing.model.MessagePushDaily;
 import com.houoy.www.gongxing.util.DateUtil;
+import com.houoy.www.gongxing.util.StringUtil;
 import com.houoy.www.gongxing.vo.MessageVO;
 
 import org.greenrobot.eventbus.EventBus;
 import org.xutils.ex.DbException;
 
 import java.util.Map;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 /**
  * @author: 正纬
@@ -41,6 +56,27 @@ public class MyMessageReceiver extends MessageReceiver {
 
     // 消息接收部分的LOG_TAG
     public static final String REC_TAG = "receiver";
+
+    Notification notify = null;
+    NotificationManager mNManager = null;
+
+    public GongXingApplication getApplication() {
+        return GongXingApplication.gongXingApplication;
+    }
+
+    public Notification getNotification(Notification.Builder mBuilder) {
+        if (notify == null) {
+            notify = mBuilder.build();
+        }
+        return notify;
+    }
+
+    public NotificationManager getNotificationManager() {
+        if (mNManager == null) {
+            mNManager = (NotificationManager) getApplication().getSystemService(NOTIFICATION_SERVICE);
+        }
+        return mNManager;
+    }
 
     /**
      * 推送通知的回调方法
@@ -243,16 +279,16 @@ public class MyMessageReceiver extends MessageReceiver {
                             talkerDao.add(chatTalker);
                         }
 
-//                        //处理消息通知
-//                        if (gongXingApplication.getLifecycle().isForeground()) {//如果在前端运行
-//                            int i = 0;
-//                        } else {//如果是在后端
-//                            if (msgVO.getRule_name_value() != null) {//报警类型属性
-//                                sendNotification(messagePushAlert, chatHouse);
-//                            } else {//日报类型属性
-//                                sendNotification(messagePushDaily, chatHouse);
-//                            }
-//                        }
+                        //处理消息通知
+                        if (getApplication().getLifecycle().isForeground()) {//如果在前端运行
+                            int i = 0;
+                        } else {//如果是在后端
+                            if (msgVO.getRule_name_value() != null) {//报警类型属性
+                                sendNotification(messagePushAlert, chatHouse);
+                            } else {//日报类型属性
+                                sendNotification(messagePushDaily, chatHouse);
+                            }
+                        }
 
                         //发送刷新布局事件
 //                                EventBus.getDefault().post(msgVO);
@@ -275,4 +311,67 @@ public class MyMessageReceiver extends MessageReceiver {
             }
         }
     }
+
+
+    private void sendNotification(MessagePushBase messagePushBase, ChatHouse chatHouse) {
+        //定义一个PendingIntent点击Notification后启动一个Activity
+        Context context = getApplication();
+        Intent it = new Intent(context, MessageActivity.class);
+//        it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);//应用内只保留一个 MessageActivity
+        it.putExtra(MessageActivity.intentStr, chatHouse);
+        PendingIntent pit = PendingIntent.getActivity(context, messagePushBase.getType(), it, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        //创建大图标的Bitmap
+        Bitmap LargeBitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher_round);
+
+        //设置图片,通知标题,发送时间,提示方式等属性
+        Notification.Builder mBuilder = new Notification.Builder(context);
+        mBuilder.setContentTitle(messagePushBase.getTitle_value())                        //标题
+                .setContentText(messagePushBase.getRemark_value())      //内容
+                .setSubText(DateUtil.getNowDateTimeShanghai())                    //内容下面的一小段文字
+                .setTicker(chatHouse.getHouse_name())             //收到信息后状态栏显示的文字信息
+                .setWhen(System.currentTimeMillis())           //设置通知时间
+                .setSmallIcon(R.mipmap.ic_launcher_round)            //设置小图标
+                .setLargeIcon(LargeBitmap)                     //设置大图标
+                .setAutoCancel(true)                           //设置点击后取消Notification
+                .setContentIntent(pit);                        //设置PendingIntent
+
+        SharedPreferences mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+//                    Map mpsq = mySharedPreferences.getAll();
+        Boolean isOpen = mySharedPreferences.getBoolean("notifications_new_message", true);
+        Boolean vibrate = mySharedPreferences.getBoolean("notifications_new_message_vibrate", true);
+        String ringtoneStr = mySharedPreferences.getString("notifications_new_message_ringtone", "");
+        if (isOpen) {
+            if (vibrate && StringUtil.isEmpty(ringtoneStr)) {//默认为系统声音
+                mBuilder.setDefaults(Notification.DEFAULT_LIGHTS |
+                        Notification.DEFAULT_VIBRATE);
+//                                    | Notification.DEFAULT_SOUND);    //设置默认的三色灯与振动器与声音
+            } else if (!vibrate && !StringUtil.isEmpty(ringtoneStr)) {//只声音
+                mBuilder.setDefaults(Notification.DEFAULT_LIGHTS);    //设置默认的三色灯
+//                            Ringtone ringtone = RingtoneManager.getRingtone(
+//                                    preference.getContext(), Uri.parse(stringValue));
+                mBuilder.setSound(Uri.parse(ringtoneStr));
+//                            mBuilder.setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.biaobiao));  //设置自定义的提示音
+            } else if (vibrate && !StringUtil.isEmpty(ringtoneStr)) {//震动和声音
+                mBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);    //设置默认的三色灯与振动器
+                mBuilder.setSound(Uri.parse(ringtoneStr));
+//                            mBuilder.setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.biaobiao));  //设置自定义的提示音
+            } else {
+
+            }
+        } else {
+
+        }
+
+        getNotificationManager().notify(messagePushBase.getType(), getNotification(mBuilder));
+    }
+
+
+    //清除通知
+    public void cleanAllNotification() {
+        if (getNotificationManager() != null) {
+            getNotificationManager().cancelAll();
+        }
+    }
+
 }

@@ -48,8 +48,8 @@ public class ClientInfo implements Serializable {
     private String headimgurl;//用户头像url
 
 
-    //冗余字段clientid
-    @Column(name = "clientId")
-    private String clientId;
+//    //冗余字段clientid
+//    @Column(name = "clientId")
+//    private String clientId;
 
 }

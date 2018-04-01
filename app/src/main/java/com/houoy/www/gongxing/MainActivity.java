@@ -142,7 +142,7 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
             if (clientInfo != null) {
                 //绑定消息通道
                 GongXingApplication application = (GongXingApplication) getApplication();
-                application.pushService.bindAccount(clientInfo.getClientId(), new CommonCallback() {
+                application.pushService.bindAccount(clientInfo.getTopic(), new CommonCallback() {
                     @Override
                     public void onSuccess(String s) {
                         Log.d(TAG, "bind cloudchannel success");
