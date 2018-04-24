@@ -1,6 +1,7 @@
 package com.houoy.www.gongxing.util;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -10,9 +11,12 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+
+import java.util.ArrayList;
 
 /**
  * App相关工具类
@@ -112,6 +116,27 @@ public class AppUtil {
     }
 
     /**
+     * 判断服务是否开启
+     *
+     * @return
+     */
+    public static boolean isServiceRunning(Context context, String ServiceName) {
+        if (("").equals(ServiceName) || ServiceName == null)
+            return false;
+        ActivityManager myManager = (ActivityManager) context
+                .getSystemService(Context.ACTIVITY_SERVICE);
+        ArrayList<ActivityManager.RunningServiceInfo> runningService = (ArrayList<ActivityManager.RunningServiceInfo>) myManager
+                .getRunningServices(30);
+        for (int i = 0; i < runningService.size(); i++) {
+            if (runningService.get(i).service.getClassName().toString()
+                    .equals(ServiceName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * 获取应用程序版本名称信息
      *
      * @param context
@@ -176,4 +201,23 @@ public class AppUtil {
         return m_szDevIDShort;
     }
 
+    //updateutils
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            "android.permission.READ_EXTERNAL_STORAGE",
+            "android.permission.WRITE_EXTERNAL_STORAGE"};
+
+    public static void verifyStoragePermissions(Activity activity) {
+        try {
+            //检测是否有写的权限
+            int permission = ActivityCompat.checkSelfPermission(activity,
+                    "android.permission.WRITE_EXTERNAL_STORAGE");
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                // 没有写的权限，去申请写的权限，会弹出对话框
+                ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

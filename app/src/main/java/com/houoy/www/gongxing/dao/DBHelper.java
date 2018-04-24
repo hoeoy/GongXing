@@ -3,6 +3,7 @@ package com.houoy.www.gongxing.dao;
 import android.util.Log;
 
 import com.houoy.www.gongxing.GongXingApplication;
+import com.houoy.www.gongxing.model.AboutMenu;
 import com.houoy.www.gongxing.model.ChatHouse;
 import com.houoy.www.gongxing.model.ChatTalker;
 import com.houoy.www.gongxing.model.ClientInfo;
@@ -47,6 +48,7 @@ public class DBHelper {
                             db.dropTable(Setting.class);
                             db.dropTable(ChatHouse.class);
                             db.dropTable(ChatTalker.class);
+                            db.dropTable(AboutMenu.class);
                         } catch (DbException e) {
                             Log.e(e.getMessage(), e.getLocalizedMessage());
                         }

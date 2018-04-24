@@ -7,6 +7,8 @@
 
     <string name="action_out">退出登录</string>
     <string name="help">帮助</string>
+    <string name="about">关于</string>
+    <string name="about_update">新版本更新</string>
     <string name="action_share">分享</string>
     <string name="clear_cache">清除缓存</string>
     <string name="action_setting">设置</string>
@@ -41,4 +43,5 @@
         <item>http://101.201.67.36:9011/CloudWeChatPlatServer/</item>
         <item>http://app.51jfjk.com:9017/CloudAPPServer/</item>
     </string-array>
+    <string name="title_activity_about">AboutActivity</string>
 </resources>

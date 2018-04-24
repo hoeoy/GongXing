@@ -1,8 +1,12 @@
 package com.houoy.www.gongxing;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.StrictMode;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import com.alibaba.sdk.android.push.CloudPushService;
@@ -30,7 +34,7 @@ public class GongXingApplication extends Application {
     public final static String State_warning = "项异常";
     public final static String State_warningName = "报警";
     public final static String DB_Name = "gongxing_db";//本地sqlite数据库名称
-    public final static Integer DB_Version = 18;//数据库版本
+    public final static Integer DB_Version = 25;//数据库版本
 
 //    private MainActivity lastMainActivity;
 
@@ -41,6 +45,7 @@ public class GongXingApplication extends Application {
     public CloudPushService pushService;
 
     public static GongXingApplication gongXingApplication = null;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -55,6 +60,12 @@ public class GongXingApplication extends Application {
         if (Build.VERSION.SDK_INT >= 14) {
             lifecycle = new MyActivityLifecycle();
             registerActivityLifecycleCallbacks(lifecycle);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            //解决v7.0的不能访问下载路径的问题
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy(builder.build());
         }
 
         controller = GongXingController.getInstant();

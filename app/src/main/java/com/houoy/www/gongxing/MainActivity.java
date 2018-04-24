@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,7 +17,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,9 +31,13 @@ import com.houoy.www.gongxing.dao.UserDao;
 import com.houoy.www.gongxing.event.LogoutEvent;
 import com.houoy.www.gongxing.event.NetBroadcastReceiver;
 import com.houoy.www.gongxing.event.NetworkChangeEvent;
+import com.houoy.www.gongxing.event.UpdateEvent;
 import com.houoy.www.gongxing.fragment.ChatFragment;
 import com.houoy.www.gongxing.fragment.SearchFragment;
+import com.houoy.www.gongxing.model.AboutMenu;
 import com.houoy.www.gongxing.model.ClientInfo;
+import com.houoy.www.gongxing.service.DownLoadService;
+import com.houoy.www.gongxing.util.AppUtil;
 import com.houoy.www.gongxing.util.ImageUtil;
 import com.houoy.www.gongxing.util.StringUtil;
 
@@ -44,6 +48,8 @@ import org.xutils.ex.DbException;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
+
+import java.io.File;
 
 @ContentView(R.layout.activity_main)
 public class MainActivity extends MyAppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
@@ -90,6 +96,7 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
     NetBroadcastReceiver netWorkStateReceiver;
 
     Intent serviceIntent = null;
+    private Intent intentOne;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,6 +180,9 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
         } catch (DbException e) {
             Log.e(e.getMessage(), e.getLocalizedMessage());
         }
+
+        AppUtil.verifyStoragePermissions(this);
+        intentOne = new Intent(this, DownLoadService.class);
 //
 //        //删除上一个mainActivity
 //        GongXingApplication application = (GongXingApplication) getApplication();
@@ -253,6 +263,10 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
             case R.id.help:
                 Intent intent1 = new Intent(MainActivity.this, HelpActivity.class);
                 startActivity(intent1);
+                break;
+            case R.id.about:
+                Intent intent3 = new Intent(MainActivity.this, AboutActivity.class);
+                startActivity(intent3);
                 break;
             case R.id.clear_setting:
                 Intent intent2 = new Intent(MainActivity.this, SettingActivity.class);
@@ -335,6 +349,21 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
         ClientInfo clientInfo = (ClientInfo) event.getData();
         //取消订阅
 //        mqttService.unSubscribe(clientInfo.getTopic());
+        if (clientInfo != null) {
+            //绑定消息通道
+            GongXingApplication application = (GongXingApplication) getApplication();
+            application.pushService.unbindAccount(new CommonCallback() {
+                @Override
+                public void onSuccess(String s) {
+                    Log.d(TAG, "unbindAccount cloudchannel success");
+                }
+
+                @Override
+                public void onFailed(String s, String s1) {
+                    Log.d(TAG, "unbindAccount cloudchannel fail");
+                }
+            });
+        }
         Intent intent = new Intent();
         intent.setClass(mContext, RegisterAndSignInActivity.class);
         startActivity(intent);
@@ -396,6 +425,48 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
         EventBus.getDefault().unregister(this);
         unregisterReceiver(netWorkStateReceiver);
         super.onDestroy();
+    }
+
+    /**
+     * 下载安装包，安装
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUpdateEvent(UpdateEvent event) {
+        switch (event.getType()) {
+            case UpdateEvent.newVersion:
+                int a = 0;
+                break;
+            case UpdateEvent.begin:
+                if (AppUtil.isServiceRunning(this, "com.houoy.www.gongxing.service.DownLoadService")) {
+                    Toast.makeText(mContext, "已经在下载...", Toast.LENGTH_SHORT).show();
+                } else {
+                    intentOne.putExtra("url", ((AboutMenu) event.getData()).getUrl());
+                    //连续启动Service
+                    startService(intentOne);
+                }
+                break;
+            case UpdateEvent.finish:
+                stopService(intentOne);
+                installApkNew(Uri.fromFile((File) event.getData()), event.getContext());
+                break;
+        }
+    }
+
+    //安装apk
+    protected void installApkNew(Uri uri, Context context) {
+        Intent intent = new Intent();
+        //执行动作
+        intent.setAction(Intent.ACTION_VIEW);
+        //执行的数据类型
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setDataAndType(uri, "application/vnd.android.package-archive");
+        //不加下面这句话是可以的，查考的里面说如果不加上这句的话在apk安装完成之后点击单开会崩溃
+//        android.os.Process.killProcess(android.os.Process.myPid());
+        if (context != null) {
+            context.startActivity(intent);
+        } else {
+            this.startService(intent);
+        }
     }
 
     /**

@@ -3,8 +3,6 @@
     package="com.houoy.www.gongxing">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -16,7 +14,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.RESTART_PACKAGES" />
@@ -25,11 +23,13 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.REORDER_TASKS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
 
     <application
         android:name=".GongXingApplication"
         android:allowBackup="true"
+
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -60,6 +60,12 @@
             android:name=".HelpActivity"
             android:launchMode="singleInstance" />
         <activity
+            android:name=".AboutActivity"
+            android:launchMode="singleInstance" />
+        <activity
+            android:name=".AboutUpdateActivity"
+            android:launchMode="singleInstance" />
+        <activity
             android:name=".SettingActivity"
             android:label="@string/action_setting" />
         <activity
@@ -67,7 +73,6 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -76,10 +81,12 @@
         <receiver
             android:name=".service.MyMessageReceiver"
             android:exported="false">
-            <intent-filter> 
+            <intent-filter>
+                 
                 <action android:name="com.alibaba.push2.action.NOTIFICATION_OPENED" />
             </intent-filter>
-            <intent-filter>     
+            <intent-filter>
+                     
                 <action android:name="com.alibaba.push2.action.NOTIFICATION_REMOVED" />
             </intent-filter>
             <intent-filter>
@@ -90,20 +97,22 @@
         <service
             android:name=".service.MyMessageIntentService"
             android:exported="false">
-            <intent-filter> 
+            <intent-filter>
+                 
                 <action android:name="com.alibaba.push2.action.NOTIFICATION_OPENED" />
             </intent-filter>
-            <intent-filter>     
+            <intent-filter>
+                     
                 <action android:name="com.alibaba.push2.action.NOTIFICATION_REMOVED" />
             </intent-filter>
             <intent-filter>
                 <action android:name="com.alibaba.sdk.android.push.RECEIVE" />
             </intent-filter>
         </service>
-
+         <service android:name=".service.DownLoadService" />
         <!-- Mqtt Service -->
-        <!--<service android:name="org.eclipse.paho.android.service.MqttService" />-->
-        <!--<service android:name=".service.MQTTService" />-->
+        <!-- <service android:name="org.eclipse.paho.android.service.MqttService" /> -->
+        <!-- <service android:name=".service.MQTTService" /> -->
         <!--
           android:enabled="true"
           android:process="system" />

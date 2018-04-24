@@ -3,9 +3,9 @@ package com.houoy.www.gongxing;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.WindowManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.houoy.www.gongxing.controller.GongXingController;
@@ -13,6 +13,7 @@ import com.houoy.www.gongxing.dao.UserDao;
 import com.houoy.www.gongxing.event.GoToSigninEvent;
 import com.houoy.www.gongxing.event.LoginEvent;
 import com.houoy.www.gongxing.model.ClientInfo;
+import com.houoy.www.gongxing.util.AppUtil;
 import com.houoy.www.gongxing.util.StringUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -36,7 +37,9 @@ public class SplashActivity extends MyAppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         gongXingController = GongXingController.getInstant();
         userDao = UserDao.getInstant();
-
+        String appCurrentName = AppUtil.getVersionName(GongXingApplication.gongXingApplication.getBaseContext());
+        TextView splashSubTitle = findViewById(R.id.splashSubTitle);
+        splashSubTitle.setText(appCurrentName);
         /**
          * 延迟进入主界面
          */
@@ -55,7 +58,7 @@ public class SplashActivity extends MyAppCompatActivity {
                     Toast.makeText(x.app(), "获取本地缓存用户信息失败，所以无法登录", Toast.LENGTH_SHORT).show();
                 }
             }
-        }, 500*2);
+        }, 500 * 2);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

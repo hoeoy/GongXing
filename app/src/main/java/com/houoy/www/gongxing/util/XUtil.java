@@ -1,13 +1,9 @@
 package com.houoy.www.gongxing.util;
 
-import com.alibaba.fastjson.JSON;
-import com.houoy.www.gongxing.vo.RequestVO;
-
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**

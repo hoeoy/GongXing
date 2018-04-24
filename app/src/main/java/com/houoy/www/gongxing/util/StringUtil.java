@@ -1,6 +1,18 @@
 package com.houoy.www.gongxing.util;
 
+import java.text.DecimalFormat;
+
 public class StringUtil {
+
+    public static String byteToM(Long byteNum) {
+        if (byteNum == null) {
+            return "0";
+        }
+
+        DecimalFormat df = new DecimalFormat("0.00");
+        String s = df.format((double) byteNum / 1048576);
+        return s;
+    }
 
     //是否
     public static Boolean isEmpty(String s) {

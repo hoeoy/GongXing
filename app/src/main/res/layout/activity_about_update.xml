@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/text_margin"
+    tools:context="com.houoy.www.gongxing.AboutUpdateActivity">
+
+    <ImageView
+        android:id="@+id/fileImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_launcher_round"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/fileTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="版本说明"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fileImage" />
+
+    <TextView
+        android:id="@+id/fileDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="安装包大小"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fileTitle" />
+
+    <ProgressBar
+        android:max="100"
+        android:progress="50"
+        android:secondaryProgress="0"
+        android:indeterminate="false"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:id="@+id/progressBarHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fileDesc" />
+
+    <TextView
+        android:id="@+id/downloadProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="已下载"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progressBarHorizontal" />
+
+    <Button
+        android:id="@+id/installBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/bg_white"
+        android:background="@drawable/btn_selector"
+        android:text="立即更新"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/downloadProgress" />
+</android.support.constraint.ConstraintLayout>
