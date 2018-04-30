@@ -1,19 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_white"
     android:orientation="vertical"
     android:padding="@dimen/fab_margin">
 
-    <com.houoy.www.gongxing.element.ClearEditText
-        android:id="@+id/userid"
+    <android.support.v7.widget.GridLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:drawableLeft="@drawable/person_little"
-        android:drawablePadding="10dp"
-        android:hint="请输入用户名" />
+        app:orientation="horizontal">
+
+        <com.houoy.www.gongxing.element.ClearEditText
+            android:id="@+id/userid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="0dp"
+            android:drawableLeft="@drawable/person_little"
+            android:drawablePadding="10dp"
+            android:hint="请输入用户名"
+            app:layout_column="0"
+            app:layout_columnSpan="1"
+            app:layout_columnWeight="10" />
+
+        <Button
+            android:id="@+id/btnCheckUserId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00000000"
+            android:gravity="center"
+            android:text="验证用户名"
+            android:textColor="@color/text_font_blue"
+            android:textSize="@dimen/regular17"
+            app:layout_column="1"
+            app:layout_columnSpan="1"
+            app:layout_columnWeight="2" />
+
+        <TextView
+            android:id="@+id/lastTimeTextView"
+            android:layout_width="144dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="倒计时"
+            android:visibility="gone"
+            app:layout_column="1"
+            app:layout_columnSpan="1"
+            app:layout_columnWeight="2" />
+    </android.support.v7.widget.GridLayout>
 
     <com.houoy.www.gongxing.element.ClearEditText
         android:id="@+id/password"
@@ -41,8 +76,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:background="@color/colorPrimary"
+        android:text="下一步"
         android:textColor="@color/bg_white"
-        android:textSize="@dimen/regular14"
-        android:text="下一步" />
+        android:textSize="@dimen/regular14" />
 
 </LinearLayout>

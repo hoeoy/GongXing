@@ -175,6 +175,27 @@ public class GongXingController {
         });
     }
 
+    public void checkUserId(String userid) {
+        String url = getUrl() + "APPCHECKUSERID";
+        Map<String, String> params = new HashMap();
+        params.put("userid", userid);
+        RequestVO requestVO = new RequestVO(GongXingApplication.sign, params);
+        String paramStr = JSON.toJSONString(requestVO);
+
+        XUtil.Post(url, paramStr, new XUtilCallBack<String>() {
+            @Override
+            public void onSuccess(String result) {
+                ResultVO resultVO = JSON.parseObject(result, ResultVO.class);
+                if (resultVO.getCode().equals("success")) {
+                    EventBus.getDefault().post(new RegisterEvent(RegisterEvent.CheckUserId, resultVO.getData()));
+                } else {
+                    Toast.makeText(x.app(), resultVO.getMessage(), Toast.LENGTH_LONG).show();
+                    EventBus.getDefault().post(new RegisterEvent(RegisterEvent.CheckUserId_Fail, resultVO.getData()));
+                }
+            }
+        });
+    }
+
     public void register(final ClientInfo clientInfo) {
         //识别码验证
 //        String url = GongXingApplication.url + "CheckProjectID";

@@ -3,9 +3,12 @@ package com.houoy.www.gongxing.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.houoy.www.gongxing.R;
@@ -33,6 +36,8 @@ public class Register extends Fragment {
     private ClearEditText password;
     @ViewInject(R.id.password2)
     private ClearEditText password2;
+    @ViewInject(R.id.btnCheckUserId)
+    private TextView btnCheckUserId;
 
     public Register() {
     }
@@ -50,6 +55,24 @@ public class Register extends Fragment {
         if (!injected) {
             x.view().inject(this, this.getView());
         }
+
+        userid.addTextChangedListener(new TextWatcher(){
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                btnCheckUserId.setText("验证用户名");
+                btnCheckUserId.setEnabled(true);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     @Event(value = {R.id.btnNext})
@@ -71,6 +94,17 @@ public class Register extends Fragment {
         }
     }
 
+    @Event(value = {R.id.btnCheckUserId})
+    private void onbtnCheckUserId(View view) {
+        String useridStr = userid.getText().toString();
+        //输入验证
+        if (StringUtil.isEmpty(useridStr)) {
+            Toast.makeText(view.getContext(), "请输入用户名", Toast.LENGTH_LONG).show();
+        } else {
+            EventBus.getDefault().post(new RegisterEvent(RegisterEvent.Begin_CheckUserId, useridStr));
+        }
+    }
+
     public ClientInfo getInputClientInfo() {
         ClientInfo clientInfo = new ClientInfo();
         clientInfo.setUserID(userid.getText().toString());
@@ -84,5 +118,9 @@ public class Register extends Fragment {
 
     public String getPassword() {
         return password.getText().toString();
+    }
+
+    public TextView getBtnCheck() {
+        return btnCheckUserId;
     }
 }

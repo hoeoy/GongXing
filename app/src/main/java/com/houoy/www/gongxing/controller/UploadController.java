@@ -20,8 +20,8 @@ public class UploadController {
 
     private static UploadController uploadController = null;
 
-    public static String ip = "http://192.168.1.28";
-    private static String defaultUrl = ip + ":9898/";
+    public static String ip = "http://192.168.0.100";
+    private static String defaultUrl = ip + ":8888/";
 
     private AboutMenuDao aboutMenuDao;
 
@@ -37,7 +37,7 @@ public class UploadController {
     }
 
     public void initAboutMenu() {
-        String url = defaultUrl + "/update/check";
+        String url = defaultUrl + "/api/apk/check";
         XUtil.Get(url, null, new XUtilCallBack<String>() {
             @Override
             public void onSuccess(String result) {

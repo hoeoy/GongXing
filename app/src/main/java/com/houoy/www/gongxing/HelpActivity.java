@@ -103,6 +103,9 @@ public class HelpActivity extends MyAppCompatActivity {
                 "</br>1 重构消息接收模块" +
                 "</br>2 更改一些BUG" +
                 "</br></br>");
+        detail.insert(0, "更新2018-4-3：" +
+                "</br>1 增加更新功能" +
+                "</br></br>");
 
         webView.loadData(detail.toString(), "text/html; charset=UTF-8", null);
     }

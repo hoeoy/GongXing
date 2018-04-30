@@ -196,6 +196,19 @@ public class RegisterAndSignInActivity extends MyAppCompatActivity implements Ra
                 ClientInfo clientInfo = mAdapter.getClientInfo();
                 gongXingController.register(clientInfo);
                 break;
+            case RegisterEvent.Begin_CheckUserId:
+                mAdapter.getRegister().getBtnCheck().setText("正在验证");
+                mAdapter.getRegister().getBtnCheck().setEnabled(false);
+                gongXingController.checkUserId((String) event.getData());
+                break;
+            case RegisterEvent.CheckUserId:
+                mAdapter.getRegister().getBtnCheck().setText("验证通过");
+                mAdapter.getRegister().getBtnCheck().setEnabled(false);
+                break;
+            case RegisterEvent.CheckUserId_Fail:
+                mAdapter.getRegister().getBtnCheck().setText("验证用户名");
+                mAdapter.getRegister().getBtnCheck().setEnabled(true);
+                break;
             case RegisterEvent.Begin_DentifyingCode:
                 gongXingController.getDentifyingCode((String) event.getData());
                 break;
