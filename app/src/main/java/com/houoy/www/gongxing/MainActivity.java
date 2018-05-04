@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.alibaba.sdk.android.push.CommonCallback;
 import com.houoy.www.gongxing.controller.GongXingController;
+import com.houoy.www.gongxing.controller.UploadController;
 import com.houoy.www.gongxing.dao.UserDao;
 import com.houoy.www.gongxing.event.LogoutEvent;
 import com.houoy.www.gongxing.event.NetBroadcastReceiver;
@@ -90,6 +91,8 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
     private long exitTime = 0;
     private UserDao userDao;
     private GongXingController gongXingController;
+
+    private UploadController uploadController;
 //    private MQTTService mqttService;
 //    private MyMqttCallback myMqttCallback = null;
 
@@ -191,6 +194,9 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
 //        }
 //
 //        application.setLastMainActivity(this);
+
+        uploadController = UploadController.getInstant();
+        uploadController.initAboutMenu();
     }
 
     @Override
@@ -434,7 +440,7 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
     public void onUpdateEvent(UpdateEvent event) {
         switch (event.getType()) {
             case UpdateEvent.newVersion:
-                int a = 0;
+                showMsgDialog("有新版本,请到关于页面进行下载安装",null,null);
                 break;
             case UpdateEvent.begin:
                 if (AppUtil.isServiceRunning(this, "com.houoy.www.gongxing.service.DownLoadService")) {

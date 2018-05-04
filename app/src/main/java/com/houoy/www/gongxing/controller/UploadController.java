@@ -20,8 +20,8 @@ public class UploadController {
 
     private static UploadController uploadController = null;
 
-    public static String ip = "http://192.168.0.100";
-    private static String defaultUrl = ip + ":8888/";
+    public static String ip = "http://appupdate.51jfjk.com";
+    private static String defaultUrl = ip + ":9032/";
 
     private AboutMenuDao aboutMenuDao;
 
