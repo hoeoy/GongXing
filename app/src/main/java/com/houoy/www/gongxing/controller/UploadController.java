@@ -63,6 +63,7 @@ public class UploadController {
                             aboutMenuDao.update(daoAM);
                         }
                     } else {
+                        //如果从服务器获取到信息
                         if (appCurrentCode < resultVO.getNewestVersionCode()) {
                             //如果本机安装包版本小于服务器最新版本
                             resultVO.setMenu_name("版本");
@@ -90,18 +91,23 @@ public class UploadController {
 
                             EventBus.getDefault().post(new UpdateEvent(UpdateEvent.newVersion, null));
                         } else {
-                            daoAM.setHas_update(false);
-                            daoAM.setMenu_code(resultVO.getNewestVersionName());
-                            daoAM.setCurrentVersionCode(resultVO.getNewestVersionCode());
-                            daoAM.setCurrentVersionName(resultVO.getNewestVersionName());
+                            //如果本机安装包版本大于等于服务器版本
                             //如果服务器不是最新版本
                             if (daoAM == null) {
                                 //如果没有初始化数据，则初始化
                                 daoAM = new AboutMenu();
                                 daoAM.setMenu_name("版本");
+                                daoAM.setHas_update(false);
+                                daoAM.setMenu_code(resultVO.getNewestVersionName());
+                                daoAM.setCurrentVersionCode(resultVO.getNewestVersionCode());
+                                daoAM.setCurrentVersionName(resultVO.getNewestVersionName());
                                 aboutMenuDao.add(daoAM);
                             } else {
                                 //如果已经存在数据
+                                daoAM.setHas_update(false);
+                                daoAM.setMenu_code(resultVO.getNewestVersionName());
+                                daoAM.setCurrentVersionCode(resultVO.getNewestVersionCode());
+                                daoAM.setCurrentVersionName(resultVO.getNewestVersionName());
                                 aboutMenuDao.update(daoAM);
                             }
                         }

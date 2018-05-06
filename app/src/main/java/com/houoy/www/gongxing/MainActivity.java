@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -20,6 +21,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -47,6 +49,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.xutils.ex.DbException;
 import org.xutils.view.annotation.ContentView;
+import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
@@ -75,6 +78,8 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
 //    private TextView txt_message;
     @ViewInject(R.id.txt_search)
     private TextView txt_search;
+    @ViewInject(R.id.txt_record)
+    private TextView txt_record;
     //    @ViewInject(R.id.txt_notice)
 //    private TextView txt_notice;
     @ViewInject(R.id.ly_content)
@@ -101,6 +106,7 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
     Intent serviceIntent = null;
     private Intent intentOne;
 
+    private Button btnChangePW;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
@@ -144,6 +150,7 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
 //        txt_notice.setOnClickListener(this);
         txt_search.setOnClickListener(this);
         txt_chat.setOnClickListener(this);
+        txt_record.setOnClickListener(this);
 
         txt_chat.performClick();   //模拟一次点击，既进去后选择第一项
 
@@ -168,6 +175,14 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
                 View headerLayout = navigationView.getHeaderView(0);
                 ImageView nav_head_portal = (ImageView) headerLayout.findViewById(R.id.nav_head_portal);
                 TextView nav_head_person_name = (TextView) headerLayout.findViewById(R.id.nav_head_person_name);
+                btnChangePW = (Button) headerLayout.findViewById(R.id.btnChangePW);
+                btnChangePW.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent1 = new Intent(MainActivity.this, ChangePWActivity.class);
+                        startActivity(intent1);
+                    }
+                });
 
                 if (!StringUtil.isEmpty(clientInfo.getHeadimgurl())) {
                     ImageUtil.setImageToImageView(nav_head_portal, clientInfo.getHeadimgurl());
@@ -315,6 +330,7 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
                     fTransaction.show(searchFragment);
                 }
                 break;
+
 //            case R.id.txt_message:
 //                setSelected();
 //                txt_message.setSelected(true);
@@ -345,6 +361,9 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
                 } else {
                     fTransaction.show(chatFragment);
                 }
+                break;
+            case R.id.txt_record:
+                Toast.makeText(getApplicationContext(), "报警查询页面", Toast.LENGTH_SHORT).show();
                 break;
         }
         fTransaction.commit();
@@ -391,6 +410,7 @@ public class MainActivity extends MyAppCompatActivity implements NavigationView.
 //        txt_notice.setSelected(false);
         txt_search.setSelected(false);
         txt_chat.setSelected(false);
+        txt_record.setSelected(false);
     }
 
 /*

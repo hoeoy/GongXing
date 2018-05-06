@@ -29,7 +29,6 @@
     <application
         android:name=".GongXingApplication"
         android:allowBackup="true"
-
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -62,6 +61,8 @@
         <activity
             android:name=".AboutActivity"
             android:launchMode="singleInstance" />
+        <activity android:name=".ChangePWActivity"
+            android:launchMode="singleInstance"/>
         <activity
             android:name=".AboutUpdateActivity"
             android:launchMode="singleInstance" />
@@ -73,6 +74,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -109,7 +111,7 @@
                 <action android:name="com.alibaba.sdk.android.push.RECEIVE" />
             </intent-filter>
         </service>
-         <service android:name=".service.DownLoadService" />
+        <service android:name=".service.DownLoadService" />
         <!-- Mqtt Service -->
         <!-- <service android:name="org.eclipse.paho.android.service.MqttService" /> -->
         <!-- <service android:name=".service.MQTTService" /> -->

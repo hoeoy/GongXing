@@ -8,6 +8,7 @@
     <string name="action_out">退出登录</string>
     <string name="help">帮助</string>
     <string name="about">关于</string>
+    <string name="changePW">修改密码</string>
     <string name="about_update">新版本更新</string>
     <string name="action_share">分享</string>
     <string name="clear_cache">清除缓存</string>
@@ -20,6 +21,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="search">查询</string>
+    <string name="record">记录</string>
     <string name="message">消息</string>
     <string name="chat">聊天</string>
     <string name="notice">通知</string>

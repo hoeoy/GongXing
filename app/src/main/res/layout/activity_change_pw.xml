@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_white"
+    android:orientation="vertical"
+    android:padding="@dimen/fab_margin">
+
+    <com.houoy.www.gongxing.element.ClearEditText
+        android:id="@+id/change_userid"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="0dp"
+        android:drawableLeft="@drawable/person_little"
+        android:drawablePadding="10dp"
+        android:hint="请输入用户名" />
+
+    <com.houoy.www.gongxing.element.ClearEditText
+        android:id="@+id/change_old"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:drawableLeft="@drawable/lock"
+        android:drawablePadding="10dp"
+        android:hint="请输入旧密码"
+        android:inputType="textPassword" />
+
+    <com.houoy.www.gongxing.element.ClearEditText
+        android:id="@+id/change_new"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:drawableLeft="@drawable/lock"
+        android:drawablePadding="10dp"
+        android:hint="请输入新密码"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/changeBtn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@color/colorPrimary"
+        android:text="修改"
+        android:textColor="@color/bg_white"
+        android:textSize="@dimen/regular14" />
+
+</LinearLayout>
