@@ -231,10 +231,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     ((NewsViewHolder) holder).humidity_value.setText(mpd.getHumidity_value());
                     ((NewsViewHolder) holder).state_value.setText(mpd.getState_value());
                     ((NewsViewHolder) holder).alarm_num_value.setText(mpd.getAlarm_num_value());
-                    ((NewsViewHolder) holder).remark2.setText(mpd.getRemark_value()
-                            + "\n relationID:" + mpd.getRelationID() + "\n"
-                            + "touser:" + mpd.getTouser()
-                    );
+                    ((NewsViewHolder) holder).remark2.setText(mpd.getRemark_value());
+//                            + "\n relationID:" + mpd.getRelationID() + "\n"
+//                            + "touser:" + mpd.getTouser()
+//                    );
 
                     ((NewsViewHolder) holder).btn_more2.setText("日报详细");
                     ((NewsViewHolder) holder).btn_more2.setOnClickListener(new View.OnClickListener() {
@@ -265,10 +265,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     ((NewsViewHolder) holder).device_name.setText(mpa.getDevice_name_value());
                     ((NewsViewHolder) holder).subkey_name.setText(mpa.getSubkey_name_value());
                     ((NewsViewHolder) holder).current_parameter.setText(mpa.getCurrent_parameter_value());
-                    ((NewsViewHolder) holder).remark.setText(mpa.getRemark_value()
-                            + "\n relationID:" + mpa.getRelationID() + "\n"
-                            + "touser:" + mpa.getTouser()
-                    );
+                    ((NewsViewHolder) holder).remark.setText(mpa.getRemark_value());
+//                            + "\n relationID:" + mpa.getRelationID() + "\n"
+//                            + "touser:" + mpa.getTouser()
+//                    );
                     ((NewsViewHolder) holder).readMore.setText("报警详细");
                     ((NewsViewHolder) holder).readMore.setOnClickListener(new View.OnClickListener() {
                         @Override

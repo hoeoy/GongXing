@@ -1,13 +1,16 @@
 package com.houoy.www.gongxing.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
+import com.houoy.www.gongxing.ForgetPWActivity;
 import com.houoy.www.gongxing.R;
 import com.houoy.www.gongxing.controller.GongXingController;
 import com.houoy.www.gongxing.element.ClearEditText;
@@ -25,6 +28,8 @@ import org.xutils.x;
 public class Signin extends Fragment {
     private boolean injected = false;
 
+    @ViewInject(R.id.btnForgetPW)
+    private Button btnForgetPW;
     @ViewInject(R.id.etxtEmail)
     private ClearEditText etxtEmail;
     @ViewInject(R.id.etxtPwd)
@@ -69,6 +74,13 @@ public class Signin extends Fragment {
         }
 
         gongXingController.signin(userid, password);
+    }
+
+    @Event(value = {R.id.btnForgetPW})
+    private void onBtnForgetPWClick(View view) {
+        Intent intent = new Intent();
+        intent.setClass(view.getContext(), ForgetPWActivity.class);
+        startActivity(intent);
     }
 
     public void setUserid(String userid) {

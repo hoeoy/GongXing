@@ -130,7 +130,7 @@ public class Register2 extends Fragment {
     private void onbtnDentifyingCodeClick(View view) {
         String mobile = etxtPhone.getText().toString();
         //输入验证
-        if (StringUtil.isEmpty(mobile) || mobile.length() < 11 || mobile.length() > 11) {
+        if (StringUtil.isEmpty(mobile) || !StringUtil.isCellphone(mobile)) {
             Toast.makeText(view.getContext(), "请输入正确手机号", Toast.LENGTH_LONG).show();
         } else {
             activity.timer = 0;

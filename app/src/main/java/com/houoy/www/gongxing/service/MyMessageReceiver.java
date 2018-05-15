@@ -236,6 +236,10 @@ public class MyMessageReceiver extends MessageReceiver {
                         }
 
                         ClientInfo clientInfo = userDao.findUser();
+                        if(clientInfo==null){
+                            return;
+                        }
+
                         //chathouse,chatUser处理聊天室和聊天用户表
                         chatHouse = houseDao.findByNameAndUserid(house_name, clientInfo.getUserID());
                         if (chatHouse == null) {

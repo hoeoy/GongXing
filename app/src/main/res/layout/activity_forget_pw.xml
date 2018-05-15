@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_white"
+    android:orientation="vertical"
+    android:padding="@dimen/fab_margin"
+    tools:context="com.houoy.www.gongxing.ForgetPWActivity">
+
+    <com.houoy.www.gongxing.element.ClearEditText
+        android:id="@+id/forget_userid"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="0dp"
+        android:drawableLeft="@drawable/person_little"
+        android:drawablePadding="10dp"
+        android:hint="请输入用户名" />
+
+    <com.houoy.www.gongxing.element.ClearEditText
+        android:id="@+id/forget_phone"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:drawableLeft="@drawable/phone"
+        android:drawablePadding="10dp"
+        android:hint="请输入注册时的手机号"
+        android:inputType="phone" />
+
+    <android.support.v7.widget.GridLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        app:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnForgetCheckId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00000000"
+            android:drawablePadding="10dp"
+            android:gravity="center"
+            android:text="获取短信验证码"
+            android:textColor="@color/text_font_blue"
+            android:textSize="@dimen/regular17"
+            app:layout_column="0"
+            app:layout_columnSpan="1"
+            app:layout_columnWeight="5" />
+
+        <Button
+            android:id="@+id/btnForgetCheckSoundId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00000000"
+            android:drawablePadding="10dp"
+            android:gravity="center"
+            android:text="获取语音验证码"
+            android:textColor="@color/text_font_blue"
+            android:textSize="@dimen/regular17"
+            app:layout_column="1"
+            app:layout_columnSpan="1"
+            app:layout_columnWeight="5" />
+
+        <TextView
+            android:id="@+id/ForgetLastTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="10dp"
+            android:gravity="center"
+            android:text="倒计时"
+            android:visibility="gone"
+            app:layout_column="0"
+            app:layout_columnSpan="1"
+            app:layout_columnWeight="5" />
+
+        <TextView
+            android:id="@+id/ForgetLastTimeSound"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="10dp"
+            android:gravity="center"
+            android:text="倒计时"
+            android:visibility="gone"
+            app:layout_column="1"
+            app:layout_columnSpan="1"
+            app:layout_columnWeight="5" />
+    </android.support.v7.widget.GridLayout>
+
+    <com.houoy.www.gongxing.element.ClearEditText
+        android:id="@+id/forget_check"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:drawableLeft="@drawable/person_little"
+        android:drawablePadding="10dp"
+        android:hint="请输入验证码"
+        android:inputType="text" />
+
+    <com.houoy.www.gongxing.element.ClearEditText
+        android:id="@+id/forget_new"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:drawableLeft="@drawable/lock"
+        android:drawablePadding="10dp"
+        android:hint="请输入新密码"
+        android:inputType="textPassword" />
+
+    <com.houoy.www.gongxing.element.ClearEditText
+        android:id="@+id/forget_again"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:drawableLeft="@drawable/lock"
+        android:drawablePadding="10dp"
+        android:hint="请再次输入新密码"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/forgetBtn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@color/colorPrimary"
+        android:text="提交"
+        android:textColor="@color/bg_white"
+        android:textSize="@dimen/regular14" />
+
+</LinearLayout>

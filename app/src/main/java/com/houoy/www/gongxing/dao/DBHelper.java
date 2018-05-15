@@ -7,6 +7,7 @@ import com.houoy.www.gongxing.model.AboutMenu;
 import com.houoy.www.gongxing.model.ChatHouse;
 import com.houoy.www.gongxing.model.ChatTalker;
 import com.houoy.www.gongxing.model.ClientInfo;
+import com.houoy.www.gongxing.model.ForgetTimer;
 import com.houoy.www.gongxing.model.MessagePushAlert;
 import com.houoy.www.gongxing.model.MessagePushDaily;
 import com.houoy.www.gongxing.vo.MessageVO;
@@ -49,6 +50,7 @@ public class DBHelper {
                             db.dropTable(ChatHouse.class);
                             db.dropTable(ChatTalker.class);
                             db.dropTable(AboutMenu.class);
+                            db.dropTable(ForgetTimer.class);
                         } catch (DbException e) {
                             Log.e(e.getMessage(), e.getLocalizedMessage());
                         }

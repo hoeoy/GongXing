@@ -9,6 +9,7 @@
     <string name="help">帮助</string>
     <string name="about">关于</string>
     <string name="changePW">修改密码</string>
+    <string name="forgetPW">忘记密码</string>
     <string name="about_update">新版本更新</string>
     <string name="action_share">分享</string>
     <string name="clear_cache">清除缓存</string>

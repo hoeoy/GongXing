@@ -61,7 +61,10 @@
         <activity
             android:name=".AboutActivity"
             android:launchMode="singleInstance" />
-        <activity android:name=".ChangePWActivity"
+        <activity
+            android:name=".ChangePWActivity"
+            android:launchMode="singleInstance" />
+        <activity android:name=".ForgetPWActivity"
             android:launchMode="singleInstance"/>
         <activity
             android:name=".AboutUpdateActivity"
